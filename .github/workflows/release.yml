@@ -28,23 +28,37 @@ jobs:
 
       # ExifTool is a runtime dependency of UMI but lives outside this repo
       # (Perl-based tool, ~30 MB). Pulled fresh on every release run; pinned
-      # version keeps builds reproducible.
+      # version keeps builds reproducible. Bump occasionally — the URL pattern
+      # is exiftool-<version>_64.zip on https://exiftool.org/.
       - name: Download ExifTool
         shell: pwsh
         run: |
-          $version = '13.05'
-          $zipUrl  = "https://exiftool.org/exiftool-$version-64.zip"
+          $version = '13.58'
+          $zipUrl  = "https://exiftool.org/exiftool-${version}_64.zip"
           $zipPath = Join-Path $env:RUNNER_TEMP 'exiftool.zip'
           $extract = Join-Path $env:RUNNER_TEMP 'exiftool-extract'
           Invoke-WebRequest $zipUrl -OutFile $zipPath
           Expand-Archive $zipPath -DestinationPath $extract -Force
-          # The zip ships exiftool(-k).exe — rename to exiftool.exe and copy
-          # to tools/exiftool/ alongside the supporting Perl tree.
-          $extractedRoot = Get-ChildItem $extract -Directory | Select-Object -First 1
+
+          # The zip may or may not wrap everything in a top-level directory
+          # (varies between releases). If it does, flatten one level.
+          $items = Get-ChildItem $extract
+          if ($items.Count -eq 1 -and $items[0].PSIsContainer) {
+            $source = $items[0].FullName
+          } else {
+            $source = $extract
+          }
+
           New-Item -ItemType Directory -Path tools/exiftool -Force | Out-Null
-          Copy-Item -Recurse -Force "$($extractedRoot.FullName)/*" tools/exiftool/
+          Copy-Item -Recurse -Force "$source/*" tools/exiftool/
+
+          # Standalone build ships exiftool(-k).exe; UMI invokes plain exiftool.exe.
           if (Test-Path 'tools/exiftool/exiftool(-k).exe') {
             Move-Item -Force 'tools/exiftool/exiftool(-k).exe' 'tools/exiftool/exiftool.exe'
+          }
+          # Sanity check
+          if (-not (Test-Path 'tools/exiftool/exiftool.exe')) {
+            throw "exiftool.exe not found after extraction. Layout: $(Get-ChildItem tools/exiftool | Select-Object -ExpandProperty Name)"
           }
 
       - name: Build Gate (0-tolerance for warnings)
