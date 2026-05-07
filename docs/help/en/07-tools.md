@@ -40,11 +40,27 @@ Folder containing your [GPX](glossary:GPX) files from GPS trackers (phone apps, 
 
 #### Language
 
-Switch between English and German. Requires an app restart to take effect.
+Switch between English and German. Requires an app restart to take effect. The
+language you picked in the installer is auto-applied on first run, so you only
+ever need to touch this if you want to change it later.
 
-#### Debug Logging
+#### Logging
 
-Enables verbose log output for troubleshooting. Only needed when diagnosing issues.
+Three-state dropdown that controls the log file under `<install-dir>/logs/`:
+
+- **No log** (default) — nothing is written, no log file is created at all
+- **Info** — standard operational messages
+- **Debug** — verbose output for troubleshooting
+
+Changes take effect on the next app start. Switch to *Debug* only when
+diagnosing a specific issue.
+
+#### Check for updates on startup
+
+When enabled (default), UMI looks at the public GitHub release page on each
+startup. If a newer release is available, the installer is fetched silently in
+the background and a banner with an **Install** button appears at the top of
+the main window — one click runs the installer.
 
 #### Restart Setup Wizard
 

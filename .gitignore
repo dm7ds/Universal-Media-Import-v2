@@ -110,20 +110,35 @@ QuickTest/
 .umi.db-shm
 .umi.db-wal
 
-# .NET Satellite Assemblies (Lokalisierung)
-cs/
-de/
-es/
-fr/
-it/
-ja/
-ko/
-pl/
-pt-BR/
-ru/
-tr/
-zh-Hans/
-zh-Hant/
+# .NET Satellite Assemblies (Lokalisierung) — only inside build output dirs.
+# The unscoped patterns matched docs/help/de/ etc. and silently kept the
+# in-app DE help out of the public repo for weeks.
+**/bin/**/cs/
+**/bin/**/de/
+**/bin/**/es/
+**/bin/**/fr/
+**/bin/**/it/
+**/bin/**/ja/
+**/bin/**/ko/
+**/bin/**/pl/
+**/bin/**/pt-BR/
+**/bin/**/ru/
+**/bin/**/tr/
+**/bin/**/zh-Hans/
+**/bin/**/zh-Hant/
+**/obj/**/cs/
+**/obj/**/de/
+**/obj/**/es/
+**/obj/**/fr/
+**/obj/**/it/
+**/obj/**/ja/
+**/obj/**/ko/
+**/obj/**/pl/
+**/obj/**/pt-BR/
+**/obj/**/ru/
+**/obj/**/tr/
+**/obj/**/zh-Hans/
+**/obj/**/zh-Hant/
 
 # Bundled Tools (Binaries nicht in Git, nur Lizenz)
 tools/exiftool/exiftool.exe

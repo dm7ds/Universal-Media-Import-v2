@@ -1,10 +1,13 @@
-# Universal Media Import (UMI) v2.1
+# Universal Media Import (UMI)
 
 [![License: GPL-3.0](https://img.shields.io/badge/License-GPL--3.0-blue.svg)](LICENSE)
 [![.NET 8](https://img.shields.io/badge/.NET-8.0-purple.svg)](https://dotnet.microsoft.com/download/dotnet/8.0)
 [![Platform: Windows](https://img.shields.io/badge/Platform-Windows-lightgrey.svg)]()
+[![Latest Release](https://img.shields.io/github/v/release/dm7ds/Universal-Media-Import-v2)](https://github.com/dm7ds/Universal-Media-Import-v2/releases/latest)
 
 Automated media import tool for photographers and videographers. Insert an SD card — UMI detects it, sorts the footage into a clean workbench structure, and optionally injects GPS, stabilizes with Gyroflow, and backs up EXIF metadata. Works with any camera that connects via SD card or USB/MTP: action cams, drones, DSLRs, mirrorless. The included camera profiles are examples and are meant to be adapted to your own hardware.
+
+> **Detailed feature reference:** [FEATURES.md](FEATURES.md)
 
 ---
 
@@ -18,10 +21,13 @@ Automated media import tool for photographers and videographers. Insert an SD ca
 - **EIS detection** — separates videos with electronic stabilization from those ready for Gyroflow
 - **Metadata backup / restore** — EXIF backup to `.meta.json`, restore after DaVinci Resolve export
 - **Thumbnail generation** — thumbnail cache for RAW files after import
+- **Sequence Reviewer** — full-screen tool to rate, tag and export burst/astro/timelapse series
 - **MTP / USB import** — direct import from cameras connected via USB (Windows WPD API)
 - **Fixed-path sources** — dashcams, NAS drives, any folder watched continuously
 - **WPF GUI** — full desktop interface (`umi-gui.exe`) with setup wizard and camera tile management
-- **i18n** — English and German UI
+- **In-app updates** — checks GitHub for new releases on startup, downloads in the background, one-click install
+- **Tri-state logging** — Off (default) / Info / Debug, configurable in Settings → Tools
+- **i18n** — English and German UI, language auto-applied from the installer's language pick
 
 ---
 
@@ -29,25 +35,26 @@ Automated media import tool for photographers and videographers. Insert an SD ca
 
 ### Installer (recommended)
 
-Download `UMI_Setup_2.1.0.exe` and run it.
+Get the latest installer from [the releases page](https://github.com/dm7ds/Universal-Media-Import-v2/releases/latest) — file name is `UMI_Setup_<version>.exe`.
 
 The installer:
 - Checks for .NET 8 Runtime and downloads it if needed
 - Installs UMI to `C:\Program Files\UMI\`
 - Adds `umi` to PATH (available in any terminal)
 - Bundles ExifTool — no separate installation required
+- Asks at uninstall time whether to keep or wipe your camera/SD-card configuration (default: keep)
 
 **Requires:** [.NET 8 Runtime](https://dotnet.microsoft.com/download/dotnet/8.0) (~55 MB, checked by installer)
 
 ### Portable
 
-Download `UMI_Portable_2.1.0.exe` — done. Single EXE, everything included, no installation.
+Grab `umi-portable.zip` from the releases page — single self-contained EXE, no installation.
 
 - No .NET required — runtime is embedded
 - Ideal for USB sticks, on-location use, or when you cannot install software
 - ExifTool must be placed in `tools/exiftool/` next to the EXE (or configured in `config.json`)
 
-**Trade-off:** Larger file (~65 MB), first launch slightly slower (one-time extraction)
+**Trade-off:** Larger file (~50 MB compressed), first launch slightly slower (one-time extraction)
 
 ---
 
@@ -357,6 +364,28 @@ umi test-camera --video "video.mp4" -v
 
 ---
 
+### `update` — Check for and install updates
+
+Checks the public GitHub release page for a newer version. Optionally downloads
+the new installer and launches it via UAC.
+
+```
+umi update                # equivalent to --check
+umi update --check
+umi update --apply
+```
+
+| Option | Description |
+|---|---|
+| `--check` | Show installed version vs. latest available, exit |
+| `--apply` | Check, download `UMI_Setup_<version>.exe` to `%TEMP%` and start the installer |
+
+The GUI runs the same check at startup (when *Check for updates on startup* is
+enabled in **Settings → Tools**, the default), pre-fetches the installer in the
+background and surfaces a one-click **Install** button on the in-app banner.
+
+---
+
 ## Configuration
 
 UMI is configured via `config.json`. On first run, `umi setup` creates this file interactively. The default template is at `config/defaults/config.default.json`.
@@ -568,9 +597,9 @@ UMI includes a WPF desktop interface for Windows. Launch `umi-gui.exe` from the 
 
 | Tab | Content |
 |---|---|
-| **Import** | Camera selection, import trigger, live progress |
-| **Process** | Gyroflow stabilization, date filter, sorting, GPU queue overview |
-| **Settings** | Camera tiles (expand inline on click), feature toggles, folder names, workbench path, tool paths |
+| **Import** | Camera selection, date range filter, import trigger, live progress |
+| **Process** | Gyroflow stabilization, sequence reviewer, GPS injection, restore metadata, sort by date, statistics, thumbnails |
+| **Settings** | Sub-tabs Cameras / Profiles / Devices / Tools / Burst — camera tiles, tool paths, language, log level, profiles |
 
 **Key features:**
 - **Smart Watch** — insert card → import starts automatically (equivalent to `umi watch`)
@@ -578,7 +607,9 @@ UMI includes a WPF desktop interface for Windows. Launch `umi-gui.exe` from the 
 - **Camera tiles** — click to expand inline, feature bubbles as toggle (colored = active)
 - **Setup Wizard** — first-run wizard starts automatically when no `config.json` exists; accessible via Settings → "Restart Setup Wizard"
 - **App modes** — Easy / Standard / Advanced (controls visible options)
-- **Language** — English and German (Settings → Tools)
+- **Language** — English and German (Settings → Tools); the choice you make in the installer is auto-applied on first run
+- **Logging** — Off (default), Info or Debug, switchable in Settings → Tools (restart required)
+- **Updates** — banner appears when a new GitHub release is available, the installer is fetched in the background and one click runs it
 
 ---
 
@@ -620,7 +651,7 @@ tests/
 └── UMI.Core.Tests/    Unit tests
 ```
 
-Further documentation: [ARCHITECTURE.md](ARCHITECTURE.md)
+Further documentation: [FEATURES.md](FEATURES.md) (feature reference) and [docs/help/](docs/help/) (in-app help, EN + DE).
 
 ---
 
