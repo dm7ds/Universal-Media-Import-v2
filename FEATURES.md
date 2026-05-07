@@ -108,14 +108,22 @@ The import filter respects the capture date of media:
 
 ## Sequence Detection
 
-Photos are automatically detected and grouped by capture pattern:
+Photos are automatically detected and grouped via rule-driven burst profiles
+under `config/defaults/burst/`. Each profile combines EXIF match conditions
+with a grouping rule (`max_gap_seconds` + `min_count`, optionally
+`adaptive_threshold`). The defaults shipped with UMI:
 
-| Profile | Interval | Result |
-|---------|-----------|--------|
-| Sport/Burst | < 2 s between photos | `Photo/Sport_154111/` |
-| Astro | > 10 s between photos | `Photo/Astro_214902/` |
-| Timelapse | 2–30 s, evenly spaced | `Photo/Timelapse_120000/` |
-| Single shots | Everything else | `Photo/` |
+| Profile | Match condition (EXIF) | Grouping | Result |
+|---------|------------------------|----------|--------|
+| Sport / Burst | `ContinuousDrive ≥ 1` | gap ≤ 2 s, ≥ 3 photos | `Photo/Sport_154111/` |
+| Astro | `ExposureTime ≥ 1 s` AND `ISO ≥ 800`, OR Bulb-mode (`ExposureMode = 6`) AND `ExposureTime ≥ 8 s` | gap ≤ 90 s, ≥ 10 photos | `Photo/Astro_214902/` |
+| Timelapse | `ContinuousDrive = 0` (single-shot) | gap ≤ 15 s, ≥ 15 photos, adaptive multiplier 1.5 | `Photo/Timelapse_120000/` |
+| Single shots | None match | — | `Photo/` |
+
+Profiles are user-editable via the **Settings → Burst** tab and the Burst
+Visualizer; the auto-preset generator can derive `max_gap_seconds` /
+`min_count` from a marked sample selection (median-clustering, see
+`SeriesBoundaryFactor = 10.0` in `AutoPresetGenerator`).
 
 ---
 
@@ -442,7 +450,7 @@ First-run wizard that guides users through initial configuration.
 - **Manual restart:** "Restart Setup Wizard" button in Settings → Tools tab
 - **9 Steps:** Welcome (mode selection) → Workbench → Source Detection → Camera Confirm → Add Cards → More Cameras? → Tools → GPS → Summary (Tools and GPS are skipped in Easy mode)
 - **Auto SD detect:** Live SD card detection in the Source Detection step, including initial scan for already-mounted readers
-- **Camera Model Database:** `config/camera-models.json` with 180+ entries — Make/Model → CameraType lookup (exact model match, make rules, volume label rules)
+- **Camera Model Database:** `config/camera-models.json` with ~140 entries — Make/Model → CameraType lookup (exact model match, make rules, volume label rules)
 - **AppMode selection:** Welcome step lets the user choose Easy / Standard / Advanced
 - **Setup language hand-off:** Inno Setup writes `{app}\config\install-language.txt` after install; on first run the GUI reads this hint, applies the matching UI culture, and persists the language to the new `config.json` so the wizard runs in the same language the user picked in the installer
 
@@ -452,7 +460,7 @@ First-run wizard that guides users through initial configuration.
 
 Full English + German localization.
 
-- **3 .resx pairs:** GUI (700+ keys), CLI (367 keys), Core (12 keys) — EN + DE parity
+- **3 .resx pairs:** GUI (771 keys), CLI (381 keys), Core (23 keys) — EN + DE parity
 - **XAML:** `{helpers:Localize Key}` extension
 - **Language setting:** `AppSettings.Language` (default `"en"`), Language dropdown in **Settings → Tools**
 - **Feature labels:** Dynamic via `CoreStrings`
