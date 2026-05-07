@@ -85,6 +85,50 @@ jobs:
       - name: Build Installer
         run: pwsh -File build.ps1 -Publish slim -Gui -Installer
 
+      # ── Code signing via SignPath Foundation (free OSS programme) ──
+      # The block below stays dormant until SignPath has approved the project.
+      # After approval set the following on the public repo:
+      #
+      #   Repository variables (Settings → Secrets and variables → Actions → Variables):
+      #     SIGNPATH_ENABLED        = true
+      #     SIGNPATH_ORG_ID         = <org id from SignPath dashboard>
+      #     SIGNPATH_PROJECT_SLUG   = umi
+      #     SIGNPATH_POLICY_SLUG    = release-signing
+      #
+      #   Repository secret (Settings → Secrets and variables → Actions → Secrets):
+      #     SIGNPATH_API_TOKEN      = <CI user's API token>
+      #
+      # Until SIGNPATH_ENABLED == 'true', the installer ships unsigned but the
+      # rest of the workflow keeps working unchanged.
+      - name: Upload installer for signing
+        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        id: upload-unsigned-installer
+        uses: actions/upload-artifact@v4
+        with:
+          name: umi-installer-unsigned
+          path: installer/Output/UMI_Setup_*.exe
+
+      - name: Submit installer to SignPath
+        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        uses: signpath/github-action-submit-signing-request@v2
+        with:
+          api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
+          organization-id: ${{ vars.SIGNPATH_ORG_ID }}
+          project-slug: ${{ vars.SIGNPATH_PROJECT_SLUG }}
+          signing-policy-slug: ${{ vars.SIGNPATH_POLICY_SLUG }}
+          github-artifact-id: ${{ steps.upload-unsigned-installer.outputs.artifact-id }}
+          wait-for-completion: true
+          output-artifact-directory: installer/Output/signed
+
+      - name: Replace unsigned installer with signed
+        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        shell: pwsh
+        run: |
+          Get-ChildItem installer/Output/signed/UMI_Setup_*.exe | ForEach-Object {
+            Move-Item -Force $_.FullName "installer/Output/$($_.Name)"
+          }
+          Remove-Item -Recurse -Force installer/Output/signed
+
       # ── GitHub Release ──
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
