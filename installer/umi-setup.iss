@@ -34,10 +34,11 @@ ArchitecturesInstallIn64BitMode=x64compatible
 WizardStyle=modern
 ShowLanguageDialog=yes
 SetupIconFile=assets\umi-icon.ico
-; Use the small (white-background) bitmap in the large wizard slot too — the
-; original umi-wizard.bmp had a black background that clashed with Inno's
-; modern wizard chrome.
-WizardImageFile=assets\umi-wizard-small.bmp
+; Wizard bitmaps regenerated from umi-icon.ico via PowerShell + System.Drawing
+; (white background, centered logo). Native Inno-Setup-Slot sizes 164x314 / 55x58.
+; Re-run the regeneration from scripts/regenerate-wizard-bitmaps.ps1 if the
+; icon changes.
+WizardImageFile=assets\umi-wizard.bmp
 WizardSmallImageFile=assets\umi-wizard-small.bmp
 ; Icon for the Apps & Features uninstall entry + readable display name
 UninstallDisplayIcon={app}\umi-icon.ico
