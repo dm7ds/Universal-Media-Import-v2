@@ -1,0 +1,524 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<UserControl
+    x:Class="UMI.GUI.Views.ProfilesTab"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:vm="clr-namespace:UMI.GUI.ViewModels">
+
+    <UserControl.Resources>
+
+        <Style x:Key="ProfileInputTextBox" TargetType="TextBox">
+            <Setter Property="Background" Value="Transparent" />
+            <Setter Property="BorderThickness" Value="0" />
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+            <Setter Property="CaretBrush" Value="{StaticResource BrushTextPrimary}" />
+            <Setter Property="SelectionBrush" Value="{StaticResource BrushDrone}" />
+            <Setter Property="Padding" Value="2,2,2,2" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="IsReadOnly" Value="True" />
+        </Style>
+
+        <Style x:Key="ProfileInputTextBoxEditing" TargetType="TextBox" BasedOn="{StaticResource ProfileInputTextBox}">
+            <Setter Property="Background" Value="{StaticResource BrushBgSurface}" />
+            <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="Padding" Value="6,4" />
+            <Setter Property="IsReadOnly" Value="False" />
+            <Style.Triggers>
+                <Trigger Property="IsFocused" Value="True">
+                    <Setter Property="BorderBrush" Value="{StaticResource BrushDrone}" />
+                </Trigger>
+            </Style.Triggers>
+        </Style>
+
+    </UserControl.Resources>
+
+    <ScrollViewer Padding="20,16">
+        <StackPanel>
+
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock
+                        Text="{helpers:Localize ProfilesTab_Title}"
+                        FontSize="{StaticResource FontSizeMedium}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextPrimary}" />
+                    <TextBlock
+                        Text="{helpers:Localize ProfilesTab_Desc}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        Margin="0,4,0,0" />
+                </StackPanel>
+            </Grid>
+
+            <ItemsControl ItemsSource="{Binding Profiles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:ProfileViewModel}">
+
+                        <Border Style="{StaticResource CameraCard}" Margin="0,0,0,8">
+                            <StackPanel>
+
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="3" />
+
+                                        <ColumnDefinition Width="*" />
+
+                                        <ColumnDefinition Width="Auto" />
+
+                                        <ColumnDefinition Width="Auto" />
+
+                                        <ColumnDefinition Width="Auto" />
+
+                                        <ColumnDefinition Width="Auto" />
+
+                                        <ColumnDefinition Width="Auto" />
+
+                                        <ColumnDefinition Width="28" />
+
+                                    </Grid.ColumnDefinitions>
+
+                                    <Border
+                                        Grid.Column="0"
+                                        CornerRadius="10,0,0,10"
+                                        Margin="-16,-14,6,-14"
+                                        Opacity="{StaticResource OpacityHover}"
+                                        Background="{Binding ColorPreview, Converter={StaticResource HexToBrush}}" />
+
+                                    <Grid Grid.Column="1" VerticalAlignment="Center">
+
+                                        <Grid.InputBindings>
+                                            <MouseBinding
+                                                MouseAction="LeftClick"
+                                                Command="{Binding ToggleExpandCommand}" />
+                                        </Grid.InputBindings>
+
+                                        <TextBlock
+                                            Text="{Binding EditName}"
+                                            FontSize="{StaticResource FontSizeMedium}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextPrimary}"
+                                            VerticalAlignment="Center"
+                                            Padding="2,0"
+                                            Cursor="Hand">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <TextBox
+                                            Text="{Binding EditName, UpdateSourceTrigger=PropertyChanged}"
+                                            FontSize="{StaticResource FontSizeMedium}"
+                                            FontWeight="SemiBold"
+                                            VerticalAlignment="Center"
+                                            ToolTip="{helpers:Localize ProfilesTab_TypeNameTooltip}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox" BasedOn="{StaticResource ProfileInputTextBoxEditing}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                    </Grid>
+
+                                    <Border
+                                        Grid.Column="2"
+                                        Width="14"
+                                        Height="14"
+                                        CornerRadius="3"
+                                        Margin="8,0,4,0"
+                                        VerticalAlignment="Center"
+                                        Background="{Binding ColorPreview, Converter={StaticResource HexToBrush}}" />
+
+                                    <Button
+                                        Grid.Column="3"
+                                        Style="{StaticResource CardEditVisibleButton}"
+                                        Command="{Binding EditCommand}"
+                                        ToolTip="{helpers:Localize ProfilesTab_EditTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoPencil}"
+                                            Stroke="{StaticResource BrushTextMuted}"
+                                            StrokeThickness="1.5"
+                                            Fill="Transparent"
+                                            Width="13"
+                                            Height="13"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="4"
+                                        Style="{StaticResource CardEditingVisibleButton}"
+                                        Command="{Binding SaveCommand}"
+                                        ToolTip="{helpers:Localize ProfilesTab_SaveTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoCheckmark}"
+                                            Stroke="{StaticResource BrushBadgeGps}"
+                                            StrokeThickness="2"
+                                            Fill="Transparent"
+                                            Width="13"
+                                            Height="11"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="5"
+                                        Style="{StaticResource CardEditingVisibleButton}"
+                                        Command="{Binding CancelCommand}"
+                                        ToolTip="{helpers:Localize ProfilesTab_CancelTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoXMark}"
+                                            Stroke="{StaticResource BrushTextMuted}"
+                                            StrokeThickness="1.8"
+                                            Fill="Transparent"
+                                            Width="10"
+                                            Height="10"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="6"
+                                        Style="{StaticResource CardEditingDeleteButton}"
+                                        Command="{Binding DataContext.DeleteProfileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0" />
+
+                                    <Button
+                                        Grid.Column="7"
+                                        Width="24"
+                                        Height="24"
+                                        VerticalAlignment="Center"
+                                        Cursor="Hand"
+                                        Command="{Binding ToggleExpandCommand}"
+                                        ToolTip="{helpers:Localize ProfilesTab_ExpandCollapse}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="Transparent" CornerRadius="4">
+
+                                                                <Path
+                                                                    x:Name="Chevron"
+                                                                    Stroke="{StaticResource BrushTextMuted}"
+                                                                    StrokeThickness="1.8"
+                                                                    Width="10"
+                                                                    Height="6"
+                                                                    Stretch="Uniform"
+                                                                    Fill="Transparent">
+                                                                    <Path.Style>
+                                                                        <Style TargetType="Path">
+                                                                            <Setter Property="Data" Value="M4,8 L12,16 L20,8" />
+
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                                                                    <Setter Property="Data" Value="M8,4 L16,12 L8,20" />
+
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Path.Style>
+                                                                </Path>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+
+                                </Grid>
+
+                                <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibility}}">
+
+                                    <TextBox
+                                        Margin="0,8,0,0"
+                                        AcceptsReturn="False"
+                                        ToolTip="{helpers:Localize ProfilesTab_DescriptionTooltip}">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource ProfileInputTextBox}">
+                                                <Setter Property="Text" Value="{Binding EditDescription, UpdateSourceTrigger=PropertyChanged}" />
+                                                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushBgSurface}" />
+                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+                                                        <Setter Property="BorderThickness" Value="1" />
+                                                        <Setter Property="Padding" Value="6,4" />
+                                                        <Setter Property="IsReadOnly" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+
+                                    <StackPanel
+                                        Orientation="Horizontal"
+                                        Margin="0,8,0,0"
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibility}}">
+                                        <TextBlock
+                                            Text="{helpers:Localize ProfilesTab_Color}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,6,0" />
+                                        <TextBox
+                                            Width="90"
+                                            Style="{StaticResource ProfileInputTextBoxEditing}"
+                                            Text="{Binding EditColor, UpdateSourceTrigger=PropertyChanged}"
+                                            FontFamily="{StaticResource FontMono}"
+                                            VerticalAlignment="Center"
+                                            ToolTip="{helpers:Localize ProfilesTab_ColorTooltip}" />
+
+                                        <Border
+                                            Width="18"
+                                            Height="18"
+                                            CornerRadius="3"
+                                            Margin="6,0,0,0"
+                                            VerticalAlignment="Center"
+                                            Background="{Binding ColorPreview, Converter={StaticResource HexToBrush}}" />
+                                    </StackPanel>
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,10,0,8" />
+
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="70" />
+                                            <ColumnDefinition Width="70" />
+                                            <ColumnDefinition Width="70" />
+                                        </Grid.ColumnDefinitions>
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{helpers:Localize ProfilesTab_Feature}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextMuted}" />
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{helpers:Localize ProfilesTab_Available}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            HorizontalAlignment="Center"
+                                            ToolTip="{helpers:Localize ProfilesTab_AvailableTooltip}" />
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{helpers:Localize ProfilesTab_DefaultCol}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            HorizontalAlignment="Center"
+                                            ToolTip="{helpers:Localize ProfilesTab_DefaultTooltip}" />
+                                        <TextBlock
+                                            Grid.Column="3"
+                                            Text="{helpers:Localize ProfilesTab_OnCard}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            HorizontalAlignment="Center"
+                                            ToolTip="{helpers:Localize ProfilesTab_OnCardTooltip}" />
+                                    </Grid>
+
+                                    <ItemsControl ItemsSource="{Binding Features}">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type vm:ProfileFeatureViewModel}">
+                                                <Grid Margin="0,3,0,3">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="*" />
+                                                        <ColumnDefinition Width="70" />
+                                                        <ColumnDefinition Width="70" />
+                                                        <ColumnDefinition Width="70" />
+                                                    </Grid.ColumnDefinitions>
+
+                                                    <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+
+                                                        <Ellipse
+                                                            Width="7"
+                                                            Height="7"
+                                                            Margin="0,0,7,0"
+                                                            VerticalAlignment="Center"
+                                                            Fill="{Binding BadgeKey, Converter={StaticResource BadgeKeyToFg}}" />
+                                                        <TextBlock
+                                                            Text="{Binding Label}"
+                                                            FontSize="{StaticResource FontSizeSmall}"
+                                                            Foreground="{StaticResource BrushTextSecondary}"
+                                                            VerticalAlignment="Center" />
+                                                    </StackPanel>
+
+                                                    <CheckBox
+                                                        Grid.Column="1"
+                                                        IsChecked="{Binding IsAvailable, Mode=TwoWay}"
+                                                        IsEnabled="{Binding DataContext.IsEditing, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        ToolTip="{helpers:Localize ProfilesTab_AvailableColTooltip}" />
+
+                                                    <CheckBox
+                                                        Grid.Column="2"
+                                                        IsChecked="{Binding IsDefault, Mode=TwoWay}"
+                                                        IsEnabled="{Binding DataContext.IsEditing, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        ToolTip="{helpers:Localize ProfilesTab_DefaultColTooltip}" />
+
+                                                    <CheckBox
+                                                        Grid.Column="3"
+                                                        IsChecked="{Binding IsSimple, Mode=TwoWay}"
+                                                        IsEnabled="{Binding DataContext.IsEditing, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        HorizontalAlignment="Center"
+                                                        VerticalAlignment="Center"
+                                                        ToolTip="{helpers:Localize ProfilesTab_OnCardColTooltip}" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,10,0,8" />
+
+                                    <TextBlock
+                                        Text="{helpers:Localize ProfilesTab_AssignedCameras}"
+                                        FontSize="{StaticResource FontSizeSmall}"
+                                        FontWeight="SemiBold"
+                                        Foreground="{StaticResource BrushTextMuted}"
+                                        Margin="0,0,0,6" />
+
+                                    <WrapPanel Orientation="Horizontal">
+                                        <ItemsControl ItemsSource="{Binding AssignedCameraNames}">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+
+                                                    <Border
+                                                        Margin="0,0,6,4"
+                                                        CornerRadius="5"
+                                                        Padding="8,3"
+                                                        BorderThickness="1"
+                                                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                                                        Background="{StaticResource BrushBgSurface}">
+                                                        <TextBlock
+                                                            Text="{Binding}"
+                                                            FontSize="{StaticResource FontSizeSmall}"
+                                                            Foreground="{StaticResource BrushTextSecondary}" />
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+
+                                        <TextBlock
+                                            Text="{helpers:Localize ProfilesTab_NoCameras}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontStyle="Italic"
+                                            Foreground="{StaticResource BrushNoFeatures}"
+                                            VerticalAlignment="Center">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding AssignedCameraNames.Count}" Value="0">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </WrapPanel>
+
+                                    <StackPanel
+                                        Visibility="{Binding IsEditing, Converter={StaticResource BoolToVisibility}}">
+
+                                        <Border Style="{StaticResource CardDivider}" Margin="0,10,0,8" />
+
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+
+                                                <ColumnDefinition Width="Auto" />
+
+                                                <ColumnDefinition Width="Auto" />
+
+                                            </Grid.ColumnDefinitions>
+
+                                            <TextBlock
+                                                Grid.Column="0"
+                                                VerticalAlignment="Center"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontFamily="{StaticResource FontMono}"
+                                                Text="{Binding SaveStatus}"
+                                                Foreground="{StaticResource BrushBadgeGps}"
+                                                Visibility="{Binding SaveStatus, Converter={StaticResource StringToVisibility}}" />
+
+                                            <Button
+                                                Grid.Column="1"
+                                                Style="{StaticResource CardNeutralButton}"
+                                                Content="{helpers:Localize ProfilesTab_Cancel}"
+                                                Command="{Binding CancelCommand}"
+                                                Margin="0,0,8,0" />
+
+                                            <Button
+                                                Grid.Column="2"
+                                                Style="{StaticResource CardSaveButton}"
+                                                Command="{Binding SaveCommand}">
+                                                <TextBlock>
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Text" Value="{helpers:Localize ProfilesTab_Save}" />
+                                                            <Setter Property="FontSize" Value="{StaticResource FontSizeBase}" />
+                                                            <Setter Property="FontWeight" Value="Bold" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding IsDirty}" Value="True">
+                                                                    <Setter Property="Text" Value="{helpers:Localize ProfilesTab_SaveDirty}" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </Button>
+
+                                        </Grid>
+
+                                    </StackPanel>
+
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

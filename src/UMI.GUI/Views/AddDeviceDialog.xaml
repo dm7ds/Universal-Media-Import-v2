@@ -1,0 +1,637 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.Views.AddDeviceDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:vm="clr-namespace:UMI.GUI.ViewModels"
+    xmlns:beh="clr-namespace:UMI.GUI.Behaviors"
+    Title="Add Device"
+    Width="520"
+    Height="620"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False">
+
+    <Border CornerRadius="{StaticResource RadiusDialog}" BorderThickness="1" Margin="16">
+        <Border.Background>
+            <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{StaticResource ColorBorder}" />
+        </Border.BorderBrush>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                Direction="{StaticResource ShadowDialogDirection}"
+                Color="{StaticResource ColorShadow}"
+                Opacity="{StaticResource ShadowDialogOpacity}" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border
+                Grid.Row="0"
+                Padding="20,16,20,12"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{StaticResource BrushBorderSubtle}"
+                beh:WindowDragBehavior.IsEnabled="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock
+                            Text="{helpers:Localize AddDevice_Title}"
+                            FontSize="{StaticResource FontSizeLarge}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushTextPrimary}" />
+                        <TextBlock
+                            Text="{helpers:Localize AddDevice_Desc}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CloseCommand}"
+                        Style="{StaticResource DialogCloseButton}" />
+                </Grid>
+            </Border>
+
+            <ScrollViewer Grid.Row="1" VerticalScrollBarVisibility="Auto" Padding="0">
+                <StackPanel Margin="20,16,20,8">
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Viewbox Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,6,0" Opacity="{StaticResource OpacityMuted}">
+                                <Path
+                                    Data="M4,4 C4,2.9 4.9,2 6,2 H14 L20,8 V20 C20,21.1 19.1,22 18,22 H6 C4.9,22 4,21.1 4,20 V4 Z M14,2 V8 H20"
+                                    Fill="{StaticResource BrushTextMuted}"
+                                    Stretch="Uniform" />
+                            </Viewbox>
+                            <TextBlock
+                                Text="{helpers:Localize AddDevice_SdCards}"
+                                FontSize="{StaticResource FontSizeLabel}"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource BrushTextMuted}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text="{helpers:Localize AddDevice_SdCardsLive}"
+                            FontSize="{StaticResource FontSizeLabel}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            HorizontalAlignment="Right"
+                            VerticalAlignment="Center"
+                            FontStyle="Italic"
+                            Opacity="{StaticResource OpacityHint}" />
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding DetectedSdCards}" Margin="0,0,0,8">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:DetectedDeviceViewModel}">
+                                <Border
+                                    Margin="0,0,0,6"
+                                    Padding="12,10"
+                                    CornerRadius="{StaticResource RadiusGroup}"
+                                    BorderThickness="1"
+                                    BorderBrush="{StaticResource BrushBorderSubtle}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAlreadyRegistered}" Value="True">
+                                                    <Setter Property="Opacity" Value="0.55" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock
+                                                    Text="{Binding DisplayName}"
+                                                    FontSize="{StaticResource FontSizeBase}"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource BrushTextPrimary}" />
+                                                <TextBlock
+                                                    Text="{Binding SubInfo}"
+                                                    FontSize="{StaticResource FontSizeCaption}"
+                                                    FontFamily="{StaticResource FontMono}"
+                                                    Foreground="{StaticResource BrushTextMuted}"
+                                                    Margin="0,2,0,0" />
+                                            </StackPanel>
+
+                                            <Border
+                                                Grid.Column="1"
+                                                CornerRadius="5"
+                                                Padding="6,2"
+                                                VerticalAlignment="Center"
+                                                Visibility="{Binding IsAlreadyRegistered, Converter={StaticResource BoolToVisibility}}">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{StaticResource ColorBadgeGpsBg}" />
+                                                </Border.Background>
+                                                <TextBlock
+                                                    Text="{helpers:Localize AddDevice_Registered}"
+                                                    FontSize="{StaticResource FontSizeLabel}"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource BrushBadgeGps}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding IsAlreadyRegistered, Converter={StaticResource InvertedBoolToVisibility}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ComboBox
+                                                Grid.Column="0"
+                                                ItemsSource="{Binding AvailableCameraIds}"
+                                                SelectedItem="{Binding SelectedCameraId, Mode=TwoWay}"
+                                                Style="{StaticResource DarkComboBoxStyle}"
+                                                MinWidth="0"
+                                                Margin="0,0,8,0">
+                                                <ComboBox.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <TextBlock>
+                                                            <TextBlock.Style>
+                                                                <Style TargetType="TextBlock">
+                                                                    <Setter Property="Text" Value="{Binding}" />
+                                                                    <Style.Triggers>
+                                                                        <DataTrigger Binding="{Binding}" Value="">
+                                                                            <Setter Property="Text" Value="{helpers:Localize AddDevice_NoCameraFloating}" />
+                                                                            <Setter Property="Foreground" Value="{StaticResource BrushBadgeGyro}" />
+                                                                            <Setter Property="FontStyle" Value="Italic" />
+                                                                            <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+                                                                        </DataTrigger>
+                                                                    </Style.Triggers>
+                                                                </Style>
+                                                            </TextBlock.Style>
+                                                        </TextBlock>
+                                                    </DataTemplate>
+                                                </ComboBox.ItemTemplate>
+                                            </ComboBox>
+
+                                            <Button
+                                                Grid.Column="1"
+                                                Command="{Binding RegisterCommand}"
+                                                Cursor="Hand"
+                                                IsEnabled="{Binding CanRegister}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource EditCamLinkButton}">
+                                                        <Setter Property="Padding" Value="10,5" />
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Path
+                                                            Data="M12,4 V20 M4,12 H20"
+                                                            Stroke="{StaticResource BrushDrone}"
+                                                            StrokeThickness="2"
+                                                            Width="10"
+                                                            Height="10"
+                                                            Stretch="Uniform"
+                                                            VerticalAlignment="Center"
+                                                            Margin="0,0,5,0" />
+                                                        <TextBlock
+                                                            Text="{helpers:Localize AddDevice_Register}"
+                                                            FontSize="{StaticResource FontSizeCaption}"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource BrushDrone}"
+                                                            VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock
+                        Text="{helpers:Localize AddDevice_NoSdCards}"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        FontStyle="Italic"
+                        Margin="4,0,0,8">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DetectedSdCards.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Border Style="{StaticResource CardDivider}" Margin="0,8,0,8" />
+
+                    <Grid Margin="0,0,0,8">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
+                            <Viewbox Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,6,0" Opacity="{StaticResource OpacityMuted}">
+                                <Path
+                                    Data="M12,2 L12,14 M8,10 L12,14 L16,10 M5,20 C5,18.9 5.9,18 7,18 H17 C18.1,18 19,18.9 19,20 V22 H5 V20 Z"
+                                    Stroke="{StaticResource BrushTextMuted}"
+                                    StrokeThickness="1.5"
+                                    Fill="Transparent"
+                                    Stretch="Uniform" />
+                            </Viewbox>
+                            <TextBlock
+                                Text="{helpers:Localize AddDevice_MtpDevices}"
+                                FontSize="{StaticResource FontSizeLabel}"
+                                FontWeight="Bold"
+                                Foreground="{StaticResource BrushTextMuted}"
+                                VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <Button
+                            Grid.Column="2"
+                            Command="{Binding RefreshMtpCommand}"
+                            Cursor="Hand"
+                            IsEnabled="{Binding IsRefreshingMtp, Converter={StaticResource InverseBool}}">
+                            <Button.Style>
+                                <Style TargetType="Button">
+                                    <Setter Property="Template">
+                                        <Setter.Value>
+                                            <ControlTemplate TargetType="Button">
+                                                <Border
+                                                    x:Name="RefreshBorder"
+                                                    CornerRadius="4"
+                                                    Padding="8,3"
+                                                    BorderThickness="1"
+                                                    BorderBrush="{StaticResource BrushBorderSubtle}"
+                                                    Background="Transparent">
+                                                    <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                                </Border>
+                                                <ControlTemplate.Triggers>
+                                                    <Trigger Property="IsMouseOver" Value="True">
+                                                        <Setter TargetName="RefreshBorder" Property="BorderBrush" Value="{StaticResource BrushDrone}" />
+                                                    </Trigger>
+                                                    <Trigger Property="IsEnabled" Value="False">
+                                                        <Setter TargetName="RefreshBorder" Property="Opacity" Value="0.5" />
+                                                    </Trigger>
+                                                </ControlTemplate.Triggers>
+                                            </ControlTemplate>
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                    <Setter Property="FontSize" Value="{StaticResource FontSizeLabel}" />
+                                    <Setter Property="FontWeight" Value="SemiBold" />
+                                </Style>
+                            </Button.Style>
+                            <Button.Content>
+                                <StackPanel Orientation="Horizontal">
+
+                                    <Path
+                                        Data="M17.65,6.35 C16.2,4.9 14.21,4 12,4 C7.58,4 4.01,7.58 4.01,12 C4.01,16.42 7.58,20 12,20 C15.73,20 18.84,17.45 19.73,14 H17.65 C16.83,16.33 14.61,18 12,18 C8.69,18 6,15.31 6,12 C6,8.69 8.69,6 12,6 C13.66,6 15.14,6.69 16.22,7.78 L13,11 H20 V4 L17.65,6.35 Z"
+                                        Fill="{StaticResource BrushTextMuted}"
+                                        Width="11"
+                                        Height="11"
+                                        Stretch="Uniform"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,5,0" />
+                                    <TextBlock Text="{helpers:Localize AddDevice_Refresh}" VerticalAlignment="Center" />
+                                </StackPanel>
+                            </Button.Content>
+                        </Button>
+                    </Grid>
+
+                    <ItemsControl ItemsSource="{Binding DetectedMtpDevices}" Margin="0,0,0,8">
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate DataType="{x:Type vm:DetectedDeviceViewModel}">
+                                <Border
+                                    Margin="0,0,0,6"
+                                    Padding="12,10"
+                                    CornerRadius="{StaticResource RadiusGroup}"
+                                    BorderThickness="1"
+                                    BorderBrush="{StaticResource BrushBorderSubtle}">
+                                    <Border.Style>
+                                        <Style TargetType="Border">
+                                            <Setter Property="Background">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding IsAlreadyRegistered}" Value="True">
+                                                    <Setter Property="Opacity" Value="0.55" />
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Border.Style>
+                                    <StackPanel>
+                                        <Grid Margin="0,0,0,8">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock
+                                                    Text="{Binding DisplayName}"
+                                                    FontSize="{StaticResource FontSizeBase}"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource BrushTextPrimary}" />
+                                                <TextBlock
+                                                    Text="{Binding SubInfo}"
+                                                    FontSize="{StaticResource FontSizeCaption}"
+                                                    Foreground="{StaticResource BrushTextMuted}"
+                                                    Margin="0,2,0,0" />
+                                            </StackPanel>
+                                            <Border
+                                                Grid.Column="1"
+                                                CornerRadius="5"
+                                                Padding="6,2"
+                                                VerticalAlignment="Center"
+                                                Visibility="{Binding IsAlreadyRegistered, Converter={StaticResource BoolToVisibility}}">
+                                                <Border.Background>
+                                                    <SolidColorBrush Color="{StaticResource ColorBadgeGpsBg}" />
+                                                </Border.Background>
+                                                <TextBlock
+                                                    Text="{helpers:Localize AddDevice_Registered}"
+                                                    FontSize="{StaticResource FontSizeLabel}"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource BrushBadgeGps}" />
+                                            </Border>
+                                        </Grid>
+
+                                        <Grid Visibility="{Binding IsAlreadyRegistered, Converter={StaticResource InvertedBoolToVisibility}}">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="*" />
+                                                <ColumnDefinition Width="Auto" />
+                                            </Grid.ColumnDefinitions>
+
+                                            <ComboBox
+                                                Grid.Column="0"
+                                                ItemsSource="{Binding AvailableCameraIds}"
+                                                SelectedItem="{Binding SelectedCameraId, Mode=TwoWay}"
+                                                Style="{StaticResource DarkComboBoxStyle}"
+                                                MinWidth="0"
+                                                Margin="0,0,8,0" />
+
+                                            <Button
+                                                Grid.Column="1"
+                                                Command="{Binding RegisterCommand}"
+                                                Cursor="Hand"
+                                                IsEnabled="{Binding CanRegister}">
+                                                <Button.Style>
+                                                    <Style TargetType="Button" BasedOn="{StaticResource EditCamLinkButton}">
+                                                        <Setter Property="Padding" Value="10,5" />
+                                                    </Style>
+                                                </Button.Style>
+                                                <Button.Content>
+                                                    <StackPanel Orientation="Horizontal">
+                                                        <Path
+                                                            Data="M12,4 V20 M4,12 H20"
+                                                            Stroke="{StaticResource BrushDrone}"
+                                                            StrokeThickness="2"
+                                                            Width="10"
+                                                            Height="10"
+                                                            Stretch="Uniform"
+                                                            VerticalAlignment="Center"
+                                                            Margin="0,0,5,0" />
+                                                        <TextBlock
+                                                            Text="{helpers:Localize AddDevice_Register}"
+                                                            FontSize="{StaticResource FontSizeCaption}"
+                                                            FontWeight="SemiBold"
+                                                            Foreground="{StaticResource BrushDrone}"
+                                                            VerticalAlignment="Center" />
+                                                    </StackPanel>
+                                                </Button.Content>
+                                            </Button>
+                                        </Grid>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                    <TextBlock
+                        Text="{helpers:Localize AddDevice_NoMtpDevices}"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        FontStyle="Italic"
+                        Margin="4,0,0,8">
+                        <TextBlock.Style>
+                            <Style TargetType="TextBlock">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                                <Style.Triggers>
+                                    <DataTrigger Binding="{Binding DetectedMtpDevices.Count}" Value="0">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                    </DataTrigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBlock.Style>
+                    </TextBlock>
+
+                    <Border Style="{StaticResource CardDivider}" Margin="0,8,0,8" />
+
+                    <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                        <Viewbox Width="13" Height="13" VerticalAlignment="Center" Margin="0,0,6,0" Opacity="{StaticResource OpacityMuted}">
+                            <Path
+                                Data="M10,4 H4 C2.9,4 2,4.9 2,6 V18 C2,19.1 2.9,20 4,20 H20 C21.1,20 22,19.1 22,18 V8 C22,6.9 21.1,6 20,6 H12 L10,4 Z"
+                                Fill="{StaticResource BrushTextMuted}"
+                                Stretch="Uniform" />
+                        </Viewbox>
+                        <TextBlock
+                            Text="{helpers:Localize AddDevice_FixedPath}"
+                            FontSize="{StaticResource FontSizeLabel}"
+                            FontWeight="Bold"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            VerticalAlignment="Center" />
+                    </StackPanel>
+
+                    <Border
+                        Padding="12,12"
+                        CornerRadius="{StaticResource RadiusGroup}"
+                        BorderThickness="1"
+                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                        Margin="0,0,0,8">
+                        <Border.Background>
+                            <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                        </Border.Background>
+                        <StackPanel>
+
+                            <Grid Margin="0,0,0,8">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <Border Grid.Column="0" Style="{StaticResource ToolPathDisplay}" Margin="0,0,8,0">
+                                    <TextBlock
+                                        FontFamily="{StaticResource FontMono}"
+                                        FontSize="{StaticResource FontSizeCaption}"
+                                        VerticalAlignment="Center"
+                                        TextTrimming="CharacterEllipsis">
+                                        <TextBlock.Style>
+                                            <Style TargetType="TextBlock">
+                                                <Setter Property="Text" Value="{Binding FixedPath}" />
+                                                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding FixedPath}" Value="">
+                                                        <Setter Property="Text" Value="{helpers:Localize AddDevice_SelectFolder}" />
+                                                        <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                                        <Setter Property="FontStyle" Value="Italic" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBlock.Style>
+                                    </TextBlock>
+                                </Border>
+
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding BrowseFixedPathCommand}"
+                                    Style="{StaticResource ToolBrowseButton}"
+                                    Content="{helpers:Localize ToolsConfig_Browse}" />
+                            </Grid>
+
+                            <Grid>
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*" />
+                                    <ColumnDefinition Width="Auto" />
+                                </Grid.ColumnDefinitions>
+
+                                <ComboBox
+                                    Grid.Column="0"
+                                    ItemsSource="{Binding AvailableCameraIds}"
+                                    SelectedItem="{Binding FixedPathCameraId, Mode=TwoWay}"
+                                    Style="{StaticResource DarkComboBoxStyle}"
+                                    MinWidth="0"
+                                    Margin="0,0,8,0" />
+
+                                <Button
+                                    Grid.Column="1"
+                                    Command="{Binding RegisterFixedPathCommand}"
+                                    Cursor="Hand"
+                                    IsEnabled="{Binding CanRegisterFixedPath}">
+                                    <Button.Style>
+                                        <Style TargetType="Button" BasedOn="{StaticResource EditCamLinkButton}">
+                                            <Setter Property="Padding" Value="10,5" />
+                                        </Style>
+                                    </Button.Style>
+                                    <Button.Content>
+                                        <StackPanel Orientation="Horizontal">
+                                            <Path
+                                                Data="M12,4 V20 M4,12 H20"
+                                                Stroke="{StaticResource BrushDrone}"
+                                                StrokeThickness="2"
+                                                Width="10"
+                                                Height="10"
+                                                Stretch="Uniform"
+                                                VerticalAlignment="Center"
+                                                Margin="0,0,5,0" />
+                                            <TextBlock
+                                                Text="{helpers:Localize AddDevice_Register}"
+                                                FontSize="{StaticResource FontSizeCaption}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushDrone}"
+                                                VerticalAlignment="Center" />
+                                        </StackPanel>
+                                    </Button.Content>
+                                </Button>
+                            </Grid>
+                        </StackPanel>
+                    </Border>
+
+                </StackPanel>
+            </ScrollViewer>
+
+            <Border
+                Grid.Row="2"
+                Padding="20,12"
+                BorderThickness="0,1,0,0"
+                BorderBrush="{StaticResource BrushBorderSubtle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{Binding StatusMessage}"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        FontFamily="{StaticResource FontMono}"
+                        Foreground="{StaticResource BrushBadgeGps}"
+                        VerticalAlignment="Center"
+                        TextTrimming="CharacterEllipsis"
+                        Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibility}}" />
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CloseCommand}"
+                        Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border
+                                                x:Name="CloseBtnBorder"
+                                                CornerRadius="{StaticResource RadiusButton}"
+                                                Padding="20,7"
+                                                BorderBrush="{StaticResource BrushBorderSubtle}"
+                                                BorderThickness="1"
+                                                Background="Transparent">
+                                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="CloseBtnBorder" Property="BorderBrush" Value="{StaticResource BrushBorder}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+                                <Setter Property="FontWeight" Value="SemiBold" />
+                                <Setter Property="Content" Value="{helpers:Localize AddDevice_Close}" />
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

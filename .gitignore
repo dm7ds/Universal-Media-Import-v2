@@ -1,0 +1,137 @@
+# Build results
+[Dd]ebug/
+[Dd]ebugPublic/
+[Rr]elease/
+[Rr]eleases/
+x64/
+x86/
+[Ww][Ii][Nn]32/
+[Aa][Rr][Mm]/
+[Aa][Rr][Mm]64/
+bld/
+[Bb]in/
+[Oo]bj/
+[Ll]og/
+[Ll]ogs/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.userprefs
+
+# Visual Studio Code
+.vscode/
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+packages/
+*.nupkg
+*.snupkg
+.nuget/
+
+# Test Results
+TestResults/
+[Tt]est[Rr]esult*/
+*.trx
+*.coverage
+*.coveragexml
+
+# Build Output
+*.dll
+*.exe
+!umi.cmd
+*.pdb
+*.cache
+*.obj
+*.bak
+runtimes/
+typecheck/
+win-x64/
+
+# User-specific files
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+
+# Logs
+*.log
+logs/
+
+# Config (user-specific)
+config.local.json
+config/config.json  # User's active config (nicht versioniert)
+
+# User-Profile (nicht versioniert)
+config/presets/profiles/*.umi
+config/presets/profiles/*.json  # Legacy
+
+# Import-History (laufzeit-generiert, nicht versioniert)
+config/.import_history/
+
+# Publishing
+publish/
+
+# Temp/Test files
+temp/
+tmp/
+*.tmp
+test-*.ps1
+test_*.csx
+HeaderDump.cs
+QuickTest/
+
+# Archives / Backups
+*.7z
+*.zip
+*.tar.gz
+
+# UMI Runtime files
+.umi.lock
+.umi.db
+.umi.db-shm
+.umi.db-wal
+
+# .NET Satellite Assemblies (Lokalisierung)
+cs/
+de/
+es/
+fr/
+it/
+ja/
+ko/
+pl/
+pt-BR/
+ru/
+tr/
+zh-Hans/
+zh-Hant/
+
+# Bundled Tools (Binaries nicht in Git, nur Lizenz)
+tools/exiftool/exiftool.exe
+tools/exiftool/exiftool_files/
+tools/exiftool/README.txt
+
+# Claude Skills
+skills/
+
+# Claude Working Files (Team-Task-Karten, Audits, Logs — nicht in .claude/ wegen Permission-Bug)
+.tasks/

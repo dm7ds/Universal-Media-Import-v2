@@ -1,0 +1,32 @@
+{
+  "_use_case": "Action-Kamera mit GPS-Injection und Gyroflow-Stabilisierung",
+  "_description": "Typisch für GoPro, DJI Action, Insta360. Videos haben oft EIS — Gyroflow stabilisiert zusätzlich. GPS wird per externem Tracker (GPX) injiziert.",
+  "_camera_config": {
+    "GoPro11": {
+      "name": "GoPro Hero 11 Black",
+      "manufacturer": "GoPro",
+      "camera_type": "Action",
+      "enabled": true,
+      "features": {
+        "gps_injection": true,
+        "gyroflow": true,
+        "eis_detection": true,
+        "metadata_backup": true
+      },
+      "file_types": {
+        "video": [".mp4", ".mov"],
+        "photo": [".jpg"]
+      },
+      "paths": {
+        "sd_source": "D:\\SDCards\\GoPro"
+      },
+      "custom_settings": {
+        "gyroflow": {
+          "preset": "C:\\Tools\\Gyroflow\\Presets\\GoPro_Default.gyroflow",
+          "output_folder": "Stabilized",
+          "gpu_device": "nvidia"
+        }
+      }
+    }
+  }
+}

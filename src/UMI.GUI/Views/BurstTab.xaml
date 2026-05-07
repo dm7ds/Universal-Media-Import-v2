@@ -1,0 +1,1026 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<UserControl
+    x:Class="UMI.GUI.Views.BurstTab"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:vm="clr-namespace:UMI.GUI.ViewModels"
+    xmlns:models="clr-namespace:UMI.Core.Models;assembly=UMI.Core"
+    xmlns:views="clr-namespace:UMI.GUI.Views"
+    xmlns:controls="clr-namespace:UMI.GUI.Views.Controls"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers">
+
+    <UserControl.Resources>
+
+        <DataTemplate x:Key="ExifFieldRowTemplate" DataType="{x:Type vm:ExifFieldViewModel}">
+            <Grid Margin="0,2,0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+
+                    <ColumnDefinition Width="*" />
+
+                    <ColumnDefinition Width="Auto" />
+
+                </Grid.ColumnDefinitions>
+
+                <CheckBox
+                    Grid.Column="0"
+                    IsChecked="{Binding IsSelected, Mode=TwoWay}"
+                    IsEnabled="{Binding IsNumeric}"
+                    VerticalAlignment="Center"
+                    Margin="0,0,8,0" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding FieldName}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    Foreground="{StaticResource BrushTextSecondary}"
+                    VerticalAlignment="Center"
+                    TextTrimming="CharacterEllipsis" />
+                <TextBlock
+                    Grid.Column="2"
+                    Text="{Binding SampleValue}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    FontFamily="{StaticResource FontMono}"
+                    VerticalAlignment="Center"
+                    Margin="8,0,0,0">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsNumeric}" Value="True">
+                                    <Setter Property="Foreground" Value="{StaticResource BrushBadgeBurst}" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="SequenceItemTemplate" DataType="{x:Type models:VisualizerSequence}">
+            <Border
+                Margin="0,0,0,4"
+                CornerRadius="{StaticResource RadiusBadge}"
+                BorderThickness="1"
+                BorderBrush="{StaticResource BrushBorderSubtle}"
+                Background="{StaticResource BrushBgSurface}"
+                Padding="10,6">
+                <StackPanel>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <TextBlock
+                            Grid.Column="0"
+                            Text="{Binding SequenceName}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushTextPrimary}"
+                            VerticalAlignment="Center" />
+
+                        <Border
+                            Grid.Column="1"
+                            Style="{StaticResource BadgeBurst}"
+                            Margin="8,0,8,0">
+                            <TextBlock
+                                Style="{StaticResource BadgeBurstText}"
+                                Text="{Binding Count, StringFormat='{}{0} photos'}" />
+                        </Border>
+
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="{Binding AverageGap, StringFormat='avg {0:F2}s'}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            FontFamily="{StaticResource FontMono}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            VerticalAlignment="Center" />
+                    </Grid>
+
+                    <TextBlock
+                        Text="{Binding TimeRange}"
+                        FontSize="{StaticResource FontSizeBody}"
+                        FontFamily="{StaticResource FontMono}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        Margin="0,2,0,0" />
+
+                    <Expander
+                        Style="{StaticResource AdvancedExpanderStyle}"
+                        Header="{Binding Count, StringFormat='Show {0} photos'}"
+                        IsExpanded="False"
+                        Margin="0,4,0,0">
+                        <ItemsControl ItemsSource="{Binding Photos}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate DataType="{x:Type models:VisualizerPhotoResult}">
+                                    <Grid Margin="0,1,0,1">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <TextBlock
+                                            Grid.Column="0"
+                                            Text="{Binding FileName}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontFamily="{StaticResource FontMono}"
+                                            Foreground="{StaticResource BrushTextSecondary}"
+                                            TextTrimming="CharacterEllipsis" />
+
+                                        <TextBlock
+                                            Grid.Column="1"
+                                            Text="{Binding CaptureTime, StringFormat='{}{0:HH:mm:ss.fff}'}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontFamily="{StaticResource FontMono}"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            Margin="8,0,0,0" />
+
+                                        <TextBlock
+                                            Grid.Column="2"
+                                            Text="{Binding GapSeconds, StringFormat='+{0:F2}s'}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontFamily="{StaticResource FontMono}"
+                                            Foreground="{StaticResource BrushBadgeBurst}"
+                                            Margin="8,0,0,0">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding GapSeconds}" Value="{x:Null}">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </Grid>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </Expander>
+                </StackPanel>
+            </Border>
+        </DataTemplate>
+
+        <DataTemplate x:Key="UnmatchedPhotoTemplate" DataType="{x:Type models:VisualizerPhotoResult}">
+            <Grid Margin="0,2,0,2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <TextBlock
+                    Grid.Column="0"
+                    Text="{Binding FileName}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    FontFamily="{StaticResource FontMono}"
+                    Foreground="{StaticResource BrushTextSecondary}"
+                    TextTrimming="CharacterEllipsis" />
+                <TextBlock
+                    Grid.Column="1"
+                    Text="{Binding FailedCondition}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    Foreground="{StaticResource BrushTextMuted}"
+                    Margin="8,0,0,0" />
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ExifFieldGroupTemplate" DataType="{x:Type vm:ExifFieldGroupViewModel}">
+            <Expander
+                Style="{StaticResource AdvancedExpanderStyle}"
+                Margin="0,0,0,4"
+                IsExpanded="True">
+                <Expander.Header>
+                    <TextBlock
+                        Text="{Binding Category}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextSecondary}" />
+                </Expander.Header>
+                <ItemsControl
+                    ItemsSource="{Binding Fields}"
+                    ItemTemplate="{StaticResource ExifFieldRowTemplate}"
+                    Margin="16,4,0,4" />
+            </Expander>
+        </DataTemplate>
+
+    </UserControl.Resources>
+
+    <ScrollViewer Padding="20,16">
+        <StackPanel>
+
+            <Grid Margin="0,0,0,16">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+                <StackPanel Grid.Column="0">
+                    <TextBlock
+                        Text="{helpers:Localize BurstTab_Title}"
+                        FontSize="{StaticResource FontSizeMedium}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextPrimary}" />
+                    <TextBlock
+                        Text="{helpers:Localize BurstTab_Desc}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        Margin="0,4,0,0" />
+                    <Button
+                        Style="{StaticResource HelpLinkStyle}"
+                        Content="{helpers:Localize Help_LearnMore}"
+                        Command="{Binding DataContext.ShowHelpCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                        CommandParameter="{helpers:Localize Help_AnchorBurst}"
+                        Margin="0,4,0,0" />
+                </StackPanel>
+
+                <Button
+                    Grid.Column="1"
+                    Style="{StaticResource BurstOutlineButton}"
+                    Command="{Binding AddProfileCommand}"
+                    VerticalAlignment="Center">
+                    <StackPanel Orientation="Horizontal">
+                        <Path
+                            Data="M12,4 V20 M4,12 H20"
+                            Stroke="{StaticResource BrushBadgeBurst}"
+                            StrokeThickness="2"
+                            Width="11"
+                            Height="11"
+                            Stretch="Uniform"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0" />
+                        <TextBlock
+                            Text="{helpers:Localize BurstTab_AddProfile}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushBadgeBurst}" />
+                    </StackPanel>
+                </Button>
+            </Grid>
+
+            <TextBlock
+                Text="{helpers:Localize BurstTab_NoProfiles}"
+                Margin="0,32,0,32">
+                <TextBlock.Style>
+
+                    <Style TargetType="TextBlock" BasedOn="{StaticResource EmptyStateText}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding Profiles.Count}" Value="0">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </TextBlock.Style>
+            </TextBlock>
+
+            <ItemsControl x:Name="ProfilesItemsControl" ItemsSource="{Binding Profiles}">
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate DataType="{x:Type vm:BurstProfileCardViewModel}">
+
+                        <StackPanel Margin="0,0,0,8">
+
+                        <Border
+                            Height="2"
+                            Background="{StaticResource BrushBadgeBurst}"
+                            Margin="0,0,0,2"
+                            Visibility="{Binding IsDropTargetAbove, Converter={StaticResource BoolToVisibility}}" />
+
+                        <Border
+                            Style="{StaticResource CameraCard}"
+                            Margin="0"
+                            AllowDrop="True"
+                            Drop="Card_Drop"
+                            DragOver="Card_DragOver"
+                            DragLeave="Card_DragLeave">
+
+                            <StackPanel>
+
+                                <Grid Background="Transparent" Cursor="Hand"
+                                      MouseLeftButtonUp="CardHeader_MouseLeftButtonUp">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="24" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="28" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Grid
+                                        Grid.Column="0"
+                                        Width="24">
+                                        <Border
+                                            Cursor="SizeAll"
+                                            Background="Transparent"
+                                            ToolTip="{helpers:Localize BurstTab_DragTooltip}"
+                                            PreviewMouseLeftButtonDown="DragHandle_PreviewMouseLeftButtonDown"
+                                            PreviewMouseMove="DragHandle_PreviewMouseMove">
+
+                                            <Path
+                                                Data="M7,4 A1.5,1.5 0 1 1 7,7 A1.5,1.5 0 1 1 7,4 Z
+                                                      M13,4 A1.5,1.5 0 1 1 13,7 A1.5,1.5 0 1 1 13,4 Z
+                                                      M7,10 A1.5,1.5 0 1 1 7,13 A1.5,1.5 0 1 1 7,10 Z
+                                                      M13,10 A1.5,1.5 0 1 1 13,13 A1.5,1.5 0 1 1 13,10 Z
+                                                      M7,16 A1.5,1.5 0 1 1 7,19 A1.5,1.5 0 1 1 7,16 Z
+                                                      M13,16 A1.5,1.5 0 1 1 13,19 A1.5,1.5 0 1 1 13,16 Z"
+                                                Fill="{StaticResource BrushTextMuted}"
+                                                Width="10"
+                                                Height="16"
+                                                Stretch="Uniform"
+                                                Opacity="0.5"
+                                                HorizontalAlignment="Center"
+                                                VerticalAlignment="Center" />
+                                        </Border>
+
+                                    </Grid>
+
+                                    <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                                        <!-- Profile color dot — visible when ColorIndex >= 0 -->
+                                        <Ellipse
+                                            Width="14" Height="14"
+                                            Margin="2,0,6,0"
+                                            VerticalAlignment="Center"
+                                            Cursor="Hand"
+                                            Fill="{Binding ColorIndex, Converter={StaticResource ProfileColorToBrush}, FallbackValue={StaticResource BrushBorderSubtle}}">
+                                            <Ellipse.Style>
+                                                <Style TargetType="Ellipse">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding ColorIndex}" Value="-1">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Ellipse.Style>
+                                        </Ellipse>
+
+                                        <TextBlock
+                                            Text="{Binding Name}"
+                                            FontSize="{StaticResource FontSizeMedium}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushTextPrimary}"
+                                            VerticalAlignment="Center"
+                                            Padding="2,0"
+                                            Cursor="Hand">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+
+                                        <TextBox
+                                            Text="{Binding Name, UpdateSourceTrigger=PropertyChanged}"
+                                            FontSize="{StaticResource FontSizeMedium}"
+                                            FontWeight="SemiBold"
+                                            VerticalAlignment="Center"
+                                            ToolTip="{helpers:Localize BurstTab_ProfileNameTooltip}">
+                                            <TextBox.Style>
+                                                <Style TargetType="TextBox" BasedOn="{StaticResource BurstInputTextBoxEditing}">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBox.Style>
+                                        </TextBox>
+                                    </StackPanel>
+
+                                    <Button
+                                        Grid.Column="2"
+                                        Style="{StaticResource CardEditVisibleButton}"
+                                        Command="{Binding EditCommand}"
+                                        ToolTip="{helpers:Localize BurstTab_EditTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoPencil}"
+                                            Stroke="{StaticResource BrushTextMuted}"
+                                            StrokeThickness="1.5"
+                                            Fill="Transparent"
+                                            Width="13"
+                                            Height="13"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="3"
+                                        Style="{StaticResource CardEditingVisibleButton}"
+                                        Command="{Binding SaveCommand}"
+                                        ToolTip="{helpers:Localize BurstTab_SaveTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoCheckmark}"
+                                            Stroke="{StaticResource BrushBadgeGps}"
+                                            StrokeThickness="2"
+                                            Fill="Transparent"
+                                            Width="13"
+                                            Height="11"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="4"
+                                        Style="{StaticResource CardEditingVisibleButton}"
+                                        Command="{Binding CancelCommand}"
+                                        ToolTip="{helpers:Localize BurstTab_CancelTooltip}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0">
+
+                                        <Path
+                                            Data="{StaticResource GeoXMark}"
+                                            Stroke="{StaticResource BrushTextMuted}"
+                                            StrokeThickness="1.8"
+                                            Fill="Transparent"
+                                            Width="10"
+                                            Height="10"
+                                            Stretch="Uniform" />
+                                    </Button>
+
+                                    <Button
+                                        Grid.Column="5"
+                                        Style="{StaticResource CardEditingDeleteButton}"
+                                        Command="{Binding DataContext.DeleteProfileCommand, RelativeSource={RelativeSource AncestorType=UserControl}}"
+                                        CommandParameter="{Binding}"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,2,0" />
+
+                                    <Button
+                                        Grid.Column="6"
+                                        Width="24"
+                                        Height="24"
+                                        VerticalAlignment="Center"
+                                        Cursor="Hand"
+                                        Command="{Binding ToggleExpandCommand}"
+                                        ToolTip="{helpers:Localize BurstTab_ExpandTooltip}">
+                                        <Button.Style>
+                                            <Style TargetType="Button">
+                                                <Setter Property="Template">
+                                                    <Setter.Value>
+                                                        <ControlTemplate TargetType="Button">
+                                                            <Border Background="Transparent" CornerRadius="4">
+
+                                                                <Path
+                                                                    x:Name="Chevron"
+                                                                    Stroke="{StaticResource BrushTextMuted}"
+                                                                    StrokeThickness="1.8"
+                                                                    Width="10"
+                                                                    Height="6"
+                                                                    Stretch="Uniform"
+                                                                    Fill="Transparent">
+                                                                    <Path.Style>
+                                                                        <Style TargetType="Path">
+                                                                            <Setter Property="Data" Value="M4,8 L12,16 L20,8" />
+
+                                                                            <Style.Triggers>
+                                                                                <DataTrigger Binding="{Binding IsExpanded}" Value="False">
+                                                                                    <Setter Property="Data" Value="M8,4 L16,12 L8,20" />
+
+                                                                                </DataTrigger>
+                                                                            </Style.Triggers>
+                                                                        </Style>
+                                                                    </Path.Style>
+                                                                </Path>
+                                                            </Border>
+                                                        </ControlTemplate>
+                                                    </Setter.Value>
+                                                </Setter>
+                                            </Style>
+                                        </Button.Style>
+                                    </Button>
+                                </Grid>
+
+                                <StackPanel Visibility="{Binding IsExpanded, Converter={StaticResource BoolToVisibility}}">
+
+                                    <!-- Color palette — only visible in edit mode -->
+                                    <StackPanel Orientation="Horizontal" Margin="0,10,0,0">
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="Visibility" Value="Visible" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+                                        <TextBlock
+                                            Text="{helpers:Localize BurstTab_ColorLabel}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            VerticalAlignment="Center"
+                                            Margin="0,0,8,0" />
+                                        <ItemsControl>
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <StackPanel Orientation="Horizontal" />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.Items>
+                                                <sys:Int32>0</sys:Int32>
+                                                <sys:Int32>1</sys:Int32>
+                                                <sys:Int32>2</sys:Int32>
+                                                <sys:Int32>3</sys:Int32>
+                                                <sys:Int32>4</sys:Int32>
+                                                <sys:Int32>5</sys:Int32>
+                                                <sys:Int32>6</sys:Int32>
+                                                <sys:Int32>7</sys:Int32>
+                                            </ItemsControl.Items>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Button
+                                                        Width="26" Height="26"
+                                                        Margin="2,0"
+                                                        Cursor="Hand"
+                                                        Command="{Binding DataContext.SetColorIndexCommand, RelativeSource={RelativeSource AncestorType=ItemsControl}}"
+                                                        CommandParameter="{Binding}">
+                                                        <Button.Template>
+                                                            <ControlTemplate TargetType="Button">
+                                                                <Grid>
+                                                                    <Ellipse
+                                                                        Width="18" Height="18"
+                                                                        Fill="{Binding Converter={StaticResource ProfileColorToBrush}}" />
+                                                                    <!-- Selected indicator ring -->
+                                                                    <Ellipse
+                                                                        Width="22" Height="22"
+                                                                        StrokeThickness="2"
+                                                                        Stroke="{StaticResource BrushTextPrimary}"
+                                                                        Fill="Transparent">
+                                                                        <Ellipse.Visibility>
+                                                                            <MultiBinding Converter="{StaticResource EqualsToVisibility}">
+                                                                                <Binding />
+                                                                                <Binding Path="DataContext.ColorIndex" RelativeSource="{RelativeSource AncestorType=ItemsControl}" />
+                                                                            </MultiBinding>
+                                                                        </Ellipse.Visibility>
+                                                                    </Ellipse>
+                                                                </Grid>
+                                                            </ControlTemplate>
+                                                        </Button.Template>
+                                                    </Button>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </StackPanel>
+
+                                    <TextBox
+                                        Margin="0,8,0,0"
+                                        AcceptsReturn="False"
+                                        TextWrapping="NoWrap"
+                                        Text="{Binding Description, UpdateSourceTrigger=PropertyChanged}"
+                                        ToolTip="{helpers:Localize BurstTab_DescriptionTooltip}">
+                                        <TextBox.Style>
+                                            <Style TargetType="TextBox" BasedOn="{StaticResource BurstInputTextBox}">
+                                                <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsEditing}" Value="True">
+                                                        <Setter Property="Background" Value="{StaticResource BrushBgSurface}" />
+                                                        <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+                                                        <Setter Property="BorderThickness" Value="1" />
+                                                        <Setter Property="Padding" Value="6,4" />
+                                                        <Setter Property="IsReadOnly" Value="False" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </TextBox.Style>
+                                    </TextBox>
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,14,0,10" />
+
+                                    <TextBlock Text="EXIF SCANNER" Style="{StaticResource BurstSectionLabel}" />
+
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button
+                                            Grid.Column="0"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="10,6"
+                                            Margin="0,0,8,0"
+                                            Command="{Binding Scanner.BrowseFolderCommand}"
+                                            IsEnabled="{Binding Scanner.IsEditing}"
+                                            ToolTip="{helpers:Localize BurstTab_BrowseScanTooltip}">
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_Browse}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}" />
+                                        </Button>
+
+                                        <Border
+                                            Grid.Column="1"
+                                            Style="{StaticResource WorkbenchPathPill}"
+                                            Margin="0,0,8,0"
+                                            VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontFamily="{StaticResource FontMono}"
+                                                Foreground="{StaticResource BrushTextSecondary}"
+                                                TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{Binding Scanner.FolderPath}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Scanner.FolderPath}" Value="">
+                                                                <Setter Property="Text" Value="{helpers:Localize BurstTab_NoFolderSelected}" />
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                                                <Setter Property="FontStyle" Value="Italic" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+
+                                        <Button
+                                            Grid.Column="2"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="10,6"
+                                            Command="{Binding Scanner.ScanCommand}"
+                                            IsEnabled="{Binding Scanner.CanScan}"
+                                            ToolTip="{helpers:Localize BurstTab_ScanExifTooltip}">
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_Scan}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}" />
+                                        </Button>
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding Scanner.ScanStatus}"
+                                        FontSize="{StaticResource FontSizeSmall}"
+                                        FontFamily="{StaticResource FontMono}"
+                                        Foreground="{StaticResource BrushTextMuted}"
+                                        Margin="0,0,0,6"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                    <ItemsControl
+                                        ItemsSource="{Binding Scanner.FieldGroups}"
+                                        ItemTemplate="{StaticResource ExifFieldGroupTemplate}">
+                                        <ItemsControl.Style>
+                                            <Style TargetType="ItemsControl">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Scanner.FieldGroups.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </ItemsControl.Style>
+                                    </ItemsControl>
+
+                                    <Button
+                                        Padding="10,6"
+                                        HorizontalAlignment="Left"
+                                        Margin="0,6,0,0"
+                                        Command="{Binding Scanner.AddSelectedToRulesCommand}"
+                                        IsEnabled="{Binding Scanner.IsEditing}"
+                                        ToolTip="{helpers:Localize BurstTab_AddSelectedTooltip}">
+                                        <Button.Style>
+                                            <Style TargetType="Button" BasedOn="{StaticResource BurstOutlineButton}">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Scanner.FieldGroups.Count}" Value="0">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Button.Style>
+                                        <TextBlock
+                                            Text="{helpers:Localize BurstTab_AddSelectedToRules}"
+                                            FontSize="{StaticResource FontSizeSmall}"
+                                            FontWeight="SemiBold"
+                                            Foreground="{StaticResource BrushBadgeBurst}" />
+                                    </Button>
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,14,0,10" />
+
+                                    <controls:RuleEditorPanel DataContext="{Binding}" />
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,14,0,10" />
+
+                                    <TextBlock Text="VISUALIZER" Style="{StaticResource BurstSectionLabel}" />
+
+                                    <Grid Margin="0,0,0,6">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Button
+                                            Grid.Column="0"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="10,6"
+                                            Margin="0,0,8,0"
+                                            Command="{Binding Visualizer.BrowseFolderCommand}"
+                                            IsEnabled="{Binding Visualizer.IsEditing}"
+                                            ToolTip="{helpers:Localize BurstTab_BrowsePreviewTooltip}">
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_Browse}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}" />
+                                        </Button>
+
+                                        <Border
+                                            Grid.Column="1"
+                                            Style="{StaticResource WorkbenchPathPill}"
+                                            Margin="0,0,8,0"
+                                            VerticalAlignment="Center">
+                                            <TextBlock
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontFamily="{StaticResource FontMono}"
+                                                TextTrimming="CharacterEllipsis">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{Binding Visualizer.FolderPath}" />
+                                                        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Visualizer.FolderPath}" Value="">
+                                                                <Setter Property="Text" Value="{helpers:Localize BurstTab_NoFolderSelected}" />
+                                                                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                                                <Setter Property="FontStyle" Value="Italic" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Border>
+
+                                        <Button
+                                            Grid.Column="2"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="10,6"
+                                            Command="{Binding Visualizer.LoadFolderCommand}"
+                                            IsEnabled="{Binding Visualizer.CanLoad}"
+                                            ToolTip="{helpers:Localize BurstTab_LoadExifTooltip}">
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_Load}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}" />
+                                        </Button>
+                                    </Grid>
+
+                                    <TextBlock
+                                        Text="{Binding Visualizer.LoadStatus}"
+                                        FontSize="{StaticResource FontSizeSmall}"
+                                        FontFamily="{StaticResource FontMono}"
+                                        Foreground="{StaticResource BrushTextMuted}"
+                                        Margin="0,0,0,6"
+                                        TextTrimming="CharacterEllipsis" />
+
+                                    <Grid Margin="0,0,0,8">
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="*" />
+                                            <ColumnDefinition Width="Auto" />
+                                            <ColumnDefinition Width="Auto" />
+                                        </Grid.ColumnDefinitions>
+
+                                        <Border
+                                            Grid.Column="0"
+                                            Style="{StaticResource BadgeBurst}"
+                                            HorizontalAlignment="Left"
+                                            Margin="0"
+                                            Visibility="{Binding Visualizer.Summary, Converter={StaticResource StringToVisibility}}">
+                                            <TextBlock
+                                                Style="{StaticResource BadgeBurstText}"
+                                                Text="{Binding Visualizer.Summary}" />
+                                        </Border>
+
+                                        <Button
+                                            Grid.Column="1"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="8,4"
+                                            Margin="0,0,4,0"
+                                            Command="{Binding Visualizer.ToggleViewModeCommand}"
+                                            ToolTip="{helpers:Localize BurstTab_ToggleViewTooltip}"
+                                            Visibility="{Binding Visualizer.Summary, Converter={StaticResource StringToVisibility}}">
+                                            <TextBlock
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{helpers:Localize BurstTab_Grid}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Visualizer.ShowThumbnails}" Value="True">
+                                                                <Setter Property="Text" Value="{helpers:Localize BurstTab_List}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Button>
+
+                                        <Button
+                                            Grid.Column="2"
+                                            Style="{StaticResource BurstOutlineButton}"
+                                            Padding="8,4"
+                                            Command="{Binding Visualizer.ToggleDetailCommand}"
+                                            ToolTip="{helpers:Localize BurstTab_ToggleDetailTooltip}"
+                                            Visibility="{Binding Visualizer.Summary, Converter={StaticResource StringToVisibility}}">
+                                            <TextBlock
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushBadgeBurst}">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="{helpers:Localize BurstTab_Detail}" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Visualizer.IsDetailView}" Value="True">
+                                                                <Setter Property="Text" Value="{helpers:Localize BurstTab_Compact}" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </Button>
+                                    </Grid>
+
+                                    <StackPanel>
+                                        <StackPanel.Style>
+                                            <Style TargetType="StackPanel">
+                                                <Setter Property="Visibility" Value="Visible" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding Visualizer.Result}" Value="{x:Null}">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </StackPanel.Style>
+
+                                        <StackPanel
+                                            Visibility="{Binding Visualizer.ShowThumbnails, Converter={StaticResource InvertedBoolToVisibility}}">
+
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_DetectedSequences}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushTextMuted}"
+                                                Margin="0,0,0,4" />
+
+                                            <ItemsControl
+                                                ItemsSource="{Binding Visualizer.Result.Sequences}"
+                                                ItemTemplate="{StaticResource SequenceItemTemplate}" />
+
+                                            <TextBlock
+                                                Text="{helpers:Localize BurstTab_NoSequences}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontStyle="Italic"
+                                                Foreground="{StaticResource BrushNoFeatures}"
+                                                Margin="0,4,0,8">
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Visibility" Value="Collapsed" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding Visualizer.Result.Sequences.Count}" Value="0">
+                                                                <Setter Property="Visibility" Value="Visible" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+
+                                            <StackPanel
+                                                Visibility="{Binding Visualizer.IsDetailView, Converter={StaticResource BoolToVisibility}}"
+                                                Margin="0,8,0,0">
+                                                <TextBlock
+                                                    Text="{helpers:Localize BurstTab_UnmatchedPhotos}"
+                                                    FontSize="{StaticResource FontSizeSmall}"
+                                                    FontWeight="SemiBold"
+                                                    Foreground="{StaticResource BrushTextMuted}"
+                                                    Margin="0,0,0,4" />
+                                                <ItemsControl
+                                                    ItemsSource="{Binding Visualizer.Result.Unmatched}"
+                                                    ItemTemplate="{StaticResource UnmatchedPhotoTemplate}" />
+                                                <TextBlock
+                                                    Text="{helpers:Localize BurstTab_None}"
+                                                    FontSize="{StaticResource FontSizeSmall}"
+                                                    FontStyle="Italic"
+                                                    Foreground="{StaticResource BrushNoFeatures}">
+                                                    <TextBlock.Style>
+                                                        <Style TargetType="TextBlock">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                            <Style.Triggers>
+                                                                <DataTrigger Binding="{Binding Visualizer.Result.Unmatched.Count}" Value="0">
+                                                                    <Setter Property="Visibility" Value="Visible" />
+                                                                </DataTrigger>
+                                                            </Style.Triggers>
+                                                        </Style>
+                                                    </TextBlock.Style>
+                                                </TextBlock>
+                                            </StackPanel>
+
+                                            <TextBlock
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontFamily="{StaticResource FontMono}"
+                                                Foreground="{StaticResource BrushTextMuted}"
+                                                Margin="0,8,0,0"
+                                                Text="{Binding Visualizer.Result.EffectiveThreshold, StringFormat='Effective threshold: {0:F3}s'}" />
+
+                                        </StackPanel>
+
+                                        <ScrollViewer
+                                            MaxHeight="300"
+                                            VerticalScrollBarVisibility="Auto"
+                                            Visibility="{Binding Visualizer.ShowThumbnails, Converter={StaticResource BoolToVisibility}}">
+                                            <ItemsControl ItemsSource="{Binding Visualizer.ThumbnailGridItems}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate>
+                                                        <Border
+                                                            Width="64"
+                                                            Margin="1"
+                                                            BorderThickness="2"
+                                                            BorderBrush="{Binding SequenceIndex, Converter={StaticResource SeqIndexToBrush}}"
+                                                            CornerRadius="3">
+                                                            <Grid>
+                                                                <Grid.RowDefinitions>
+                                                                    <RowDefinition Height="64" />
+                                                                    <RowDefinition Height="Auto" />
+                                                                </Grid.RowDefinitions>
+                                                                <Grid Grid.Row="0" ClipToBounds="True">
+                                                                    <Image
+                                                                        Source="{Binding ThumbnailData, Converter={StaticResource BytesToBitmap}}"
+                                                                        Stretch="UniformToFill"
+                                                                        RenderOptions.BitmapScalingMode="HighQuality" />
+                                                                </Grid>
+                                                                <StackPanel Grid.Row="1" Margin="2,1,2,0">
+                                                                    <TextBlock
+                                                                        Text="{Binding FileName}"
+                                                                        FontSize="{StaticResource FontSizeLabel}"
+                                                                        Foreground="{StaticResource BrushTextSecondary}"
+                                                                        TextTrimming="CharacterEllipsis"
+                                                                        ToolTip="{Binding FileName}" />
+                                                                    <TextBlock FontSize="{StaticResource FontSizeLabel}" Foreground="{StaticResource BrushTextMuted}">
+                                                                        <Run Text="{Binding DisplayTime, Mode=OneWay}" />
+                                                                        <Run Text=" " />
+                                                                        <Run Text="{Binding DisplayIso, Mode=OneWay}" />
+                                                                    </TextBlock>
+                                                                </StackPanel>
+                                                            </Grid>
+                                                        </Border>
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+                                        </ScrollViewer>
+
+                                    </StackPanel>
+
+                                    <Border Style="{StaticResource CardDivider}" Margin="0,14,0,8" />
+
+                                    <TextBlock
+                                        VerticalAlignment="Center"
+                                        FontSize="{StaticResource FontSizeSmall}"
+                                        FontFamily="{StaticResource FontMono}"
+                                        Text="{Binding SaveStatus}"
+                                        Foreground="{StaticResource BrushBadgeGps}"
+                                        Visibility="{Binding SaveStatus, Converter={StaticResource StringToVisibility}}" />
+
+                                </StackPanel>
+
+                            </StackPanel>
+                        </Border>
+
+                        <Border
+                            Height="2"
+                            Background="{StaticResource BrushBadgeBurst}"
+                            Margin="0,2,0,0"
+                            Visibility="{Binding IsDropTargetBelow, Converter={StaticResource BoolToVisibility}}" />
+
+                        </StackPanel>
+
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+
+            <views:BurstVisualizerV2 DataContext="{Binding VisualizerV2}" Margin="0,16,0,0" />
+
+        </StackPanel>
+    </ScrollViewer>
+
+</UserControl>

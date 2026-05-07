@@ -1,0 +1,153 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="AppMode_Dau" xml:space="preserve">
+    <value>Easy</value>
+    <comment>Display name for AppMode.Dau</comment>
+  </data>
+  <data name="AppMode_Simple" xml:space="preserve">
+    <value>Standard</value>
+    <comment>Display name for AppMode.Simple</comment>
+  </data>
+  <data name="AppMode_Advanced" xml:space="preserve">
+    <value>Advanced</value>
+    <comment>Display name for AppMode.Advanced</comment>
+  </data>
+  <data name="Feature_GpsInjection" xml:space="preserve">
+    <value>GPS Injection</value>
+    <comment>Display label for GPS injection feature</comment>
+  </data>
+  <data name="Feature_Gyroflow" xml:space="preserve">
+    <value>Gyroflow</value>
+    <comment>Display label for Gyroflow stabilization feature</comment>
+  </data>
+  <data name="Feature_BurstDetection" xml:space="preserve">
+    <value>Burst Detection</value>
+    <comment>Display label for burst detection feature</comment>
+  </data>
+  <data name="Feature_MetadataBackup" xml:space="preserve">
+    <value>Metadata Backup</value>
+    <comment>Display label for metadata backup feature</comment>
+  </data>
+  <data name="Feature_EisDetection" xml:space="preserve">
+    <value>EIS Detection</value>
+    <comment>Display label for EIS detection feature</comment>
+  </data>
+  <data name="Feature_LensCorrection" xml:space="preserve">
+    <value>Lens Correction</value>
+    <comment>Display label for lens correction feature</comment>
+  </data>
+  <data name="Feature_PostProcess" xml:space="preserve">
+    <value>Post Processing</value>
+    <comment>Display label for post-processing feature</comment>
+  </data>
+  <data name="Feature_RenameVideos" xml:space="preserve">
+    <value>Rename Videos</value>
+    <comment>Display label for rename videos feature</comment>
+  </data>
+  <data name="Feature_GoProRename" xml:space="preserve">
+    <value>GoPro Rename</value>
+    <comment>Display label for GoPro rename feature</comment>
+  </data>
+  <data name="Feature_GpsInjection_Desc" xml:space="preserve">
+    <value>Injects GPS coordinates from GPX track files into video metadata</value>
+    <comment>Tooltip description for GPS injection feature</comment>
+  </data>
+  <data name="Feature_Gyroflow_Desc" xml:space="preserve">
+    <value>Stabilizes videos using Gyroflow with camera-specific presets</value>
+    <comment>Tooltip description for Gyroflow stabilization feature</comment>
+  </data>
+  <data name="Feature_BurstDetection_Desc" xml:space="preserve">
+    <value>Detects and groups photo burst sequences by time gaps</value>
+    <comment>Tooltip description for burst detection feature</comment>
+  </data>
+  <data name="Feature_MetadataBackup_Desc" xml:space="preserve">
+    <value>Creates .meta.json backup of original EXIF/QuickTime metadata before processing</value>
+    <comment>Tooltip description for metadata backup feature</comment>
+  </data>
+  <data name="Feature_EisDetection_Desc" xml:space="preserve">
+    <value>Detects EIS-enabled videos and moves them to a separate folder for Gyroflow</value>
+    <comment>Tooltip description for EIS detection feature</comment>
+  </data>
+  <data name="Feature_LensCorrection_Desc" xml:space="preserve">
+    <value>Applies lens distortion correction (coming soon)</value>
+    <comment>Tooltip description for lens correction feature</comment>
+  </data>
+  <data name="Feature_PostProcess_Desc" xml:space="preserve">
+    <value>Exports processed videos via DaVinci Resolve DVR for color grading</value>
+    <comment>Tooltip description for post-processing feature</comment>
+  </data>
+  <data name="Feature_RenameVideos_Desc" xml:space="preserve">
+    <value>Renames video files using camera-specific naming patterns</value>
+    <comment>Tooltip description for rename videos feature</comment>
+  </data>
+  <data name="Feature_GoProRename_Desc" xml:space="preserve">
+    <value>Renames GoPro files from chaptered format (GXnnnnCC) to sequential names</value>
+    <comment>Tooltip description for GoPro rename feature</comment>
+  </data>
+  <data name="Feature_GenerateThumbnails" xml:space="preserve">
+    <value>Generate Thumbnails</value>
+    <comment>Display label for generate thumbnails feature</comment>
+  </data>
+  <data name="Feature_GenerateThumbnails_Desc" xml:space="preserve">
+    <value>Auto-generate preview images for RAW files after import</value>
+    <comment>Tooltip description for generate thumbnails feature</comment>
+  </data>
+</root>

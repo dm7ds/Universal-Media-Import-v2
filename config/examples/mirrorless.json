@@ -1,0 +1,29 @@
+{
+  "_use_case": "Spiegellose Kamera mit Burst/Sequenz-Erkennung",
+  "_description": "Für Kameras mit Serienbildfunktion. UMI erkennt Sport-Serien, Astro-Stacks und Timelapses anhand der Zeitabstände und sortiert sie in benannte Ordner.",
+  "_camera_config": {
+    "MyDSLR": {
+      "name": "Canon EOS R6 Mark II",
+      "manufacturer": "Canon",
+      "camera_type": "Mirrorless",
+      "enabled": true,
+      "features": {
+        "burst_detection": true,
+        "metadata_backup": true
+      },
+      "file_types": {
+        "video": [".mp4"],
+        "photo": [".jpg", ".cr3"]
+      },
+      "paths": {
+        "sd_source": "D:\\SDCards\\Canon"
+      },
+      "burst_detection_config": {
+        "enabled": true,
+        "active_profiles": ["Sport", "Astro", "Timelapse"],
+        "fallback_max_gap_seconds": 3.0,
+        "fallback_min_count": 3
+      }
+    }
+  }
+}

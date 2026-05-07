@@ -1,0 +1,330 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.Views.HelpWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:mdxaml="clr-namespace:MdXaml;assembly=MdXaml"
+    xmlns:res="clr-namespace:UMI.GUI.Resources"
+    xmlns:views="clr-namespace:UMI.GUI.Views"
+    Title="{helpers:Localize Help_WindowTitle}"
+    MinWidth="680"
+    MinHeight="460"
+    Width="940"
+    Height="680"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False"
+    ResizeMode="CanResizeWithGrip">
+
+    <Border
+        CornerRadius="{StaticResource RadiusDialog}"
+        BorderThickness="1"
+        Margin="14">
+        <Border.Background>
+            <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{StaticResource ColorBorder}" />
+        </Border.BorderBrush>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                Direction="{StaticResource ShadowDialogDirection}"
+                Color="{StaticResource ColorShadow}"
+                Opacity="{StaticResource ShadowDialogOpacity}" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="44" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Title bar -->
+            <Border
+                Grid.Row="0"
+                CornerRadius="{StaticResource RadiusDialogTop}"
+                MouseLeftButtonDown="TitleBar_MouseLeftButtonDown">
+                <Border.Background>
+                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                        <GradientStop Color="{StaticResource ColorHeaderGradientStart}" Offset="0" />
+                        <GradientStop Color="{StaticResource ColorHeaderGradientEnd}" Offset="1" />
+                    </LinearGradientBrush>
+                </Border.Background>
+                <Grid Margin="16,0">
+                    <TextBlock
+                        Text="{helpers:Localize Help_WindowTitle}"
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeBase}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextPrimary}"
+                        VerticalAlignment="Center" />
+                    <Button
+                        HorizontalAlignment="Right"
+                        VerticalAlignment="Center"
+                        Width="26"
+                        Height="26"
+                        Cursor="Hand"
+                        Click="CloseButton_Click"
+                        ToolTip="{helpers:Localize Help_Close}">
+                        <Button.Style>
+                            <Style TargetType="Button">
+                                <Setter Property="Background" Value="Transparent" />
+                                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                <Setter Property="BorderThickness" Value="0" />
+                                <Setter Property="Template">
+                                    <Setter.Value>
+                                        <ControlTemplate TargetType="Button">
+                                            <Border
+                                                x:Name="CloseBorder"
+                                                Background="{TemplateBinding Background}"
+                                                CornerRadius="13"
+                                                Width="26" Height="26">
+                                                <Path
+                                                    x:Name="CloseIcon"
+                                                    Data="M6,6 L20,20 M20,6 L6,20"
+                                                    Stroke="{StaticResource BrushTextMuted}"
+                                                    StrokeThickness="1.8"
+                                                    StrokeStartLineCap="Round"
+                                                    StrokeEndLineCap="Round"
+                                                    HorizontalAlignment="Center"
+                                                    VerticalAlignment="Center" />
+                                            </Border>
+                                            <ControlTemplate.Triggers>
+                                                <Trigger Property="IsMouseOver" Value="True">
+                                                    <Setter TargetName="CloseBorder" Property="Background">
+                                                        <Setter.Value>
+                                                            <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                    <Setter TargetName="CloseIcon" Property="Stroke" Value="{StaticResource BrushTextPrimary}" />
+                                                </Trigger>
+                                            </ControlTemplate.Triggers>
+                                        </ControlTemplate>
+                                    </Setter.Value>
+                                </Setter>
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </Grid>
+            </Border>
+
+            <!-- Search bar -->
+            <Border
+                Grid.Row="1"
+                BorderThickness="0,1,0,1"
+                Padding="16,8">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource ColorBorderSubtle}" />
+                </Border.BorderBrush>
+                <Border.Background>
+                    <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+                </Border.Background>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        x:Name="SearchBox"
+                        Grid.Column="0"
+                        Style="{StaticResource HelpSearchBoxStyle}"
+                        TextChanged="SearchBox_TextChanged"
+                        MaxWidth="400"
+                        HorizontalAlignment="Left"
+                        Width="300" />
+
+                    <TextBlock
+                        x:Name="SearchPlaceholder"
+                        Grid.Column="0"
+                        Text="{helpers:Localize Help_SearchPlaceholder}"
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center"
+                        Margin="10,0,0,0"
+                        IsHitTestVisible="False"
+                        MaxWidth="400"
+                        HorizontalAlignment="Left" />
+                </Grid>
+            </Border>
+
+            <!-- Content area: sidebar + markdown viewer -->
+            <Grid Grid.Row="2">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="200" MinWidth="140" MaxWidth="280" />
+                    <ColumnDefinition Width="1" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Sidebar -->
+                <Border
+                    Grid.Column="0"
+                    CornerRadius="0,0,0,12">
+                    <Border.Background>
+                        <SolidColorBrush Color="{StaticResource ColorBg}" />
+                    </Border.Background>
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="*" />
+                        </Grid.RowDefinitions>
+                        <TextBlock
+                            Grid.Row="0"
+                            Text="{helpers:Localize Help_SidebarTitle}"
+                            FontFamily="{StaticResource FontPrimary}"
+                            FontSize="{StaticResource FontSizeCaption}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            Margin="10,12,10,6" />
+                        <ScrollViewer
+                            Grid.Row="1"
+                            VerticalScrollBarVisibility="Auto"
+                            HorizontalScrollBarVisibility="Disabled"
+                            Padding="4,0,4,8">
+                            <ItemsControl x:Name="SidebarItems">
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type views:SidebarEntry}">
+                                        <Button
+                                            Tag="{Binding}"
+                                            HorizontalAlignment="Stretch"
+                                            Click="SidebarItem_Click">
+                                            <Button.Style>
+                                                <!--
+                                                    Base style for Level-3 sub-sections (most common case).
+                                                    Level-1 chapters override via DataTrigger on Level == 1.
+                                                    Active chapter gets BrushActionMuted background via IsActive.
+                                                -->
+                                                <Style TargetType="Button" BasedOn="{StaticResource HelpNavButtonStyle}">
+                                                    <Setter Property="Content"    Value="{Binding Text}" />
+                                                    <Setter Property="Margin"     Value="18,1,6,1" />
+                                                    <Setter Property="FontSize"   Value="{StaticResource FontSizeCaption}" />
+                                                    <Setter Property="FontWeight" Value="Normal" />
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                                    <Style.Triggers>
+                                                        <!-- Chapter entry (Level 1) -->
+                                                        <DataTrigger Binding="{Binding Level}" Value="1">
+                                                            <Setter Property="Margin"     Value="6,3" />
+                                                            <Setter Property="FontSize"   Value="{StaticResource FontSizeSmall}" />
+                                                            <Setter Property="FontWeight" Value="SemiBold" />
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                                        </DataTrigger>
+                                                        <!-- Active chapter highlight -->
+                                                        <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                                            <Setter Property="Background" Value="{StaticResource BrushActionMuted}" />
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushAction}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Button.Style>
+                                        </Button>
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- Divider -->
+                <Rectangle
+                    Grid.Column="1"
+                    Fill="{StaticResource BrushBorderSubtle}" />
+
+                <!-- Content panel -->
+                <Border
+                    Grid.Column="2"
+                    CornerRadius="0,0,12,0">
+                    <Border.Background>
+                        <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+                    </Border.Background>
+
+                    <TextBlock
+                        x:Name="ErrorText"
+                        Text="{helpers:Localize Help_NotFound}"
+                        Style="{StaticResource EmptyStateText}"
+                        Visibility="Collapsed"
+                        Margin="32" />
+                </Border>
+
+                <mdxaml:MarkdownScrollViewer
+                    x:Name="MarkdownViewer"
+                    Grid.Column="2"
+                    MarkdownStyle="{StaticResource DarkMarkdownStyle}"
+                    Padding="24,16,24,24"
+                    VerticalScrollBarVisibility="Auto"
+                    HorizontalScrollBarVisibility="Disabled"
+                    Background="Transparent"
+                    Foreground="{StaticResource BrushTextPrimary}"
+                    PreviewMouseWheel="MarkdownViewer_PreviewMouseWheel" />
+            </Grid>
+
+            <!-- Footer -->
+            <Border
+                Grid.Row="3"
+                BorderThickness="0,1,0,0"
+                CornerRadius="{StaticResource RadiusDialogBottom}"
+                Padding="16,10">
+                <Border.BorderBrush>
+                    <SolidColorBrush Color="{StaticResource ColorBorderSubtle}" />
+                </Border.BorderBrush>
+                <Border.Background>
+                    <SolidColorBrush Color="{StaticResource ColorBg}" />
+                </Border.Background>
+                <StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                    <TextBlock
+                        Text="{x:Static res:Strings.About_AppName}"
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextSecondary}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Text=" · "
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Text="{Binding AppVersion}"
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Text=" · "
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Text="{x:Static res:Strings.About_Copyright}"
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        Text=" · "
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+                    <TextBlock
+                        FontFamily="{StaticResource FontPrimary}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center">
+                        <Run Text="{x:Static res:Strings.About_LicensedUnder}" /><Run Text="GPL-3.0-or-later" FontWeight="SemiBold" />
+                    </TextBlock>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

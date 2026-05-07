@@ -1,0 +1,10 @@
+[
+  { "key": "setup",    "file": "01-setup.md",    "title_en": "Setup Wizard",       "title_de": "Einrichtung" },
+  { "key": "import",   "file": "02-import.md",   "title_en": "Import",             "title_de": "Import" },
+  { "key": "advanced", "file": "03-advanced.md",  "title_en": "Advanced Guide",     "title_de": "Erweiterte Anleitung" },
+  { "key": "burst",    "file": "04-burst.md",     "title_en": "Photo Series Detection", "title_de": "Serien-Erkennung" },
+  { "key": "devices",  "file": "05-devices.md",   "title_en": "Device Management",  "title_de": "Geräteverwaltung" },
+  { "key": "reviewer", "file": "06-reviewer.md",  "title_en": "Sequence Reviewer",  "title_de": "Sequence Reviewer" },
+  { "key": "tools",    "file": "07-tools.md",     "title_en": "Tools & Options",    "title_de": "Werkzeuge & Optionen" },
+  { "key": "glossary", "file": "08-glossary.md",  "title_en": "Glossary",           "title_de": "Glossar" }
+]

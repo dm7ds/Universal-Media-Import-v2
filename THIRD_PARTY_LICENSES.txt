@@ -1,0 +1,20 @@
+Third-Party Licenses for Universal Media Import (UMI)
+======================================================
+
+This file lists third-party software bundled with or used by UMI
+and their respective licenses.
+
+
+1. ExifTool
+-----------
+  Author:    Phil Harvey
+  Website:   https://exiftool.org/
+  Source:    https://github.com/exiftool/exiftool
+  Version:   (see tools/exiftool.exe -ver)
+  License:   Same terms as Perl itself (Dual License):
+               - Artistic License 1.0 (Perl)
+               - OR GNU General Public License v1.0 or later
+  Usage:     UMI ships an unmodified copy of the ExifTool executable
+             for reading and writing image/video metadata.
+  Note:      ExifTool is not modified or incorporated into UMI's
+             source code. It is invoked as an external process.

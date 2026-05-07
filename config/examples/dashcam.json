@@ -1,0 +1,17 @@
+{
+  "_use_case": "Dashcam oder NAS mit festem Pfad",
+  "_description": "Für Kameras die immer am gleichen Ort speichern. UMI überwacht den Ordner und importiert neue Dateien automatisch. Ideal für Dashcams, Überwachungskameras oder NAS-Shares.",
+  "_camera_config": {
+    "DashCam": {
+      "name": "Blackvue DR970X",
+      "camera_type": "Action",
+      "source_type": "fixed_path",
+      "source_path": "D:\\DashCam\\Videos",
+      "flatten_source": true,
+      "enabled": true,
+      "file_types": {
+        "video": [".mp4"]
+      }
+    }
+  }
+}

@@ -1,0 +1,21 @@
+{
+  "_use_case": "Kamera per USB/MTP direkt importieren",
+  "_description": "Windows-only. Kamera per USB anschließen, UMI importiert direkt über MTP. Kein SD-Kartenleser nötig. Gerät wird beim ersten Import automatisch registriert.",
+  "_camera_config": {
+    "GoPro11_USB": {
+      "name": "GoPro Hero 11 Black (USB)",
+      "manufacturer": "GoPro",
+      "camera_type": "Action",
+      "source_type": "mtp",
+      "enabled": true,
+      "features": {
+        "gyroflow": true,
+        "eis_detection": true,
+        "metadata_backup": true
+      },
+      "file_types": {
+        "video": [".mp4", ".mov"]
+      }
+    }
+  }
+}

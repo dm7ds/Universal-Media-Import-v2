@@ -1,0 +1,106 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<UserControl
+    x:Class="UMI.GUI.Views.Controls.DateFilterPopup"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers">
+
+    <Popup
+        IsOpen="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=IsPopupOpen, Mode=TwoWay}"
+        PlacementTarget="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=PlacementTargetRef}"
+        Placement="Bottom"
+        StaysOpen="False"
+        AllowsTransparency="True">
+        <Border
+            Background="{StaticResource BrushBgCard}"
+            BorderBrush="{StaticResource BrushBorderSubtle}"
+            BorderThickness="1"
+            CornerRadius="{StaticResource RadiusCard}"
+            Padding="10"
+            Margin="0,4,0,0">
+            <Border.Effect>
+                <DropShadowEffect Color="{StaticResource ColorShadow}" Opacity="{StaticResource ShadowPopupOpacity}" BlurRadius="{StaticResource ShadowPopupBlurRadius}" ShadowDepth="{StaticResource ShadowPopupShadowDepth}" />
+            </Border.Effect>
+            <StackPanel Width="200">
+
+                <TextBlock
+                    Text="{Binding RelativeSource={RelativeSource AncestorType=UserControl}, Path=HeaderText}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource BrushTextPrimary}"
+                    Margin="0,0,0,8" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <Button
+                        Command="{Binding SetTodayFilterCommand}"
+                        Content="{helpers:Localize DateFilter_Today}"
+                        Style="{StaticResource CardNeutralButton}"
+                        Margin="0,0,6,0"
+                        Padding="8,3"
+                        FontSize="{StaticResource FontSizeSmall}" />
+                    <Button
+                        Command="{Binding SetYesterdayFilterCommand}"
+                        Content="{helpers:Localize DateFilter_Yesterday}"
+                        Style="{StaticResource CardNeutralButton}"
+                        Padding="8,3"
+                        FontSize="{StaticResource FontSizeSmall}" />
+                </StackPanel>
+
+                <TextBlock
+                    Text="{helpers:Localize DateFilter_From}"
+                    FontSize="{StaticResource FontSizeCaption}"
+                    Foreground="{StaticResource BrushTextSecondary}"
+                    Margin="0,0,0,3" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,8">
+                    <DatePicker
+                        SelectedDate="{Binding DateFrom, Mode=TwoWay}"
+                        Style="{StaticResource DarkDatePicker}"
+                        Width="124"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        VerticalContentAlignment="Center" />
+                    <TextBox
+                        Text="{Binding DateFromTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource DateFilterTimeBox}"
+                        Width="60"
+                        Margin="6,0,0,0"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        VerticalContentAlignment="Center"
+                        ToolTip="{helpers:Localize DateFilter_TimeTooltip}" />
+                </StackPanel>
+
+                <TextBlock
+                    Text="{helpers:Localize DateFilter_To}"
+                    FontSize="{StaticResource FontSizeCaption}"
+                    Foreground="{StaticResource BrushTextSecondary}"
+                    Margin="0,0,0,3" />
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,10">
+                    <DatePicker
+                        SelectedDate="{Binding DateTo, Mode=TwoWay}"
+                        Style="{StaticResource DarkDatePicker}"
+                        Width="124"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        VerticalContentAlignment="Center" />
+                    <TextBox
+                        Text="{Binding DateToTime, Mode=TwoWay, UpdateSourceTrigger=PropertyChanged}"
+                        Style="{StaticResource DateFilterTimeBox}"
+                        Width="60"
+                        Margin="6,0,0,0"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        VerticalContentAlignment="Center"
+                        ToolTip="{helpers:Localize DateFilter_TimeTooltip}" />
+                </StackPanel>
+
+                <Button
+                    Command="{Binding ClearDateFilterCommand}"
+                    Content="{helpers:Localize DateFilter_Clear}"
+                    HorizontalAlignment="Left"
+                    Style="{StaticResource CardNeutralButton}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    Padding="8,3" />
+
+            </StackPanel>
+        </Border>
+    </Popup>
+
+</UserControl>

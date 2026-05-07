@@ -1,0 +1,22 @@
+<Project>
+  <!--
+    Single source of truth for the UMI release version.
+
+    All csproj files in src/* inherit these properties automatically (MSBuild
+    walks parent directories looking for Directory.Build.props). The build
+    script (build.ps1) reads <Version> from this file when invoking ISCC, so
+    the installer's filename and Apps & Features entry stay in sync.
+
+    To bump for a release: edit <Version> below, commit, tag (e.g. `git tag
+    v2.1.1`), build, then publish a GitHub release on the public repo
+    (dm7ds/Universal-Media-Import-v2) with the matching tag. The in-app
+    update checker (GitHubReleaseChecker) compares the running assembly
+    version against /releases/latest from there.
+  -->
+  <PropertyGroup>
+    <Version>2.1.1</Version>
+    <AssemblyVersion>$(Version).0</AssemblyVersion>
+    <FileVersion>$(Version).0</FileVersion>
+    <InformationalVersion>$(Version)</InformationalVersion>
+  </PropertyGroup>
+</Project>

@@ -1,0 +1,29 @@
+{
+  "_umi_header": {
+    "type": "camera_type",
+    "version": "2.1.0",
+    "schema_version": 2,
+    "created": "2026-02-22T18:00:00Z",
+    "modified": "2026-02-28T00:00:00Z",
+    "description": "DSLR Camera Type"
+  },
+  "name": "DSLR",
+  "description": "Spiegelreflexkameras (Canon EOS, Nikon D)",
+  "color": "#a6adc8",
+  "features": {
+    "gps_injection":   { "available": false, "enabled_by_default": false, "simple_on_card": false },
+    "gyroflow":        { "available": false, "enabled_by_default": false, "simple_on_card": false },
+    "eis_detection":   { "available": false, "enabled_by_default": false, "simple_on_card": false },
+    "burst_detection": { "available": true,  "enabled_by_default": true,  "simple_on_card": true  },
+    "metadata_backup": { "available": true,  "enabled_by_default": true,  "simple_on_card": false },
+    "rename_videos":   { "available": true,  "enabled_by_default": false, "simple_on_card": false },
+    "gopro_rename":    { "available": false, "enabled_by_default": false, "simple_on_card": false },
+    "post_process":        { "available": true,  "enabled_by_default": false, "simple_on_card": false },
+    "generate_thumbnails": { "available": true,  "enabled_by_default": false, "simple_on_card": false }
+  },
+  "simple_features": ["burst_detection"],
+  "default_file_types": {
+    "video": [".mp4", ".mov"],
+    "photo": [".jpg", ".jpeg", ".cr3", ".cr2", ".arw", ".nef"]
+  }
+}

@@ -1,0 +1,1208 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="Archive_Banner" xml:space="preserve">
+    <value>UMI - Project Archive</value>
+  </data>
+  <data name="Archive_Created" xml:space="preserve">
+    <value>Archive created: {0}</value>
+  </data>
+  <data name="Archive_DeliveryHint" xml:space="preserve">
+    <value>Use --include-delivery to archive them as well.</value>
+  </data>
+  <data name="Archive_DeliveryNotIncluded" xml:space="preserve">
+    <value>Note: DVR exports were NOT archived.</value>
+  </data>
+  <data name="Camera_AddBanner" xml:space="preserve">
+    <value>UMI - Add Camera</value>
+  </data>
+  <data name="Camera_AddNeedInteractive" xml:space="preserve">
+    <value>&#x27;umi config camera add&#x27; requires an interactive terminal.</value>
+  </data>
+  <data name="Camera_AlreadyState" xml:space="preserve">
+    <value>Camera {0} is already {1}.</value>
+  </data>
+  <data name="Camera_AssignBanner" xml:space="preserve">
+    <value>UMI - Card Assignment</value>
+  </data>
+  <data name="Camera_AssignCurrent" xml:space="preserve">
+    <value>  Currently assigned: {0} SD card(s), {1} MTP device(s)</value>
+  </data>
+  <data name="Camera_AssignDone_Label" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Camera_AssignManualVsn" xml:space="preserve">
+    <value>Enter SD card manually (VSN)</value>
+  </data>
+  <data name="Camera_AssignMtp" xml:space="preserve">
+    <value>Assign MTP device</value>
+  </data>
+  <data name="Camera_AssignNeedInteractive" xml:space="preserve">
+    <value>&#x27;umi config camera assign&#x27; requires an interactive terminal.</value>
+  </data>
+  <data name="Camera_AssignNoChanges" xml:space="preserve">
+    <value>No changes.</value>
+  </data>
+  <data name="Camera_AssignRemove" xml:space="preserve">
+    <value>Remove assignment</value>
+  </data>
+  <data name="Camera_AssignSaved" xml:space="preserve">
+    <value>Changes saved</value>
+  </data>
+  <data name="Camera_AssignScanSd" xml:space="preserve">
+    <value>Scan SD card (inserted)</value>
+  </data>
+  <data name="Camera_AssignWhat" xml:space="preserve">
+    <value>What would you like to do?</value>
+  </data>
+  <data name="Camera_AvailableCameras" xml:space="preserve">
+    <value>Available cameras:</value>
+  </data>
+  <data name="Camera_ConfiguredCameras" xml:space="preserve">
+    <value>Configured cameras:</value>
+  </data>
+  <data name="Camera_ConfirmRemove" xml:space="preserve">
+    <value>Really remove camera {0} ({1})? [y/N]: </value>
+  </data>
+  <data name="Camera_Disabled" xml:space="preserve">
+    <value>Camera {0} ({1}) disabled</value>
+  </data>
+  <data name="Camera_Enabled" xml:space="preserve">
+    <value>Camera {0} ({1}) enabled</value>
+  </data>
+  <data name="Camera_FooterTotal" xml:space="preserve">
+    <value>  {0} camera(s) configured ({1} active)</value>
+  </data>
+  <data name="Camera_ListBanner" xml:space="preserve">
+    <value>UMI - Camera Overview</value>
+  </data>
+  <data name="Camera_ManualLabelPrompt" xml:space="preserve">
+    <value>Label (optional):</value>
+  </data>
+  <data name="Camera_ManualVsnPrompt" xml:space="preserve">
+    <value>Volume Serial Number (e.g. A4F2-8B31):</value>
+  </data>
+  <data name="Camera_MtpAlreadyRegistered" xml:space="preserve">
+    <value>MTP device is already registered for {0}.</value>
+  </data>
+  <data name="Camera_MtpAssigned" xml:space="preserve">
+    <value>MTP device {0}{1} assigned to {2} [Fixed]</value>
+  </data>
+  <data name="Camera_MtpDetectError" xml:space="preserve">
+    <value>Error detecting MTP devices: {0}</value>
+  </data>
+  <data name="Camera_MtpDeviceRemoved" xml:space="preserve">
+    <value>MTP device {0} removed</value>
+  </data>
+  <data name="Camera_MtpNoDevices" xml:space="preserve">
+    <value>No MTP devices connected.</value>
+  </data>
+  <data name="Camera_MtpNotAvailable" xml:space="preserve">
+    <value>MTP service not available (Windows only).</value>
+  </data>
+  <data name="Camera_MtpWhichDevice" xml:space="preserve">
+    <value>Which MTP device to assign?</value>
+  </data>
+  <data name="Camera_RemoveBanner" xml:space="preserve">
+    <value>UMI - Remove Camera</value>
+  </data>
+  <data name="Camera_RemoveCleanupHint" xml:space="preserve">
+    <value>Assigned cards/devices were not removed. Use &#x27;umi config cards remove&#x27; to clean up.</value>
+  </data>
+  <data name="Camera_RemoveHasDevices" xml:space="preserve">
+    <value>Camera {0} still has {1} assigned.</value>
+  </data>
+  <data name="Camera_RemoveMtpDevices" xml:space="preserve">
+    <value>{0} MTP device(s)</value>
+  </data>
+  <data name="Camera_RemoveNoAssignments" xml:space="preserve">
+    <value>No assignments present.</value>
+  </data>
+  <data name="Camera_RemoveSdCards" xml:space="preserve">
+    <value>{0} SD card(s)</value>
+  </data>
+  <data name="Camera_RemoveWhich" xml:space="preserve">
+    <value>Which assignments to remove?</value>
+  </data>
+  <data name="Camera_Removed" xml:space="preserve">
+    <value>Camera {0} ({1}) removed</value>
+  </data>
+  <data name="Camera_ScanAlreadyRegistered" xml:space="preserve">
+    <value>Card {0} is already registered for {1}.</value>
+  </data>
+  <data name="Camera_ScanAssigned" xml:space="preserve">
+    <value>SD card {0} assigned to {1} [{2}]</value>
+  </data>
+  <data name="Camera_ScanNoRemovable" xml:space="preserve">
+    <value>No removable drives found. Please insert an SD card.</value>
+  </data>
+  <data name="Camera_ScanReassign" xml:space="preserve">
+    <value>Reassign to {0}? [y/N]: </value>
+  </data>
+  <data name="Camera_ScanRegisteredOther" xml:space="preserve">
+    <value>Card {0} is currently registered for {1}.</value>
+  </data>
+  <data name="Camera_ScanWhichDrive" xml:space="preserve">
+    <value>Which drive?</value>
+  </data>
+  <data name="Camera_SdCardRemoved" xml:space="preserve">
+    <value>SD card {0} removed</value>
+  </data>
+  <data name="Camera_ShowAssignedCards" xml:space="preserve">
+    <value>  Assigned cards:</value>
+  </data>
+  <data name="Camera_ShowEnabled" xml:space="preserve">
+    <value>  Enabled:        {0}</value>
+  </data>
+  <data name="Camera_ShowFeatures" xml:space="preserve">
+    <value>  Features:</value>
+  </data>
+  <data name="Camera_ShowFileTypes" xml:space="preserve">
+    <value>  File types:     Video: {0} | Photo: {1}</value>
+  </data>
+  <data name="Camera_ShowFolder" xml:space="preserve">
+    <value>  Folder name:    {0}</value>
+  </data>
+  <data name="Camera_ShowHeader" xml:space="preserve">
+    <value>  Camera: {0} — {1}</value>
+  </data>
+  <data name="Camera_ShowManufacturer" xml:space="preserve">
+    <value>  Manufacturer:   {0}</value>
+  </data>
+  <data name="Camera_ShowNoCards" xml:space="preserve">
+    <value>  Assigned cards: (none)</value>
+  </data>
+  <data name="Camera_ShowSerial" xml:space="preserve">
+    <value>  Serial number:  {0}</value>
+  </data>
+  <data name="Camera_ShowSource" xml:space="preserve">
+    <value>  Source:         {0}</value>
+  </data>
+  <data name="Camera_ShowType" xml:space="preserve">
+    <value>  Type:           {0}</value>
+  </data>
+  <data name="Camera_StateDisabled" xml:space="preserve">
+    <value>disabled</value>
+  </data>
+  <data name="Camera_StateEnabled" xml:space="preserve">
+    <value>enabled</value>
+  </data>
+  <data name="Camera_TipAdd" xml:space="preserve">
+    <value>Tip: Use &#x27;umi config camera add&#x27; to set up.</value>
+  </data>
+  <data name="CardSwap_InsertCard" xml:space="preserve">
+    <value>[{0}/{1}] Insert SD card for {2}</value>
+  </data>
+  <data name="CardSwap_Prompt" xml:space="preserve">
+    <value>Enter = Start import, S = Skip, Q = Quit &gt; </value>
+  </data>
+  <data name="CardSwap_Quit" xml:space="preserve">
+    <value> → Quit</value>
+  </data>
+  <data name="CardSwap_Skipped" xml:space="preserve">
+    <value> → Skipped</value>
+  </data>
+  <data name="Cards_AcceptPrompt" xml:space="preserve">
+    <value>Accept? [Y/n]: </value>
+  </data>
+  <data name="Cards_AddBanner" xml:space="preserve">
+    <value>UMI - Register SD Card</value>
+  </data>
+  <data name="Cards_AddDone" xml:space="preserve">
+    <value>✓ Done: {0} newly registered, {1} updated, {2} overwritten</value>
+  </data>
+  <data name="Cards_AlreadyRegistered" xml:space="preserve">
+    <value>  {0}: Already registered for {1}, updated</value>
+  </data>
+  <data name="Cards_AlreadyRegisteredOther" xml:space="preserve">
+    <value>{0} is already registered for {1}.</value>
+  </data>
+  <data name="Cards_AssignBanner" xml:space="preserve">
+    <value>UMI - Card Assignment</value>
+  </data>
+  <data name="Cards_AssignCardType" xml:space="preserve">
+    <value>Card type?</value>
+  </data>
+  <data name="Cards_AssignCurrentlyAssigned" xml:space="preserve">
+    <value>  Currently assigned: {0} ({1}) [{2}]</value>
+  </data>
+  <data name="Cards_AssignDone" xml:space="preserve">
+    <value>Card {0} assigned to {1} [{2}]</value>
+  </data>
+  <data name="Cards_AssignFixedOption" xml:space="preserve">
+    <value>Fixed (always belongs to this camera)</value>
+  </data>
+  <data name="Cards_AssignFloatingOption" xml:space="preserve">
+    <value>Floating (switches between cameras)</value>
+  </data>
+  <data name="Cards_AssignNeedInteractive" xml:space="preserve">
+    <value>&#x27;umi config cards assign&#x27; requires an interactive terminal.</value>
+  </data>
+  <data name="Cards_AssignNoCameras" xml:space="preserve">
+    <value>No cameras configured. Use &#x27;umi config camera add&#x27; to set up.</value>
+  </data>
+  <data name="Cards_AssignNotAssigned" xml:space="preserve">
+    <value>  Currently: not assigned</value>
+  </data>
+  <data name="Cards_AssignNotRegistered" xml:space="preserve">
+    <value>Card {0} is not registered.</value>
+  </data>
+  <data name="Cards_AssignRemoveOption" xml:space="preserve">
+    <value>(Remove assignment)</value>
+  </data>
+  <data name="Cards_AssignRemoved" xml:space="preserve">
+    <value>Assignment for {0} removed</value>
+  </data>
+  <data name="Cards_AssignWhichCamera" xml:space="preserve">
+    <value>Which camera to assign?</value>
+  </data>
+  <data name="Cards_BatchRegistration" xml:space="preserve">
+    <value>Batch registration: {0} cards</value>
+  </data>
+  <data name="Cards_CameraExif" xml:space="preserve">
+    <value>  Camera (EXIF): {0}</value>
+  </data>
+  <data name="Cards_CameraNotExists" xml:space="preserve">
+    <value>Camera &#x27;{0}&#x27; does not exist in config.</value>
+  </data>
+  <data name="Cards_CannotReadVsn" xml:space="preserve">
+    <value>Cannot read Volume Serial from {0}</value>
+  </data>
+  <data name="Cards_CardDetected" xml:space="preserve">
+    <value>SD card detected: {0} ({1})</value>
+  </data>
+  <data name="Cards_CardRegisteredFor" xml:space="preserve">
+    <value>  Card {0} registered for {1}{2}</value>
+  </data>
+  <data name="Cards_CardRegisteredFull" xml:space="preserve">
+    <value>✓ Card {0} registered for {1}{2}{3}</value>
+  </data>
+  <data name="Cards_CardRemoved" xml:space="preserve">
+    <value>✓ Card {0} removed</value>
+  </data>
+  <data name="Cards_CardsForCamera" xml:space="preserve">
+    <value>SD cards for {0} ({1}):</value>
+  </data>
+  <data name="Cards_ConfirmPrompt" xml:space="preserve">
+    <value>Sure? [y/N]: </value>
+  </data>
+  <data name="Cards_ConfirmRemove" xml:space="preserve">
+    <value>Remove {0} (was: {1}{2}).</value>
+  </data>
+  <data name="Cards_DontRegister" xml:space="preserve">
+    <value>  (0) Don&#x27;t register</value>
+  </data>
+  <data name="Cards_FooterSimple" xml:space="preserve">
+    <value>  {0} card(s)</value>
+  </data>
+  <data name="Cards_FooterTotal" xml:space="preserve">
+    <value>  {0} card(s) registered ({1}x Fixed, {2}x Floating)</value>
+  </data>
+  <data name="Cards_HistoryCardInfo" xml:space="preserve">
+    <value>SD card: {0}{1}</value>
+  </data>
+  <data name="Cards_HistoryNone" xml:space="preserve">
+    <value>No imports recorded for this card yet.</value>
+  </data>
+  <data name="Cards_HistoryTotalImports" xml:space="preserve">
+    <value>Total imports: {0}</value>
+  </data>
+  <data name="Cards_HistoryType" xml:space="preserve">
+    <value>Type: {0}</value>
+  </data>
+  <data name="Cards_InfoDiskSerial" xml:space="preserve">
+    <value>  Disk Serial:  {0}</value>
+  </data>
+  <data name="Cards_InfoLabel" xml:space="preserve">
+    <value>  Label:        {0}</value>
+  </data>
+  <data name="Cards_InfoPath" xml:space="preserve">
+    <value>  Path:         {0}</value>
+  </data>
+  <data name="Cards_InfoSize" xml:space="preserve">
+    <value>  Size:         {0}</value>
+  </data>
+  <data name="Cards_InfoType" xml:space="preserve">
+    <value>  Type:         {0}</value>
+  </data>
+  <data name="Cards_InfoVsn" xml:space="preserve">
+    <value>  VSN:          {0}</value>
+  </data>
+  <data name="Cards_InvalidType" xml:space="preserve">
+    <value>Invalid type &#x27;{0}&#x27;. Allowed: fixed, floating</value>
+  </data>
+  <data name="Cards_KnownCard" xml:space="preserve">
+    <value>✓ Known card: {0} (VSN {1}){2}</value>
+  </data>
+  <data name="Cards_LabelPrompt" xml:space="preserve">
+    <value>Label [{0}]: </value>
+  </data>
+  <data name="Cards_ListBanner" xml:space="preserve">
+    <value>UMI - SD Card Registry</value>
+  </data>
+  <data name="Cards_NoCardsDetected" xml:space="preserve">
+    <value>No inserted SD cards detected.</value>
+  </data>
+  <data name="Cards_NoCardsForCamera" xml:space="preserve">
+    <value>No SD cards registered for {0}.</value>
+  </data>
+  <data name="Cards_NoCardsRegistered" xml:space="preserve">
+    <value>No SD cards registered.</value>
+  </data>
+  <data name="Cards_NotAvailable" xml:space="preserve">
+    <value>(not available)</value>
+  </data>
+  <data name="Cards_NotRemovableDrive" xml:space="preserve">
+    <value>{0} is not a Removable Drive ({1}).</value>
+  </data>
+  <data name="Cards_OverwritePrompt" xml:space="preserve">
+    <value>Overwrite with {0}? [y/N]: </value>
+  </data>
+  <data name="Cards_RegisteredCards" xml:space="preserve">
+    <value>Registered SD cards:</value>
+  </data>
+  <data name="Cards_RegistrationCancelled" xml:space="preserve">
+    <value>Registration cancelled.</value>
+  </data>
+  <data name="Cards_RemovableDrivesDetected" xml:space="preserve">
+    <value>{0} removable drives detected:</value>
+  </data>
+  <data name="Cards_RemoveBanner" xml:space="preserve">
+    <value>UMI - Remove SD Card</value>
+  </data>
+  <data name="Cards_ScanAnyway" xml:space="preserve">
+    <value>Scan anyway? [y/N]: </value>
+  </data>
+  <data name="Cards_ScanBanner" xml:space="preserve">
+    <value>UMI - Scan SD Card</value>
+  </data>
+  <data name="Cards_ScannedInfo" xml:space="preserve">
+    <value>SD card scanned:</value>
+  </data>
+  <data name="Cards_Selection" xml:space="preserve">
+    <value>Selection [0-{0}]: </value>
+  </data>
+  <data name="Cards_SelectionDefault" xml:space="preserve">
+    <value>Selection [0-{0}] (Default: {1}): </value>
+  </data>
+  <data name="Cards_SetDone" xml:space="preserve">
+    <value>✓ Card {0}{1} → {2}</value>
+  </data>
+  <data name="Cards_SetNoCamera" xml:space="preserve">
+    <value>Card is set to Fixed but has no camera ID. Use &#x27;umi config cards assign&#x27; to assign.</value>
+  </data>
+  <data name="Cards_Skipped" xml:space="preserve">
+    <value>  {0}: Skipped</value>
+  </data>
+  <data name="Cards_SourceSuggests" xml:space="preserve">
+    <value>{0} suggests: {1} ({2})</value>
+  </data>
+  <data name="Cards_TipForce" xml:space="preserve">
+    <value>  Tip: Use --force to reassign camera.</value>
+  </data>
+  <data name="Cards_TipInsertOrPath" xml:space="preserve">
+    <value>Tip: Insert card or specify manually with --path F:\</value>
+  </data>
+  <data name="Cards_TipList" xml:space="preserve">
+    <value>Use &#x27;umi config cards list&#x27; to show all registrations.</value>
+  </data>
+  <data name="Cards_TipScan" xml:space="preserve">
+    <value>Tip: Insert an SD card and use &#x27;umi config cards scan --path F:\&#x27; to register.</value>
+  </data>
+  <data name="Cards_Unknown" xml:space="preserve">
+    <value>Unknown</value>
+  </data>
+  <data name="Cards_UnusualVsn" xml:space="preserve">
+    <value>Unusual VSN format: {0} (expected: XXXX-XXXX)</value>
+  </data>
+  <data name="Cards_VersionTxtConflict" xml:space="preserve">
+    <value>version.txt says &#x27;{0}&#x27;, label says &#x27;{1}&#x27; – version.txt probably outdated</value>
+  </data>
+  <data name="Cards_VersionTxtRegistryConflict" xml:space="preserve">
+    <value>version.txt says &#x27;{0}&#x27;, registry says &#x27;{1}&#x27; – version.txt probably outdated</value>
+  </data>
+  <data name="Cards_VsnNotRegistered" xml:space="preserve">
+    <value>VSN {0} is not registered</value>
+  </data>
+  <data name="Cards_WhichCamera" xml:space="preserve">
+    <value>Which camera to assign?</value>
+  </data>
+  <data name="Cards_WhichCard" xml:space="preserve">
+    <value>Which card? [1-{0}]: </value>
+  </data>
+  <data name="Common_AvailableCameras" xml:space="preserve">
+    <value>Available cameras:</value>
+  </data>
+  <data name="Common_BlockedBy" xml:space="preserve">
+    <value>Blocked by:</value>
+  </data>
+  <data name="Common_BlockedByProcess" xml:space="preserve">
+    <value>Another UMI process is already running!</value>
+  </data>
+  <data name="Common_CameraNotFound" xml:space="preserve">
+    <value>Camera &#x27;{0}&#x27; not found.</value>
+  </data>
+  <data name="Common_CameraNotInConfig" xml:space="preserve">
+    <value>Camera &#x27;{0}&#x27; not found in config.</value>
+  </data>
+  <data name="Common_CancelRequested" xml:space="preserve">
+    <value>Cancellation requested, waiting for running operations...</value>
+  </data>
+  <data name="Archive_ConfirmProceed" xml:space="preserve">
+    <value>Proceed? [Y/n]: </value>
+  </data>
+  <data name="Common_Cancelled" xml:space="preserve">
+    <value>Cancelled.</value>
+  </data>
+  <data name="Common_Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Common_DryRunNo" xml:space="preserve">
+    <value>Dry-Run: No</value>
+  </data>
+  <data name="Common_DryRunYes" xml:space="preserve">
+    <value>Dry-Run: YES</value>
+  </data>
+  <data name="Common_Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Common_LockInfo" xml:space="preserve">
+    <value>Lock info: {0}</value>
+  </data>
+  <data name="Common_LockInfoCommand" xml:space="preserve">
+    <value>  Command: {0}</value>
+  </data>
+  <data name="Common_LockInfoPid" xml:space="preserve">
+    <value>  PID:     {0}</value>
+  </data>
+  <data name="Common_LockInfoSource" xml:space="preserve">
+    <value>  Source:  {0}</value>
+  </data>
+  <data name="Common_LockInfoStarted" xml:space="preserve">
+    <value>  Started: {0}</value>
+  </data>
+  <data name="Common_No" xml:space="preserve">
+    <value>No</value>
+  </data>
+  <data name="Common_NoCamerasConfigured" xml:space="preserve">
+    <value>No cameras configured.</value>
+  </data>
+  <data name="Common_NoHandlerForCamera" xml:space="preserve">
+    <value>No handler for &#x27;{0}&#x27; registered</value>
+  </data>
+  <data name="Common_NoLabel" xml:space="preserve">
+    <value>(no label)</value>
+  </data>
+  <data name="Common_WaitForProcess" xml:space="preserve">
+    <value>Wait until the other process finishes or terminate it.</value>
+  </data>
+  <data name="Common_Yes" xml:space="preserve">
+    <value>Yes</value>
+  </data>
+  <data name="Dashboard_Detected" xml:space="preserve">
+    <value>detected, assignment pending</value>
+  </data>
+  <data name="Dashboard_Queued" xml:space="preserve">
+    <value>in queue</value>
+  </data>
+  <data name="Dashboard_Scanning" xml:space="preserve">
+    <value>Scan...</value>
+  </data>
+  <data name="Detection_AlreadyImported" xml:space="preserve">
+    <value>  → ⚠ Already imported in this session (VSN {0})</value>
+  </data>
+  <data name="Detection_CannotReadVsn" xml:space="preserve">
+    <value>Cannot read VSN</value>
+  </data>
+  <data name="Detection_CardRegistered" xml:space="preserve">
+    <value>  ✓ Card registered as {0}</value>
+  </data>
+  <data name="Detection_FixedAssignment" xml:space="preserve">
+    <value>  → {0} (fixed assignment)</value>
+  </data>
+  <data name="Detection_FixedLabel" xml:space="preserve">
+    <value>fixed</value>
+  </data>
+  <data name="Detection_FloatingCard" xml:space="preserve">
+    <value>  → Floating card (changing assignment)</value>
+  </data>
+  <data name="Detection_ImportAgain" xml:space="preserve">
+    <value>  Import again? [y/N]: </value>
+  </data>
+  <data name="Detection_RegisterCard" xml:space="preserve">
+    <value>  Register card? [Y/n]: </value>
+  </data>
+  <data name="Detection_Skip" xml:space="preserve">
+    <value>    (0) Skip</value>
+  </data>
+  <data name="Detection_Skipped" xml:space="preserve">
+    <value>  → {0}: skipped</value>
+  </data>
+  <data name="Detection_Suggestion" xml:space="preserve">
+    <value> ← Suggestion</value>
+  </data>
+  <data name="Detection_UnknownCard" xml:space="preserve">
+    <value>  → ⚠ Unknown card!</value>
+  </data>
+  <data name="Detection_WhichCamera" xml:space="preserve">
+    <value>Which camera?</value>
+  </data>
+  <data name="ExifScan_Banner" xml:space="preserve">
+    <value>UMI - EXIF Field Analysis</value>
+  </data>
+  <data name="ExifScan_FolderNotFound" xml:space="preserve">
+    <value>Folder does not exist: {0}</value>
+  </data>
+  <data name="ExifScan_InvalidFormat" xml:space="preserve">
+    <value>Invalid format: {0}. Use &#x27;table&#x27; or &#x27;json&#x27;.</value>
+  </data>
+  <data name="ExifScan_NoCategoryFields" xml:space="preserve">
+    <value>No fields found in category &#x27;{0}&#x27;.</value>
+  </data>
+  <data name="ExifScan_NoPhotos" xml:space="preserve">
+    <value>No photos found.</value>
+  </data>
+  <data name="ExifScan_PanelHeader" xml:space="preserve">
+    <value>EXIF Analysis: {0} photos, {1} fields in all images</value>
+  </data>
+  <data name="ExifScan_ScanningFields" xml:space="preserve">
+    <value>Scanning EXIF fields</value>
+  </data>
+  <data name="ExifScan_Tip" xml:space="preserve">
+    <value>Tip: Use these fields for burst profiles:</value>
+  </data>
+  <data name="Gps_AllDatesSources" xml:space="preserve">
+    <value>All Dates/Sources</value>
+  </data>
+  <data name="Gps_CreateBanner" xml:space="preserve">
+    <value>UMI - GPS Create</value>
+  </data>
+  <data name="Gps_CreateSummary" xml:space="preserve">
+    <value>GPS Create: {0} videos found, {1} GPX created, {2} skipped (present), {3} no GPS match</value>
+  </data>
+  <data name="Gps_DateAll" xml:space="preserve">
+    <value>All</value>
+  </data>
+  <data name="Gps_DateLabel" xml:space="preserve">
+    <value>Date:  {0}</value>
+  </data>
+  <data name="Gps_DryRunFinalize" xml:space="preserve">
+    <value>[DRY-RUN] Would finalize {0} videos (GPS inject + move + cleanup)</value>
+  </data>
+  <data name="Gps_ExpectedPath" xml:space="preserve">
+    <value>  Expected: {0}</value>
+  </data>
+  <data name="Gps_ExportedFound" xml:space="preserve">
+    <value>  {0} exported video(s) found</value>
+  </data>
+  <data name="Gps_FilterLabel" xml:space="preserve">
+    <value>Filter: {0}</value>
+  </data>
+  <data name="Gps_FinalizeCheck" xml:space="preserve">
+    <value>Finalize check: Searching for exported videos...</value>
+  </data>
+  <data name="Gps_FinalizeSummary" xml:space="preserve">
+    <value>Finalize: {0} exported videos → GPS inject → Video/ → Cleanup ({1} errors)</value>
+  </data>
+  <data name="Gps_GpsInjected" xml:space="preserve">
+    <value>GPS injected</value>
+  </data>
+  <data name="Gps_GpxCreated" xml:space="preserve">
+    <value>GPX created</value>
+  </data>
+  <data name="Gps_GpxNotConfigured" xml:space="preserve">
+    <value>(not configured)</value>
+  </data>
+  <data name="Gps_GpxSourceNotFound" xml:space="preserve">
+    <value>GPX source not found: {0}</value>
+  </data>
+  <data name="Gps_InjectBanner" xml:space="preserve">
+    <value>UMI - GPS Inject</value>
+  </data>
+  <data name="Gps_InjectSummary" xml:space="preserve">
+    <value>GPS Inject: {0} injected, {1} skipped (GPS present), {2} no GPX</value>
+  </data>
+  <data name="Gps_InjectionHeader" xml:space="preserve">
+    <value>GPS injection: Processing videos in Video/ folders...</value>
+  </data>
+  <data name="Gps_NoExportedVideos" xml:space="preserve">
+    <value>  No exported videos in postprocess/exported/ found</value>
+  </data>
+  <data name="Gps_NoGpsMatch" xml:space="preserve">
+    <value>no GPS match</value>
+  </data>
+  <data name="Gps_NoGpxMatch" xml:space="preserve">
+    <value>no GPX match</value>
+  </data>
+  <data name="Gps_NoGpxSourceWarning" xml:space="preserve">
+    <value>⚠ No GPX source directory configured or not found.</value>
+  </data>
+  <data name="Gps_NoInjectionVideos" xml:space="preserve">
+    <value>No videos for GPS injection found.</value>
+  </data>
+  <data name="Gps_NoVideosFound" xml:space="preserve">
+    <value>No videos found.</value>
+  </data>
+  <data name="Gps_NoteInjectNeeded" xml:space="preserve">
+    <value>inject needed</value>
+  </data>
+  <data name="Gps_NoteNoGpsMatch" xml:space="preserve">
+    <value>no GPS match</value>
+  </data>
+  <data name="Gps_SkippedGpsPresent" xml:space="preserve">
+    <value>skipped (GPS present)</value>
+  </data>
+  <data name="Gps_TipInject" xml:space="preserve">
+    <value>Tip: &#x27;umi gps inject&#x27; to inject GPS into missing videos</value>
+  </data>
+  <data name="Gps_VerifyBanner" xml:space="preserve">
+    <value>UMI - GPS Verify</value>
+  </data>
+  <data name="Gps_VerifyLabel" xml:space="preserve">
+    <value>GPS Verify: {0}</value>
+  </data>
+  <data name="Gps_VerifySummary" xml:space="preserve">
+    <value>  Summary: {0}/{1} with GPS, {2}/{3} GPX present</value>
+  </data>
+  <data name="Gps_VideosFound" xml:space="preserve">
+    <value>Found: {0} videos</value>
+  </data>
+  <data name="Import_Aborted" xml:space="preserve">
+    <value>Import aborted.</value>
+  </data>
+  <data name="Import_AdHocBanner" xml:space="preserve">
+    <value>UMI - Ad-hoc Import</value>
+  </data>
+  <data name="Import_AnotherImportRunning" xml:space="preserve">
+    <value>Another import is already running!</value>
+  </data>
+  <data name="Import_Banner" xml:space="preserve">
+    <value>UMI - Universal Media Import</value>
+  </data>
+  <data name="Import_CardRegistered" xml:space="preserve">
+    <value>SD card registered: {0} → {1}</value>
+  </data>
+  <data name="Import_Completed" xml:space="preserve">
+    <value>Import completed!</value>
+  </data>
+  <data name="Import_ConfirmImport" xml:space="preserve">
+    <value>  Import now? [Y/n] </value>
+  </data>
+  <data name="Import_ConflictExisting" xml:space="preserve">
+    <value>  {0} files are without subfolder.</value>
+  </data>
+  <data name="Import_ConflictHeader" xml:space="preserve">
+    <value>⚠️ Structure note for {0}/{1}:</value>
+  </data>
+  <data name="Import_ConflictNewType" xml:space="preserve">
+    <value>  Now new files with different media type are coming.</value>
+  </data>
+  <data name="Import_ConflictOption1" xml:space="preserve">
+    <value>  (1) Create subfolder for new files, existing stay [Default]</value>
+  </data>
+  <data name="Import_ConflictOption1Detail1" xml:space="preserve">
+    <value>      → Existing files: stay where they are</value>
+  </data>
+  <data name="Import_ConflictOption1Detail2" xml:space="preserve">
+    <value>      → New files: go into Photo/ or Video/ folder</value>
+  </data>
+  <data name="Import_ConflictOption2" xml:space="preserve">
+    <value>  (2) Keep everything flat</value>
+  </data>
+  <data name="Import_ConflictOption2Detail" xml:space="preserve">
+    <value>      → New files go next to existing files</value>
+  </data>
+  <data name="Import_ConflictOption3" xml:space="preserve">
+    <value>  (3) Reorganize: Move everything into subfolders</value>
+  </data>
+  <data name="Import_ConflictOption3Detail1" xml:space="preserve">
+    <value>      → Existing files: moved to Video/ or Photo/</value>
+  </data>
+  <data name="Import_ConflictOption3Detail2" xml:space="preserve">
+    <value>      → New files: also go into subfolders</value>
+  </data>
+  <data name="Import_ConflictOption3Warning" xml:space="preserve">
+    <value>      ⚠️ Only if not yet imported into editing software!</value>
+  </data>
+  <data name="Import_ConflictPrompt" xml:space="preserve">
+    <value>  Choice (1/2/3) [1]: </value>
+  </data>
+  <data name="Import_ConflictReorgWarning" xml:space="preserve">
+    <value>  ⚠️ WARNING: Existing files will be moved!</value>
+  </data>
+  <data name="Import_ContinueAnyway" xml:space="preserve">
+    <value>  Continue anyway? [Y/n] </value>
+  </data>
+  <data name="Import_CopyingToWorkbench" xml:space="preserve">
+    <value>▶ Copying to workbench...</value>
+  </data>
+  <data name="Import_DeleteLockManually" xml:space="preserve">
+    <value>or delete manually: {0}</value>
+  </data>
+  <data name="Import_Details" xml:space="preserve">
+    <value>  Details: {0}</value>
+  </data>
+  <data name="Import_FolderLabel" xml:space="preserve">
+    <value>  Folder: {0}</value>
+  </data>
+  <data name="Import_FolderNotFound" xml:space="preserve">
+    <value>Folder not found: {0}</value>
+  </data>
+  <data name="Import_GpuQueueWaiting" xml:space="preserve">
+    <value>GPU Queue: Waiting for {0} pending tasks...</value>
+  </data>
+  <data name="Import_HistoryReconciled" xml:space="preserve">
+    <value>History reconciled: {0} stale entries for {1} removed.</value>
+  </data>
+  <data name="Import_HistoryReset" xml:space="preserve">
+    <value>Import history for {0} reset.</value>
+  </data>
+  <data name="Import_ImportForCameras" xml:space="preserve">
+    <value>Import for {0} camera(s):</value>
+  </data>
+  <data name="Import_Importing" xml:space="preserve">
+    <value>▶ Importing: {0}</value>
+  </data>
+  <data name="Import_LayoutConflict" xml:space="preserve">
+    <value>  ⚠ Layout conflict detected → Default (new files in folder, existing stay)</value>
+  </data>
+  <data name="Import_MtpDevice" xml:space="preserve">
+    <value>  → MTP device: {0}</value>
+  </data>
+  <data name="Import_MtpDownloaded" xml:space="preserve">
+    <value>  → {0} files downloaded ({1})</value>
+  </data>
+  <data name="Import_MtpErrors" xml:space="preserve">
+    <value>  → {0} errors</value>
+  </data>
+  <data name="Import_MtpNoDevice" xml:space="preserve">
+    <value>[{0}] No registered MTP device connected.</value>
+  </data>
+  <data name="Import_NoCamerasFound" xml:space="preserve">
+    <value>No matching cameras found!</value>
+  </data>
+  <data name="Import_NoFilesToImport" xml:space="preserve">
+    <value>(No files to import)</value>
+  </data>
+  <data name="Import_PidInfo" xml:space="preserve">
+    <value>  PID {0}, started {1}</value>
+  </data>
+  <data name="Import_RegisterAsCamera" xml:space="preserve">
+    <value>  Register as &#x27;{0}&#x27;? [Y/n] </value>
+  </data>
+  <data name="Import_ScanResult" xml:space="preserve">
+    <value>  → {0} photos, {1} videos, {2} sequences detected</value>
+  </data>
+  <data name="Import_SdCardBelongsTo" xml:space="preserve">
+    <value>SD card in {0} belongs to &#x27;{1}&#x27;, not to &#x27;{2}&#x27;</value>
+  </data>
+  <data name="Import_SequenceDetail" xml:space="preserve">
+    <value>    {0}  │ {1} photos │ Mode: {2}</value>
+  </data>
+  <data name="Import_Sequences" xml:space="preserve">
+    <value>  Sequences:</value>
+  </data>
+  <data name="Import_SimTotal" xml:space="preserve">
+    <value>  Total: {0} files, {1} → {2}</value>
+  </data>
+  <data name="Import_SimulationDone" xml:space="preserve">
+    <value>  Simulation finished. No files were copied.</value>
+  </data>
+  <data name="Import_SimulationPreview" xml:space="preserve">
+    <value>▶ This is how the import would look:</value>
+  </data>
+  <data name="Import_SinglePhotos" xml:space="preserve">
+    <value>{0}x single photos</value>
+  </data>
+  <data name="Import_SourceCommand" xml:space="preserve">
+    <value>  Source: {0}, Command: {1}</value>
+  </data>
+  <data name="Import_StructureFlatten" xml:space="preserve">
+    <value>Flatten (subfolders as prefix)</value>
+  </data>
+  <data name="Import_StructureKeep" xml:space="preserve">
+    <value>Keep</value>
+  </data>
+  <data name="Import_UnknownCameraIds" xml:space="preserve">
+    <value>Unknown camera IDs: {0}</value>
+  </data>
+  <data name="Import_UnknownCard" xml:space="preserve">
+    <value>Unknown SD card in {0} (VSN: {1})</value>
+  </data>
+  <data name="Import_WaitOrDelete" xml:space="preserve">
+    <value>Wait until the running import finishes,</value>
+  </data>
+  <data name="Match_CardType" xml:space="preserve">
+    <value>  Card type?</value>
+  </data>
+  <data name="Match_FixedOption" xml:space="preserve">
+    <value>    (1) Fixed    – This card always belongs to {0}</value>
+  </data>
+  <data name="Match_FloatingOption" xml:space="preserve">
+    <value>    (2) Floating – This card switches between cameras</value>
+  </data>
+  <data name="Match_Selection" xml:space="preserve">
+    <value>  Selection [1]: </value>
+  </data>
+  <data name="Process_Banner" xml:space="preserve">
+    <value>UMI - Post-Processing</value>
+  </data>
+  <data name="Process_Completed" xml:space="preserve">
+    <value>Processing completed!</value>
+  </data>
+  <data name="Process_DryRunStabilize" xml:space="preserve">
+    <value>[DRY-RUN] Would stabilize {0} videos (mode: {1})</value>
+  </data>
+  <data name="Process_DryRunWouldMove" xml:space="preserve">
+    <value>[DRY-RUN] would be moved</value>
+  </data>
+  <data name="Process_GpuDone" xml:space="preserve">
+    <value>Done: {0} stabilized, {1} errors</value>
+  </data>
+  <data name="Process_GpuQueueEnqueued" xml:space="preserve">
+    <value>GPU Queue: {0} videos queued (Batch: {1})</value>
+  </data>
+  <data name="Process_MinOneOption" xml:space="preserve">
+    <value>At least one option required: --stabilize or --sort</value>
+  </data>
+  <data name="Process_MoveError" xml:space="preserve">
+    <value>Error while moving: {0}: {1}</value>
+  </data>
+  <data name="Process_MoveErrors" xml:space="preserve">
+    <value>{0} errors while moving</value>
+  </data>
+  <data name="Process_NoGyroflowVideos" xml:space="preserve">
+    <value>No videos for Gyroflow found.</value>
+  </data>
+  <data name="Process_NoMediaFiles" xml:space="preserve">
+    <value>No media files to sort found.</value>
+  </data>
+  <data name="Process_SkippedAtTarget" xml:space="preserve">
+    <value>  → {0} skipped (already at target)</value>
+  </data>
+  <data name="Process_SortResult" xml:space="preserve">
+    <value>  ✓ {0} files {1} into {2} date folders</value>
+  </data>
+  <data name="Process_Sorted" xml:space="preserve">
+    <value>sorted</value>
+  </data>
+  <data name="Process_SortingFiles" xml:space="preserve">
+    <value>  Sorting files by EXIF date...</value>
+  </data>
+  <data name="Process_UnknownSortValue" xml:space="preserve">
+    <value>Unknown --sort value: &#x27;{0}&#x27;. Allowed: &#x27;full&#x27; or &#x27;date&#x27;.</value>
+  </data>
+  <data name="Profiles_ConfirmDelete" xml:space="preserve">
+    <value>Really delete profile &#x27;{0}&#x27;? (y/N): </value>
+  </data>
+  <data name="Profiles_DeleteError" xml:space="preserve">
+    <value>Error deleting profile &#x27;{0}&#x27;.</value>
+  </data>
+  <data name="Profiles_Deleted" xml:space="preserve">
+    <value>Profile &#x27;{0}&#x27; was deleted.</value>
+  </data>
+  <data name="Profiles_DoesNotExist" xml:space="preserve">
+    <value>Profile &#x27;{0}&#x27; does not exist.</value>
+  </data>
+  <data name="Profiles_None" xml:space="preserve">
+    <value>No profiles found.</value>
+  </data>
+  <data name="Profiles_NotFound" xml:space="preserve">
+    <value>Profile &#x27;{0}&#x27; not found.</value>
+  </data>
+  <data name="Quick_AlreadyConnected" xml:space="preserve">
+    <value>already connected</value>
+  </data>
+  <data name="Quick_AlreadyInserted" xml:space="preserve">
+    <value>already inserted</value>
+  </data>
+  <data name="Quick_ChangeTarget" xml:space="preserve">
+    <value>Change? [Enter = OK, or enter path/name]:</value>
+  </data>
+  <data name="Quick_FilesCopied" xml:space="preserve">
+    <value>files copied</value>
+  </data>
+  <data name="Quick_FilesDownloaded" xml:space="preserve">
+    <value>files downloaded</value>
+  </data>
+  <data name="Quick_FilesFound" xml:space="preserve">
+    <value>file(s) found</value>
+  </data>
+  <data name="Quick_GyroflowFailed" xml:space="preserve">
+    <value>Gyroflow failed: {0}</value>
+  </data>
+  <data name="Quick_ImportCompleted" xml:space="preserve">
+    <value>Quick-Import completed</value>
+  </data>
+  <data name="Quick_MetadataBackup" xml:space="preserve">
+    <value>Metadata backup...</value>
+  </data>
+  <data name="Quick_MetadataBackupFailed" xml:space="preserve">
+    <value>Metadata backup failed: {0}: {1}</value>
+  </data>
+  <data name="Quick_Mode" xml:space="preserve">
+    <value>Quick-Import Mode</value>
+  </data>
+  <data name="Quick_MtpTransferStarted" xml:space="preserve">
+    <value>MTP transfer started</value>
+  </data>
+  <data name="Quick_NoFilesImported" xml:space="preserve">
+    <value>No files imported.</value>
+  </data>
+  <data name="Quick_NoImportableFiles" xml:space="preserve">
+    <value>No importable files on {0}</value>
+  </data>
+  <data name="Quick_NoImportableFilesDevice" xml:space="preserve">
+    <value>No importable files on device.</value>
+  </data>
+  <data name="Quick_NoImportableFilesSource" xml:space="preserve">
+    <value>No importable files on {0}</value>
+  </data>
+  <data name="Quick_NoTarget" xml:space="preserve">
+    <value>No target folder specified or input cancelled.</value>
+  </data>
+  <data name="Quick_StartingGyroflow" xml:space="preserve">
+    <value>Starting Gyroflow stabilization...</value>
+  </data>
+  <data name="Quick_TargetFolder" xml:space="preserve">
+    <value>Target folder</value>
+  </data>
+  <data name="Quick_WaitingForCards" xml:space="preserve">
+    <value>Waiting for cards... (Ctrl+C to exit)</value>
+  </data>
+  <data name="Quick_WaitingForNextCard" xml:space="preserve">
+    <value>Waiting for next card...</value>
+  </data>
+  <data name="Quick_WaitingForNextCardDevice" xml:space="preserve">
+    <value>Waiting for next card/device...</value>
+  </data>
+  <data name="Restore_Banner" xml:space="preserve">
+    <value>UMI - Metadata Restore</value>
+  </data>
+  <data name="Restore_CancelledByUser" xml:space="preserve">
+    <value>Cancelled by user</value>
+  </data>
+  <data name="Restore_Done" xml:space="preserve">
+    <value>Done: {0} restored, {1} errors</value>
+  </data>
+  <data name="Restore_Error" xml:space="preserve">
+    <value>Error ({0})</value>
+  </data>
+  <data name="Restore_VideosFound" xml:space="preserve">
+    <value>Found: {0} videos</value>
+  </data>
+  <data name="Restore_WorkbenchNotFound" xml:space="preserve">
+    <value>Workbench not found: {0}</value>
+  </data>
+  <data name="Setup_Aborted" xml:space="preserve">
+    <value>Setup cancelled. No changes saved.</value>
+  </data>
+  <data name="Setup_Banner" xml:space="preserve">
+    <value>UMI Setup Wizard</value>
+  </data>
+  <data name="Setup_CameraAborted" xml:space="preserve">
+    <value>Camera setup cancelled.</value>
+  </data>
+  <data name="Setup_CameraAddMore" xml:space="preserve">
+    <value>Add another camera: umi setup camera</value>
+  </data>
+  <data name="Setup_CameraBanner" xml:space="preserve">
+    <value>UMI Camera Setup Wizard</value>
+  </data>
+  <data name="Setup_CameraNeedInteractive" xml:space="preserve">
+    <value>&#x27;umi setup camera&#x27; requires an interactive terminal.</value>
+  </data>
+  <data name="Setup_CameraRegisterCards" xml:space="preserve">
+    <value>Register cards:        umi cards scan</value>
+  </data>
+  <data name="Setup_CreatingConfig" xml:space="preserve">
+    <value>New config will be created: {0}</value>
+  </data>
+  <data name="Setup_EditingConfig" xml:space="preserve">
+    <value>Editing existing config: {0}</value>
+  </data>
+  <data name="Setup_NeedInteractive" xml:space="preserve">
+    <value>&#x27;umi setup&#x27; requires an interactive terminal.</value>
+  </data>
+  <data name="Setup_NotConfigured" xml:space="preserve">
+    <value>(not configured)</value>
+  </data>
+  <data name="Setup_NotSet" xml:space="preserve">
+    <value>(not set)</value>
+  </data>
+  <data name="Setup_SaveCancelled" xml:space="preserve">
+    <value>Save cancelled. No changes saved.</value>
+  </data>
+  <data name="Setup_SavePrompt" xml:space="preserve">
+    <value>Save configuration?</value>
+  </data>
+  <data name="Setup_Saved" xml:space="preserve">
+    <value>Configuration saved: {0}</value>
+  </data>
+  <data name="Setup_StartCameraWizard" xml:space="preserve">
+    <value>Set up camera — Camera Setup Wizard starts...</value>
+  </data>
+  <data name="TestCamera_Banner" xml:space="preserve">
+    <value>Camera Detection Test</value>
+  </data>
+  <data name="TestCamera_VideoNotFound" xml:space="preserve">
+    <value>Video not found: {0}</value>
+  </data>
+  <data name="Verify_AllCorrect" xml:space="preserve">
+    <value>All files are correct!</value>
+  </data>
+  <data name="Verify_Banner" xml:space="preserve">
+    <value>UMI - Verification</value>
+  </data>
+  <data name="Verify_DbNotFound" xml:space="preserve">
+    <value>Import database not found: {0}</value>
+  </data>
+  <data name="Verify_Errors" xml:space="preserve">
+    <value>✗ {0} errors</value>
+  </data>
+  <data name="Verify_ErrorsHeader" xml:space="preserve">
+    <value>Errors:</value>
+  </data>
+  <data name="Verify_Failed" xml:space="preserve">
+    <value>Verification failed: {0} errors found</value>
+  </data>
+  <data name="Verify_FfprobeNotAvailable" xml:space="preserve">
+    <value>FFprobe not available - video integrity will not be checked</value>
+  </data>
+  <data name="Verify_FilesChecked" xml:space="preserve">
+    <value>Verification: {0} files checked</value>
+  </data>
+  <data name="Verify_ForCamera" xml:space="preserve">
+    <value> for {0}</value>
+  </data>
+  <data name="Verify_MoreWarnings" xml:space="preserve">
+    <value>  ... and {0} more warnings</value>
+  </data>
+  <data name="Verify_Ok" xml:space="preserve">
+    <value>✓ {0} OK</value>
+  </data>
+  <data name="Verify_PostImport" xml:space="preserve">
+    <value>Post-Import Verification{0}...</value>
+  </data>
+  <data name="Verify_RunImportFirst" xml:space="preserve">
+    <value>Run &#x27;umi import&#x27; first or use standalone mode without --post-import</value>
+  </data>
+  <data name="Verify_Warnings" xml:space="preserve">
+    <value>⚠ {0} warnings</value>
+  </data>
+  <data name="Verify_WarningsHeader" xml:space="preserve">
+    <value>Warnings:</value>
+  </data>
+  <data name="Verify_WorkbenchCheck" xml:space="preserve">
+    <value>Workbench verification{0}...</value>
+  </data>
+  <data name="Verify_WorkbenchNotFound" xml:space="preserve">
+    <value>Workbench not found: {0}</value>
+  </data>
+  <data name="Watch_WaitingForChanges" xml:space="preserve">
+    <value>Waiting for changes...</value>
+  </data>
+  <data name="Watch_WaitingForNextCardCamera" xml:space="preserve">
+    <value>Waiting for next card (→ {0})...</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Update Command -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="Update_CheckTitle" xml:space="preserve">
+    <value>UMI Update Check</value>
+  </data>
+  <data name="Update_CurrentVersion" xml:space="preserve">
+    <value>Current version : {0}</value>
+  </data>
+  <data name="Update_LatestVersion" xml:space="preserve">
+    <value>Latest version  : {0}</value>
+  </data>
+  <data name="Update_Available" xml:space="preserve">
+    <value>Update available: yes</value>
+  </data>
+  <data name="Update_UpToDate" xml:space="preserve">
+    <value>Update available: no — you are up to date</value>
+  </data>
+  <data name="Update_DownloadUrl" xml:space="preserve">
+    <value>Download URL    : {0}</value>
+  </data>
+  <data name="Update_CheckFailed" xml:space="preserve">
+    <value>Update check failed. Check your network connection.</value>
+  </data>
+  <data name="Update_NoDownloadUrl" xml:space="preserve">
+    <value>No download URL found in release assets. Visit the release page manually.</value>
+  </data>
+  <data name="Update_Downloading" xml:space="preserve">
+    <value>Downloading update {0}%...</value>
+  </data>
+  <data name="Update_DownloadComplete" xml:space="preserve">
+    <value>Download complete. Launching installer (UAC prompt may appear)...</value>
+  </data>
+  <data name="Update_DownloadFailed" xml:space="preserve">
+    <value>Download failed: {0}</value>
+  </data>
+  <data name="Update_LaunchFailed" xml:space="preserve">
+    <value>Failed to launch installer: {0}</value>
+  </data>
+  <data name="Update_Canceled" xml:space="preserve">
+    <value>Update download canceled.</value>
+  </data>
+</root>

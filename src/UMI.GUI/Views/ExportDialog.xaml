@@ -1,0 +1,330 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.Views.ExportDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:beh="clr-namespace:UMI.GUI.Behaviors"
+    Title="{helpers:Localize SequenceReviewer_ExportTitle}"
+    Width="460"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False">
+
+    <Window.Resources>
+        <!-- Compact radio-button style for Copy/Move selection -->
+        <Style x:Key="ExportRadioButton" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Margin" Value="0,0,16,0" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <!-- Compact CheckBox style -->
+        <Style x:Key="ExportCheckBox" TargetType="CheckBox">
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <!-- Ghost outline button: transparent bg, subtle border, hover brightens border -->
+        <Style x:Key="ExportGhostButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Bd"
+                            CornerRadius="{StaticResource RadiusButton}"
+                            Padding="{TemplateBinding Padding}"
+                            BorderBrush="{StaticResource BrushBorderSubtle}"
+                            BorderThickness="1"
+                            Background="Transparent">
+                            <ContentPresenter
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushBorder}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <!-- Shadow + rounded border — same pattern as AddCameraDialog -->
+    <Border CornerRadius="{StaticResource RadiusDialog}" BorderThickness="1" Margin="16">
+        <Border.Background>
+            <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{StaticResource ColorBorder}" />
+        </Border.BorderBrush>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                Direction="{StaticResource ShadowDialogDirection}"
+                Color="{StaticResource ColorShadow}"
+                Opacity="{StaticResource ShadowDialogOpacity}" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ── Header ── -->
+            <Border
+                Grid.Row="0"
+                Padding="20,16,20,12"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{StaticResource BrushBorderSubtle}"
+                beh:WindowDragBehavior.IsEnabled="True">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0">
+                        <TextBlock
+                            Text="{helpers:Localize SequenceReviewer_ExportTitle}"
+                            FontSize="{StaticResource FontSizeLarge}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushTextPrimary}" />
+                        <TextBlock
+                            Text="{Binding PhotoCountPreview}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            Margin="0,4,0,0" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CancelCommand}"
+                        Style="{StaticResource DialogCloseButton}" />
+                </Grid>
+            </Border>
+
+            <!-- ── Body ── -->
+            <StackPanel Grid.Row="1" Margin="20,16,20,8">
+
+                <!-- Action: Copy / Move -->
+                <TextBlock
+                    Text="{helpers:Localize SequenceReviewer_ExportAction}"
+                    Style="{StaticResource GroupHeaderText}"
+                    Margin="0,0,0,8" />
+
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,14">
+                    <RadioButton
+                        Style="{StaticResource ExportRadioButton}"
+                        Content="{helpers:Localize SequenceReviewer_ExportMove}"
+                        IsChecked="{Binding IsMove, Mode=TwoWay}" />
+                    <RadioButton
+                        Style="{StaticResource ExportRadioButton}"
+                        Content="{helpers:Localize SequenceReviewer_ExportCopy}"
+                        IsChecked="{Binding IsCopy, Mode=TwoWay}" />
+                </StackPanel>
+
+                <!-- Keep sequence folders checkbox -->
+                <CheckBox
+                    Style="{StaticResource ExportCheckBox}"
+                    Content="{helpers:Localize SequenceReviewer_ExportKeepSequences}"
+                    IsChecked="{Binding KeepSequences, Mode=TwoWay}"
+                    Margin="0,0,0,14" />
+
+                <!-- Divider -->
+                <Border
+                    Height="1"
+                    Background="{StaticResource BrushBorderSubtle}"
+                    Margin="0,0,0,14" />
+
+                <!-- Photos filter label -->
+                <TextBlock
+                    Text="{helpers:Localize SequenceReviewer_ExportTagFilter}"
+                    Style="{StaticResource GroupHeaderText}"
+                    Margin="0,0,0,8" />
+
+                <!-- Tag filter: three radio buttons -->
+                <StackPanel Orientation="Horizontal" Margin="0,0,0,12">
+                    <RadioButton
+                        Style="{StaticResource ExportRadioButton}"
+                        Content="{helpers:Localize SequenceReviewer_ExportFavoritesOnly}"
+                        IsChecked="{Binding SelectedTagFilter,
+                            Converter={StaticResource EnumToBool},
+                            ConverterParameter=FavoritesOnly,
+                            Mode=TwoWay}" />
+                    <RadioButton
+                        Style="{StaticResource ExportRadioButton}"
+                        Content="{helpers:Localize SequenceReviewer_ExportUntaggedOnly}"
+                        IsChecked="{Binding SelectedTagFilter,
+                            Converter={StaticResource EnumToBool},
+                            ConverterParameter=UntaggedOnly,
+                            Mode=TwoWay}" />
+                    <RadioButton
+                        Style="{StaticResource ExportRadioButton}"
+                        Content="{helpers:Localize SequenceReviewer_ExportAllExclTrash}"
+                        IsChecked="{Binding SelectedTagFilter,
+                            Converter={StaticResource EnumToBool},
+                            ConverterParameter=AllExclTrash,
+                            Mode=TwoWay}" />
+                </StackPanel>
+
+                <!-- Min. Rating row -->
+                <Grid Margin="0,0,0,14">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{helpers:Localize SequenceReviewer_ExportMinRating}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center"
+                        Margin="0,0,12,0" />
+
+                    <ComboBox
+                        Grid.Column="1"
+                        SelectedItem="{Binding MinRating, Mode=TwoWay}"
+                        Style="{StaticResource DarkComboBoxStyle}">
+                        <ComboBox.ItemsSource>
+                            <x:Array Type="{x:Type sys:Int32}"
+                                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
+                                <sys:Int32>0</sys:Int32>
+                                <sys:Int32>1</sys:Int32>
+                                <sys:Int32>2</sys:Int32>
+                                <sys:Int32>3</sys:Int32>
+                                <sys:Int32>4</sys:Int32>
+                                <sys:Int32>5</sys:Int32>
+                            </x:Array>
+                        </ComboBox.ItemsSource>
+                    </ComboBox>
+                </Grid>
+
+                <!-- Divider -->
+                <Border
+                    Height="1"
+                    Background="{StaticResource BrushBorderSubtle}"
+                    Margin="0,0,0,14" />
+
+                <!-- Destination folder -->
+                <TextBlock
+                    Text="{helpers:Localize SequenceReviewer_ExportDestination}"
+                    Style="{StaticResource GroupHeaderText}"
+                    Margin="0,0,0,8" />
+
+                <Grid Margin="0,0,0,4">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBox
+                        Grid.Column="0"
+                        Text="{Binding ExportPath, UpdateSourceTrigger=PropertyChanged}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Padding="8,5"
+                        Background="{StaticResource BrushBgSurface}"
+                        Foreground="{StaticResource BrushTextPrimary}"
+                        CaretBrush="{StaticResource BrushTextPrimary}"
+                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                        BorderThickness="1"
+                        Margin="0,0,8,0" />
+
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding BrowseCommand}"
+                        Content="{helpers:Localize SequenceReviewer_ExportBrowse}"
+                        Padding="12,5"
+                        Style="{StaticResource ExportGhostButton}" />
+                </Grid>
+
+            </StackPanel>
+
+            <!-- ── Footer ── -->
+            <Border
+                Grid.Row="2"
+                Padding="20,12"
+                BorderThickness="0,1,0,0"
+                BorderBrush="{StaticResource BrushBorderSubtle}">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <!-- Live count (repeated for footer visibility) -->
+                    <TextBlock
+                        Grid.Column="0"
+                        Text="{Binding PhotoCountPreview}"
+                        FontSize="{StaticResource FontSizeCaption}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        VerticalAlignment="Center" />
+
+                    <!-- Cancel -->
+                    <Button
+                        Grid.Column="1"
+                        Command="{Binding CancelCommand}"
+                        Content="{helpers:Localize SequenceReviewer_ExportCancel}"
+                        Padding="16,7"
+                        Margin="0,0,8,0"
+                        Style="{StaticResource ExportGhostButton}" />
+
+                    <!-- Export (primary action) -->
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding ExportCommand}"
+                        IsEnabled="{Binding CanExport}"
+                        Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource EditCamLinkButton}">
+                                <Setter Property="Padding" Value="16,7" />
+                            </Style>
+                        </Button.Style>
+                        <Button.Content>
+                            <StackPanel Orientation="Horizontal">
+                                <!-- Upload / export arrow-up icon -->
+                                <Path
+                                    Data="M21,15 V19 C21,20.1 20.1,21 19,21 H5 C3.9,21 3,20.1 3,19 V15 M17,8 L12,3 L7,8 M12,3 V15"
+                                    Stroke="{StaticResource BrushAction}"
+                                    StrokeThickness="2"
+                                    Width="11"
+                                    Height="11"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,6,0"
+                                    Opacity="{StaticResource OpacityHover}" />
+                                <TextBlock
+                                    Text="{helpers:Localize SequenceReviewer_Export}"
+                                    FontSize="{StaticResource FontSizeBody}"
+                                    FontWeight="SemiBold"
+                                    Foreground="{StaticResource BrushAction}"
+                                    Opacity="{StaticResource OpacityHover}"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button.Content>
+                    </Button>
+                </Grid>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

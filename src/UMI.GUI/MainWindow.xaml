@@ -1,0 +1,712 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:vm="clr-namespace:UMI.GUI.ViewModels"
+    xmlns:views="clr-namespace:UMI.GUI.Views"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:beh="clr-namespace:UMI.GUI.Behaviors"
+    Title="UMI — Universal Media Import"
+    Icon="pack://application:,,,/Assets/UMI_Icon.ico"
+    Width="900"
+    Height="650"
+    MinWidth="680"
+    MinHeight="480"
+    WindowStartupLocation="CenterScreen"
+    Style="{StaticResource WindowBase}"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ResizeMode="CanResizeWithGrip">
+
+    <Window.Resources>
+        <ResourceDictionary>
+            <ResourceDictionary.MergedDictionaries>
+                <ResourceDictionary Source="Views/CameraCard.xaml" />
+            </ResourceDictionary.MergedDictionaries>
+
+            <!-- Window control button style: 28x28 circle, transparent bg, icon stroke -->
+            <Style x:Key="WinCtrlButton" TargetType="Button">
+                <Setter Property="Width" Value="28" />
+                <Setter Property="Height" Value="28" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="Bd"
+                                Width="28" Height="28"
+                                CornerRadius="14"
+                                Background="Transparent">
+                                <ContentPresenter
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Close button: red hover -->
+            <Style x:Key="WinCtrlCloseButton" TargetType="Button" BasedOn="{StaticResource WinCtrlButton}">
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="Bd"
+                                Width="28" Height="28"
+                                CornerRadius="14"
+                                Background="Transparent">
+                                <Path
+                                    x:Name="CloseIcon"
+                                    Data="{StaticResource GeoClose}"
+                                    Fill="{StaticResource BrushTextMuted}"
+                                    Width="11" Height="11"
+                                    Stretch="Uniform"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource ColorErrorBorder}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter TargetName="CloseIcon" Property="Fill" Value="{StaticResource BrushTextPrimary}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+        </ResourceDictionary>
+    </Window.Resources>
+
+    <Window.InputBindings>
+        <KeyBinding Key="F1" Command="{Binding ShowContextHelpCommand}" />
+    </Window.InputBindings>
+
+    <!-- Root border: shadow, rounded corners, coloured background -->
+    <Border x:Name="RootBorder"
+            BorderThickness="1"
+            Margin="14">
+        <Border.Style>
+            <Style TargetType="Border">
+                <Setter Property="CornerRadius" Value="{StaticResource RadiusDialog}" />
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{StaticResource ColorBg}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderBrush">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{StaticResource ColorBorder}" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="Effect">
+                    <Setter.Value>
+                        <DropShadowEffect
+                            BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                            ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                            Direction="{StaticResource ShadowDialogDirection}"
+                            Color="{StaticResource ColorShadow}"
+                            Opacity="{StaticResource ShadowDialogOpacity}" />
+                    </Setter.Value>
+                </Setter>
+                <Style.Triggers>
+                    <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                        <Setter Property="CornerRadius" Value="0" />
+                        <Setter Property="Margin" Value="0" />
+                        <Setter Property="Effect" Value="{x:Null}" />
+                    </DataTrigger>
+                </Style.Triggers>
+            </Style>
+        </Border.Style>
+
+        <!-- Inner clip border: ensures content clips to rounded corners -->
+        <Border x:Name="ClipBorder"
+                ClipToBounds="True">
+            <Border.Style>
+                <Style TargetType="Border">
+                    <Setter Property="CornerRadius" Value="{StaticResource RadiusDialog}" />
+                    <Style.Triggers>
+                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                            <Setter Property="CornerRadius" Value="0" />
+                        </DataTrigger>
+                    </Style.Triggers>
+                </Style>
+            </Border.Style>
+
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <!-- ══════════════════ HEADER ══════════════════ -->
+                <Border Grid.Row="0"
+                        x:Name="HeaderBorder"
+                        beh:WindowDragBehavior.IsEnabled="True"
+                        MouseLeftButtonDown="TitleBar_MouseLeftButtonDown"
+                        BorderBrush="{StaticResource BrushBorderSubtle}"
+                        BorderThickness="0,0,0,1"
+                        Padding="20,16">
+                    <Border.Style>
+                        <Style TargetType="Border">
+                            <Setter Property="CornerRadius" Value="{StaticResource RadiusDialogTop}" />
+                            <Setter Property="Background">
+                                <Setter.Value>
+                                    <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                        <GradientStop Color="{StaticResource ColorHeaderGradientStart}" Offset="0" />
+                                        <GradientStop Color="{StaticResource ColorHeaderGradientEnd}" Offset="1" />
+                                    </LinearGradientBrush>
+                                </Setter.Value>
+                            </Setter>
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                    <Setter Property="CornerRadius" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Left: Logo -->
+                        <StackPanel Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center" Margin="0,0,28,0">
+                            <Ellipse Style="{StaticResource HeaderAccentDot}" />
+                            <TextBlock Style="{StaticResource AppTitleText}" Text="UMI" />
+                        </StackPanel>
+
+                        <!-- Center: Navigation tabs -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Bottom">
+
+                            <Button
+                                Content="{helpers:Localize MainTab_Import}"
+                                Command="{Binding NavigateToImportCommand}"
+                                Margin="0,0,24,0"
+                                Height="44">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource HeaderTabButton}">
+                                        <Setter Property="Tag" Value="Inactive" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedMainTabIndex}" Value="0">
+                                                <Setter Property="Tag" Value="Active" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button
+                                Content="{helpers:Localize MainTab_Process}"
+                                Command="{Binding NavigateToProcessCommand}"
+                                Margin="0,0,24,0"
+                                Height="44"
+                                Visibility="{Binding IsProcessTabVisible, Converter={StaticResource BoolToVisibility}}">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource HeaderTabButton}">
+                                        <Setter Property="Tag" Value="Inactive" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedMainTabIndex}" Value="1">
+                                                <Setter Property="Tag" Value="Active" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                            <Button
+                                Content="{helpers:Localize MainTab_Settings}"
+                                Command="{Binding NavigateToSettingsCommand}"
+                                Height="44">
+                                <Button.Style>
+                                    <Style TargetType="Button" BasedOn="{StaticResource HeaderTabButton}">
+                                        <Setter Property="Tag" Value="Inactive" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding SelectedMainTabIndex}" Value="2">
+                                                <Setter Property="Tag" Value="Active" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Button.Style>
+                            </Button>
+
+                        </StackPanel>
+
+                        <!-- Right: Camera count, mode selector, help, window controls -->
+                        <StackPanel Grid.Column="2" Orientation="Horizontal" VerticalAlignment="Center">
+
+                            <Border VerticalAlignment="Center"
+                                    Padding="12,5"
+                                    CornerRadius="14"
+                                    Margin="0,0,8,0">
+                                <Border.Background>
+                                    <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                </Border.Background>
+                                <TextBlock
+                                    Text="{Binding CameraCountText}"
+                                    FontSize="{StaticResource FontSizeSmall}"
+                                    Foreground="{StaticResource BrushTextSecondary}"
+                                    FontWeight="SemiBold" />
+                            </Border>
+
+                            <ComboBox
+                                Style="{StaticResource DarkComboBoxStyle}"
+                                ItemsSource="{Binding AppModeOptions}"
+                                SelectedItem="{Binding SelectedAppModeItem, Mode=TwoWay}"
+                                DisplayMemberPath="Label"
+                                Width="155"
+                                VerticalAlignment="Center"
+                                Margin="0,0,8,0"
+                                ToolTip="{helpers:Localize Tooltip_AppMode}" />
+
+                            <Button Style="{StaticResource AboutButtonStyle}"
+                                    Command="{Binding ShowHelpCommand}"
+                                    ToolTip="{helpers:Localize Help_TooltipButton}"
+                                    Margin="0,0,8,0" />
+
+                            <!-- Window control buttons: Minimize, Maximize/Restore, Close -->
+                            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" Margin="4,0,0,0">
+
+                                <!-- Minimize -->
+                                <Button Style="{StaticResource WinCtrlButton}"
+                                        Click="MinimizeButton_Click"
+                                        ToolTip="{helpers:Localize Common_Minimize}"
+                                        Margin="0,0,2,0">
+                                    <Path
+                                        Data="M5,12 H19"
+                                        Stroke="{StaticResource BrushTextMuted}"
+                                        StrokeThickness="1.8"
+                                        StrokeStartLineCap="Round"
+                                        StrokeEndLineCap="Round"
+                                        Width="14" Height="14"
+                                        Stretch="None"
+                                        HorizontalAlignment="Center"
+                                        VerticalAlignment="Center" />
+                                </Button>
+
+                                <!-- Maximize / Restore -->
+                                <Button x:Name="MaxRestoreButton"
+                                        Style="{StaticResource WinCtrlButton}"
+                                        Click="MaximizeButton_Click"
+                                        Margin="0,0,2,0">
+                                    <Button.ToolTip>
+                                        <ToolTip>
+                                            <TextBlock>
+                                                <TextBlock.Style>
+                                                    <Style TargetType="TextBlock">
+                                                        <Setter Property="Text" Value="Maximize" />
+                                                        <Style.Triggers>
+                                                            <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                                                <Setter Property="Text" Value="Restore" />
+                                                            </DataTrigger>
+                                                        </Style.Triggers>
+                                                    </Style>
+                                                </TextBlock.Style>
+                                            </TextBlock>
+                                        </ToolTip>
+                                    </Button.ToolTip>
+                                    <!-- Maximize icon (square outline) -->
+                                    <Grid Width="14" Height="14">
+                                        <!-- Normal: maximize square -->
+                                        <Path x:Name="MaximizeIcon"
+                                              Data="M3,3 H21 V21 H3 Z"
+                                              Stroke="{StaticResource BrushTextMuted}"
+                                              StrokeThickness="1.8"
+                                              Fill="Transparent"
+                                              StrokeStartLineCap="Round"
+                                              StrokeEndLineCap="Round"
+                                              StrokeLineJoin="Round"
+                                              Stretch="Uniform">
+                                            <Path.Style>
+                                                <Style TargetType="Path">
+                                                    <Setter Property="Visibility" Value="Visible" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                                            <Setter Property="Visibility" Value="Collapsed" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Path.Style>
+                                        </Path>
+                                        <!-- Maximized: restore (two overlapping squares) -->
+                                        <Canvas Width="14" Height="14">
+                                            <Canvas.Style>
+                                                <Style TargetType="Canvas">
+                                                    <Setter Property="Visibility" Value="Collapsed" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                                            <Setter Property="Visibility" Value="Visible" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </Canvas.Style>
+                                            <!-- Back square (offset top-right) -->
+                                            <Path Data="M4,0 H13 V9 H4 Z"
+                                                  Stroke="{StaticResource BrushTextMuted}"
+                                                  StrokeThickness="1.6"
+                                                  Fill="Transparent"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  StrokeLineJoin="Round"
+                                                  Canvas.Left="1" Canvas.Top="0" />
+                                            <!-- Front square (offset bottom-left) -->
+                                            <Path Data="M0,4 H9 V13 H0 Z"
+                                                  StrokeThickness="1.6"
+                                                  Fill="{StaticResource BrushBg}"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  StrokeLineJoin="Round"
+                                                  Canvas.Left="0" Canvas.Top="1">
+                                                <Path.Stroke>
+                                                    <SolidColorBrush Color="{StaticResource ColorBorder}" />
+                                                </Path.Stroke>
+                                            </Path>
+                                            <Path Data="M0,4 H9 V13 H0 Z"
+                                                  Stroke="{StaticResource BrushTextMuted}"
+                                                  StrokeThickness="1.6"
+                                                  Fill="Transparent"
+                                                  StrokeStartLineCap="Round"
+                                                  StrokeEndLineCap="Round"
+                                                  StrokeLineJoin="Round"
+                                                  Canvas.Left="0" Canvas.Top="1" />
+                                        </Canvas>
+                                    </Grid>
+                                </Button>
+
+                                <!-- Close -->
+                                <Button Style="{StaticResource WinCtrlCloseButton}"
+                                        Click="CloseButton_Click"
+                                        ToolTip="Close" />
+
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+
+                <!-- ══════════════════ UPDATE BANNER ══════════════════ -->
+                <Border Grid.Row="1"
+                        Background="{StaticResource BrushInfoBg}"
+                        BorderBrush="{StaticResource BrushInfoBorder}"
+                        BorderThickness="0,0,0,1"
+                        Padding="20,8"
+                        Visibility="{Binding IsUpdateBannerVisible, Converter={StaticResource BoolToVisibility}}">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto" />
+                            <RowDefinition Height="Auto" />
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <!-- Info-Icon + Text / Status -->
+                        <StackPanel Grid.Row="0" Grid.Column="0" Orientation="Horizontal" VerticalAlignment="Center">
+                            <Path Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M13,7H11V9H13V7M13,11H11V17H13V11Z"
+                                  Fill="{StaticResource BrushInfoText}"
+                                  Width="16" Height="16"
+                                  Stretch="Uniform"
+                                  VerticalAlignment="Center"
+                                  Margin="0,0,8,0">
+                                <Path.Style>
+                                    <Style TargetType="Path">
+                                        <Setter Property="Visibility" Value="Visible" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                <Setter Property="Visibility" Value="Collapsed" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </Path.Style>
+                            </Path>
+                            <TextBlock FontSize="{StaticResource FontSizeSmall}"
+                                       Foreground="{StaticResource BrushInfoText}"
+                                       VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <Setter Property="Text" Value="{Binding UpdateBannerText}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                <Setter Property="Text" Value="{Binding DownloadStatusText}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </StackPanel>
+
+                        <!-- Download / Cancel Button -->
+                        <Button Grid.Row="0" Grid.Column="1"
+                                Margin="0,0,8,0"
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryActionButton}">
+                                    <Setter Property="Command" Value="{Binding DownloadUpdateCommand}" />
+                                    <Setter Property="Foreground" Value="{StaticResource BrushInfoText}" />
+                                    <Setter Property="Padding" Value="12,4" />
+                                    <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                            <Setter Property="Command" Value="{Binding CancelDownloadCommand}" />
+                                            <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <TextBlock FontSize="{StaticResource FontSizeSmall}" VerticalAlignment="Center">
+                                <TextBlock.Style>
+                                    <Style TargetType="TextBlock">
+                                        <!-- Default = "Install" because the download starts
+                                             automatically after detection; the button only shows up
+                                             once a download is in flight (Cancel) or finished (Install). -->
+                                        <Setter Property="Text" Value="{helpers:Localize Update_Install}" />
+                                        <Setter Property="Foreground" Value="{StaticResource BrushInfoText}" />
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                                <Setter Property="Text" Value="{helpers:Localize Update_CancelDownload}" />
+                                                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </TextBlock.Style>
+                            </TextBlock>
+                        </Button>
+
+                        <!-- Later / Dismiss Button (hidden during download) -->
+                        <Button Grid.Row="0" Grid.Column="2"
+                                Command="{Binding DismissUpdateBannerCommand}"
+                                Margin="0,0,8,0"
+                                Cursor="Hand">
+                            <Button.Style>
+                                <Style TargetType="Button" BasedOn="{StaticResource SecondaryActionButton}">
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                                    <Setter Property="Padding" Value="12,4" />
+                                    <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+                                    <Style.Triggers>
+                                        <DataTrigger Binding="{Binding IsDownloading}" Value="True">
+                                            <Setter Property="Visibility" Value="Collapsed" />
+                                        </DataTrigger>
+                                    </Style.Triggers>
+                                </Style>
+                            </Button.Style>
+                            <TextBlock Text="{helpers:Localize Update_Later}"
+                                       FontSize="{StaticResource FontSizeSmall}"
+                                       Foreground="{StaticResource BrushTextMuted}" />
+                        </Button>
+
+                        <!-- Progress Bar (Row 1, visible only during download) -->
+                        <ProgressBar Grid.Row="1" Grid.Column="0" Grid.ColumnSpan="3"
+                                     Value="{Binding DownloadProgress, Mode=OneWay}"
+                                     Minimum="0" Maximum="1"
+                                     Height="{StaticResource ProgressBarHeightSlim}"
+                                     Margin="0,6,0,0"
+                                     Foreground="{StaticResource BrushInfoText}"
+                                     Background="Transparent"
+                                     BorderThickness="0"
+                                     Visibility="{Binding IsDownloading, Converter={StaticResource BoolToVisibility}}" />
+                    </Grid>
+                </Border>
+
+                <!-- ══════════════════ CONTENT ══════════════════ -->
+                <TabControl Grid.Row="2" Style="{StaticResource HeaderlessTabControlStyle}"
+                            SelectedIndex="{Binding SelectedMainTabIndex, Mode=TwoWay}">
+
+                    <TabItem Header="{helpers:Localize MainTab_Import}" Style="{StaticResource DarkTabItemStyle}">
+                        <views:ImportTab />
+                    </TabItem>
+
+                    <TabItem Header="{helpers:Localize MainTab_Process}" Style="{StaticResource DarkTabItemStyle}"
+                             Visibility="{Binding IsProcessTabVisible, Converter={StaticResource BoolToVisibility}}">
+                        <views:ProcessTab DataContext="{Binding ProcessViewModel}" />
+                    </TabItem>
+
+                    <TabItem Header="{helpers:Localize MainTab_Settings}" Style="{StaticResource DarkTabItemStyle}">
+                        <views:ConfigTab />
+                    </TabItem>
+
+                </TabControl>
+
+                <!-- ══════════════════ STATUS BAR ══════════════════ -->
+                <Border Grid.Row="3"
+                        x:Name="StatusBorder">
+                    <Border.Style>
+                        <Style TargetType="Border" BasedOn="{StaticResource StatusBarStyle}">
+                            <Setter Property="CornerRadius" Value="{StaticResource RadiusDialogBottom}" />
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding WindowState, RelativeSource={RelativeSource AncestorType=Window}}" Value="Maximized">
+                                    <Setter Property="CornerRadius" Value="0" />
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </Border.Style>
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="Auto" />
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+
+                        <StackPanel
+                            Grid.Column="0"
+                            Orientation="Horizontal"
+                            VerticalAlignment="Center"
+                            DataContext="{Binding WorkbenchViewModel}">
+
+                            <Border
+                                Style="{StaticResource WorkbenchPathPill}"
+                                MaxWidth="{StaticResource WorkbenchPathPillMaxWidthStatusBar}"
+                                Margin="0,0,6,0">
+                                <Border.ToolTip>
+                                    <StackPanel>
+                                        <TextBlock
+                                            Text="{Binding WorkbenchPath}"
+                                            FontFamily="{StaticResource FontMono}"
+                                            Foreground="{StaticResource BrushTextPrimary}" />
+
+                                        <TextBlock
+                                            Text="{Binding StatusMessage}"
+                                            FontSize="{StaticResource FontSizeCaption}"
+                                            Margin="0,4,0,0"
+                                            Visibility="{Binding StatusMessage, Converter={StaticResource StringToVisibility}}">
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Foreground" Value="{StaticResource BrushBadgeGps}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding IsStatusError}" Value="True">
+                                                            <Setter Property="Foreground" Value="{StaticResource BrushErrorText}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </StackPanel>
+                                </Border.ToolTip>
+                                <Grid>
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="Auto" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Ellipse
+                                        Grid.Column="0"
+                                        Width="6"
+                                        Height="6"
+                                        VerticalAlignment="Center"
+                                        Margin="0,0,7,0">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource BrushTextMuted}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding PathExists}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource BrushBadgeGps}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+
+                                    <TextBox
+                                        Grid.Column="1"
+                                        Text="{Binding WorkbenchPath, UpdateSourceTrigger=Explicit}"
+                                        Style="{StaticResource WorkbenchPathTextBox}"
+                                        KeyDown="WorkbenchPath_KeyDown"
+                                        LostFocus="WorkbenchPath_LostFocus" />
+                                </Grid>
+                            </Border>
+
+                            <Button
+                                Style="{StaticResource WorkbenchBrowseButton}"
+                                Command="{Binding BrowseCommand}"
+                                ToolTip="{helpers:Localize Tooltip_Workbench}">
+
+                                <Path
+                                    Data="M20,18H4V8H20M20,6H12L10,4H4C2.89,4 2,4.89 2,6V18A2,2 0 0,0 4,20H20A2,2 0 0,0 22,18V8C22,6.89 21.1,6 20,6Z"
+                                    Fill="{StaticResource BrushDrone}"
+                                    Width="12"
+                                    Height="12"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center" />
+                            </Button>
+
+                        </StackPanel>
+
+                        <TextBlock
+                            Grid.Column="1"
+                            Text=" · "
+                            Style="{StaticResource StatusText}"
+                            Margin="8,0" />
+
+                        <TextBlock
+                            Grid.Column="2"
+                            Text="{Binding AppVersion}"
+                            Style="{StaticResource StatusText}" />
+
+                        <TextBlock
+                            Grid.Column="3"
+                            Text=" · "
+                            Style="{StaticResource StatusText}"
+                            Margin="8,0" />
+
+                        <TextBlock
+                            Grid.Column="4"
+                            Text="{Binding CameraStatusText}"
+                            Style="{StaticResource StatusText}" />
+
+                        <Button
+                            Grid.Column="6"
+                            Style="{StaticResource WorkbenchSortToggleButton}"
+                            Command="{Binding WorkbenchViewModel.ToggleSortOrderCommand}">
+                            <Button.ToolTip>
+                                <StackPanel>
+                                    <TextBlock Text="{helpers:Localize Tooltip_SortOrder}" FontWeight="SemiBold" />
+                                    <TextBlock Text="{Binding WorkbenchViewModel.SortOrderDescription}" Margin="0,2,0,0" />
+                                </StackPanel>
+                            </Button.ToolTip>
+                            <StackPanel Orientation="Horizontal">
+                                <Path
+                                    Data="M3,13H15V11H3M3,6V8H21V6M3,18H9V16H3V18Z"
+                                    Fill="{StaticResource BrushTextOnAccent}"
+                                    Width="12"
+                                    Height="12"
+                                    Stretch="Uniform"
+                                    VerticalAlignment="Center"
+                                    Margin="0,0,6,0" />
+                                <TextBlock
+                                    Text="{Binding WorkbenchViewModel.SortOrderLabel}"
+                                    VerticalAlignment="Center" />
+                            </StackPanel>
+                        </Button>
+                    </Grid>
+                </Border>
+
+            </Grid>
+        </Border>
+    </Border>
+</Window>

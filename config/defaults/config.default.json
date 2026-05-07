@@ -1,0 +1,278 @@
+{
+  "$schema": "./config.schema.json",
+  "_umi_header": {
+    "type": "config",
+    "version": "2.1.0",
+    "schema_version": 1,
+    "created": "2026-02-16T13:30:00Z",
+    "modified": "2026-02-16T13:30:00Z",
+    "description": "UMI Default Configuration"
+  },
+  "version": "2.0",
+
+  "_comment": "UMI v2.0 - Template Configuration",
+  "_note": "Kopiere diese Datei nach 'config.json' und passe die Pfade an deine Umgebung an.",
+
+  "cameras": {
+    "GoPro11": {
+      "_comment": "GoPro Hero 11 Black - Action-Kamera mit GPS und Gyroflow",
+      "name": "GoPro Hero 11 Black",
+      "manufacturer": "GoPro",
+      "camera_type": "Action",
+      "enabled": true,
+
+      "features": {
+        "gps_injection": true,
+        "gyroflow": true,
+        "burst_detection": false,
+        "metadata_backup": true,
+        "lens_correction": false,
+        "eis_detection": true
+      },
+
+      "file_types": {
+        "video": [".mp4", ".mov"],
+        "photo": [".jpg", ".dng"]
+      },
+
+      "paths": {
+        "sd_source": "D:\\SDCards\\GoPro11"
+      },
+
+      "custom_settings": {
+        "gyroflow": {
+          "preset": "C:\\Tools\\Gyroflow\\Presets\\ActionCam_Default.gyroflow",
+          "output_folder": "Stabilized",
+          "gpu_device": "nvidia"
+        }
+      }
+    },
+
+    "MyDSLR": {
+      "_comment": "My DSLR Camera - Mirrorless mit Burst-Detection (Sport + Astro + Timelapse)",
+      "name": "My DSLR Camera",
+      "manufacturer": "Generic",
+      "camera_type": "Mirrorless",
+      "enabled": true,
+
+      "features": {
+        "gps_injection": false,
+        "gyroflow": false,
+        "burst_detection": true,
+        "metadata_backup": true,
+        "lens_correction": false
+      },
+
+      "file_types": {
+        "video": [".mp4"],
+        "photo": [".jpg", ".cr3"]
+      },
+
+      "paths": {
+        "sd_source": "D:\\SDCards\\MyDSLR"
+      },
+
+      "burst_detection_config": {
+        "enabled": true,
+        "active_profiles": ["Sport", "Astro", "Timelapse"],
+        "fallback_max_gap_seconds": 3.0,
+        "fallback_min_count": 3
+      }
+    },
+
+    "DroneX": {
+      "_comment": "My Drone - Drohne mit GPS",
+      "name": "My Drone",
+      "manufacturer": "DJI",
+      "camera_type": "Drone",
+      "enabled": true,
+
+      "features": {
+        "gps_injection": true,
+        "gyroflow": false,
+        "burst_detection": false,
+        "metadata_backup": true,
+        "lens_correction": false
+      },
+
+      "file_types": {
+        "video": [".mp4", ".mov"],
+        "photo": [".jpg", ".dng"]
+      },
+
+      "paths": {
+        "sd_source": "D:\\SDCards\\DroneX"
+      },
+
+      "custom_settings": {
+        "import_srt_sidecars": true
+      }
+    }
+  },
+
+  "global_paths": {
+    "workbench": "D:\\Workbench",
+    "projects": "D:\\Projects",
+    "gpx_source": "D:\\GPS\\GPX",
+
+    "tools": {
+      "exiftool": "tools/exiftool/exiftool.exe",
+      "gyroflow": "C:\\Tools\\Gyroflow\\Gyroflow.exe",
+      "ffprobe": null
+    },
+
+    "log_directory": "./logs"
+  },
+
+  "metadata_backup": {
+    "extension": ".meta.json",
+    "backup_fields": [
+      "CreateDate",
+      "ModifyDate",
+      "GPSLatitude",
+      "GPSLongitude",
+      "GPSAltitude",
+      "GPSDateTime",
+      "GPSTrack",
+      "GPSSpeed",
+      "GPSPosition",
+      "Make",
+      "Model",
+      "Duration"
+    ],
+    "restore_fields": [
+      "CreateDate",
+      "ModifyDate",
+      "GPSLatitude",
+      "GPSLongitude",
+      "GPSAltitude",
+      "GPSDateTime",
+      "GPSTrack",
+      "GPSSpeed",
+      "GPSPosition",
+      "Make",
+      "Model"
+    ]
+  },
+
+  "gps_processing": {
+    "optimization_enabled": true,
+    "time_buffer_seconds": 30,
+    "keep_optimized_gpx": true,
+    "create_srt_sidecar": false,
+    "create_racerender_gpx": false,
+    "min_points_threshold": 10,
+    "validation": {
+      "check_coordinates": true,
+      "lat_range": [-90, 90],
+      "lon_range": [-180, 180]
+    }
+  },
+
+  "gyroflow": {
+    "parallel_enabled": true,
+    "parallel_jobs": 3,
+    "auto_detect_cores": true,
+    "queue_strategy": "largest_first",
+    "timeout_minutes": 30
+  },
+
+  "verification": {
+    "enabled": true,
+    "checks": {
+      "video_integrity": true,
+      "metadata_backup": true,
+      "file_size": true
+    }
+  },
+
+  "duplicate_handling": {
+    "enabled": true,
+    "check_method": "filesize_and_date",
+    "action": "skip",
+    "time_tolerance_seconds": 1,
+    "rename_pattern": "{filename}_{counter}"
+  },
+
+  "lens_correction": {
+    "enabled": true,
+    "create_sidecar": true,
+    "profiles": {
+      "GoPro11": {
+        "profile": "GoPro11_Wide",
+        "type": "fisheye_correction",
+        "strength": 0.8
+      },
+      "DroneX": {
+        "profile": "DroneX_Standard",
+        "type": "standard",
+        "strength": 0.5
+      }
+    }
+  },
+
+  "archiving": {
+    "enabled": true,
+    "include_delivery_by_default": false,
+    "auto_cleanup_workbench": false,
+    "create_readme": true,
+    "project_structure": {
+      "raw": "RAW",
+      "delivery": "DELIVERY",
+      "edit": "EDIT",
+      "project": "_PROJECT"
+    }
+  },
+
+  "logging": {
+    "enabled": true,
+    "level": "INFO",
+    "console_output": true,
+    "file_output": true
+  },
+
+  "workflow": {
+    "make_clean": false,
+    "create_backup": true,
+    "dry_run": false,
+    "ignore_folders": [
+      "Stabilized",
+      "Gyroflow",
+      "Export",
+      "Rendered",
+      "Graded",
+      "Final",
+      "Delivery"
+    ]
+  },
+
+  "options": {
+    "gps": false,
+    "stabilize": false,
+    "dry_run": false,
+    "force": false,
+    "no_eis_sort": false
+  },
+
+  "layout": {
+    "_comment": "Steuert die Ordnerstruktur im Workbench",
+    "camera_folders": true,
+    "media_folders": "auto",
+    "sort_order": "camera_first"
+  },
+
+  "sd_cards": {
+    "_comment": "SD-Karten Registry - wird automatisch beim Import gefüllt",
+    "_example": {
+      "A4F2-8B31": {
+        "camera_id": "GoPro11",
+        "disk_serial": "SanDisk_12345678",
+        "size_bytes": 128849018880,
+        "label": "GOPRO_SD",
+        "model": "AC004",
+        "first_seen": "2026-02-15T14:30:00",
+        "last_seen": "2026-02-15T14:30:00"
+      }
+    }
+  }
+}

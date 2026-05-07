@@ -1,0 +1,82 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    name: Build & Release
+    runs-on: windows-latest
+    # Only build releases on the public repo. The dev repo also has this
+    # workflow file in the mirror snapshot, but tags pushed inside dev
+    # should not produce releases.
+    if: github.repository == 'dm7ds/Universal-Media-Import-v2'
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup .NET 8
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+
+      # ExifTool is a runtime dependency of UMI but lives outside this repo
+      # (Perl-based tool, ~30 MB). Pulled fresh on every release run; pinned
+      # version keeps builds reproducible.
+      - name: Download ExifTool
+        shell: pwsh
+        run: |
+          $version = '13.05'
+          $zipUrl  = "https://exiftool.org/exiftool-$version-64.zip"
+          $zipPath = Join-Path $env:RUNNER_TEMP 'exiftool.zip'
+          $extract = Join-Path $env:RUNNER_TEMP 'exiftool-extract'
+          Invoke-WebRequest $zipUrl -OutFile $zipPath
+          Expand-Archive $zipPath -DestinationPath $extract -Force
+          # The zip ships exiftool(-k).exe — rename to exiftool.exe and copy
+          # to tools/exiftool/ alongside the supporting Perl tree.
+          $extractedRoot = Get-ChildItem $extract -Directory | Select-Object -First 1
+          New-Item -ItemType Directory -Path tools/exiftool -Force | Out-Null
+          Copy-Item -Recurse -Force "$($extractedRoot.FullName)/*" tools/exiftool/
+          if (Test-Path 'tools/exiftool/exiftool(-k).exe') {
+            Move-Item -Force 'tools/exiftool/exiftool(-k).exe' 'tools/exiftool/exiftool.exe'
+          }
+
+      - name: Build Gate (0-tolerance for warnings)
+        run: dotnet build src/UMI.CLI/UMI.CLI.csproj -c Release -p:TreatWarningsAsErrors=true
+
+      # ── Slim Build ──
+      - name: Publish Slim
+        run: pwsh -File build.ps1 -Publish slim
+
+      - name: Zip Slim
+        run: Compress-Archive -Path publish\* -DestinationPath umi-slim.zip
+
+      # ── Portable Build ──
+      - name: Publish Portable
+        run: pwsh -File build.ps1 -Publish portable
+
+      - name: Zip Portable
+        run: Compress-Archive -Path publish\* -DestinationPath umi-portable.zip
+
+      # ── Installer Build ──
+      - name: Install Inno Setup
+        run: choco install innosetup -y --no-progress
+
+      - name: Build Installer
+        run: pwsh -File build.ps1 -Publish slim -Gui -Installer
+
+      # ── GitHub Release ──
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: ${{ github.ref_name }}
+          files: |
+            umi-slim.zip
+            umi-portable.zip
+            installer/Output/UMI_Setup_*.exe

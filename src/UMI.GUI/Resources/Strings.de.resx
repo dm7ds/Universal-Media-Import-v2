@@ -1,0 +1,2475 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+
+  <!-- ImportTab (existing) -->
+  <data name="ImportTab_SmartWatch" xml:space="preserve">
+    <value>Automatischer Import</value>
+  </data>
+  <data name="ImportTab_StopWatch" xml:space="preserve">
+    <value>Import stoppen</value>
+  </data>
+  <data name="ImportTab_QuickImport" xml:space="preserve">
+    <value>Schnell-Import</value>
+  </data>
+  <data name="ImportTab_PauseAll" xml:space="preserve">
+    <value>Alle pausieren</value>
+  </data>
+  <data name="ImportTab_ResumeAll" xml:space="preserve">
+    <value>Alle fortsetzen</value>
+  </data>
+  <data name="ImportTab_CancelAll" xml:space="preserve">
+    <value>Alle abbrechen</value>
+  </data>
+  <data name="ImportTab_Workbench" xml:space="preserve">
+    <value>Arbeitsordner</value>
+  </data>
+  <data name="ImportTab_BrowseFolder" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="ImportTab_SortOrder" xml:space="preserve">
+    <value>Sortierung</value>
+  </data>
+  <data name="ImportTab_CameraFirst" xml:space="preserve">
+    <value>Kamera zuerst</value>
+  </data>
+  <data name="ImportTab_TypeFirst" xml:space="preserve">
+    <value>Typ zuerst</value>
+  </data>
+  <data name="ImportTab_DateRange" xml:space="preserve">
+    <value>Datumsbereich</value>
+  </data>
+  <data name="ImportTab_Loading" xml:space="preserve">
+    <value>Konfiguration wird geladen...</value>
+  </data>
+  <data name="ImportTab_ConfigError" xml:space="preserve">
+    <value>Konfigurationsfehler</value>
+  </data>
+  <data name="ImportTab_EmptyState" xml:space="preserve">
+    <value>Keine Kameras konfiguriert.
+Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
+  </data>
+
+  <!-- Common -->
+  <data name="Common_Done" xml:space="preserve">
+    <value>Fertig</value>
+  </data>
+  <data name="Common_Error" xml:space="preserve">
+    <value>Fehler</value>
+  </data>
+  <data name="Common_Cancelled" xml:space="preserve">
+    <value>Abgebrochen</value>
+  </data>
+  <data name="Common_Saved" xml:space="preserve">
+    <value>Gespeichert</value>
+  </data>
+  <data name="Common_Scanning" xml:space="preserve">
+    <value>Suche nach Videos…</value>
+  </data>
+  <data name="Common_ProcessingVideos" xml:space="preserve">
+    <value>{0} Video(s) werden verarbeitet…</value>
+  </data>
+  <data name="Common_VideosProcessed" xml:space="preserve">
+    <value>{0} Video(s) verarbeitet</value>
+  </data>
+  <data name="Common_NoVideosFound" xml:space="preserve">
+    <value>Keine Videos im Arbeitsordner gefunden</value>
+  </data>
+  <data name="Common_FilesProcessed" xml:space="preserve">
+    <value>{0} Dateien verarbeitet</value>
+  </data>
+  <data name="Common_ErrorSaving" xml:space="preserve">
+    <value>Fehler beim Speichern: {0}</value>
+  </data>
+  <data name="Common_ErrorFormat" xml:space="preserve">
+    <value>Fehler: {0}</value>
+  </data>
+  <data name="Common_Minimize" xml:space="preserve">
+    <value>Minimieren</value>
+  </data>
+  <data name="Common_MaximizeRestore" xml:space="preserve">
+    <value>Maximieren/Wiederherstellen</value>
+  </data>
+
+  <!-- Finalize -->
+  <data name="Finalize_Title" xml:space="preserve">
+    <value>Exporte finalisieren</value>
+  </data>
+  <data name="Finalize_Description" xml:space="preserve">
+    <value>GPS-Daten und Metadaten in DaVinci Resolve Exporte injizieren</value>
+  </data>
+  <data name="Finalize_Scanning" xml:space="preserve">
+    <value>Suche nach exportierten Videos…</value>
+  </data>
+  <data name="Finalize_NoExports" xml:space="preserve">
+    <value>Keine exportierten Videos in postprocess/exported/ gefunden</value>
+  </data>
+  <data name="Finalize_FoundFiles" xml:space="preserve">
+    <value>{0} exportierte Datei(en) gefunden</value>
+  </data>
+  <data name="Finalize_FileProgress" xml:space="preserve">
+    <value>{0}/{1} Dateien</value>
+  </data>
+  <data name="Finalize_ResultWithFailures" xml:space="preserve">
+    <value>{0} finalisiert, {1} fehlgeschlagen</value>
+  </data>
+  <data name="Finalize_ResultSuccess" xml:space="preserve">
+    <value>{0} Datei(en) erfolgreich finalisiert</value>
+  </data>
+
+  <!-- Stabilize -->
+  <data name="Stabilize_Title" xml:space="preserve">
+    <value>Videos stabilisieren</value>
+  </data>
+  <data name="Stabilize_Description" xml:space="preserve">
+    <value>Gyroflow-Stabilisierung auf Videodateien anwenden</value>
+  </data>
+  <data name="Stabilize_ToggleDetectEis" xml:space="preserve">
+    <value>EIS erkennen</value>
+  </data>
+  <data name="Stabilize_QueueCancelled" xml:space="preserve">
+    <value>Warteschlange abgebrochen</value>
+  </data>
+
+  <!-- GPS -->
+  <data name="Gps_Title" xml:space="preserve">
+    <value>GPS-Injektion</value>
+  </data>
+  <data name="Gps_Description" xml:space="preserve">
+    <value>GPX-Tracks erstellen und optional GPS in Videos injizieren</value>
+  </data>
+  <data name="Gps_ToggleInject" xml:space="preserve">
+    <value>In Video injizieren</value>
+  </data>
+  <data name="Gps_NoEnabledVideos" xml:space="preserve">
+    <value>Keine GPS-fähigen Videos gefunden</value>
+  </data>
+
+  <!-- Restore Metadata -->
+  <data name="Restore_Title" xml:space="preserve">
+    <value>Metadaten wiederherstellen</value>
+  </data>
+  <data name="Restore_Description" xml:space="preserve">
+    <value>EXIF-Metadaten aus Backups in Videos wiederherstellen</value>
+  </data>
+  <data name="Restore_ToggleForce" xml:space="preserve">
+    <value>Überschreiben erzwingen</value>
+  </data>
+
+  <!-- Sort -->
+  <data name="Sort_Title" xml:space="preserve">
+    <value>Organisieren</value>
+  </data>
+  <data name="Sort_Description" xml:space="preserve">
+    <value>Dateien nach Datum sortieren und Fotoserien erkennen</value>
+  </data>
+  <data name="Sort_ToggleBurst" xml:space="preserve">
+    <value>Fotoserien erkennen</value>
+  </data>
+  <data name="Sort_NotAvailable" xml:space="preserve">
+    <value>In der GUI noch nicht verfügbar</value>
+  </data>
+
+  <!-- Statistics -->
+  <data name="Statistics_Title" xml:space="preserve">
+    <value>Arbeitsordner-Statistiken</value>
+  </data>
+  <data name="Statistics_Description" xml:space="preserve">
+    <value>Alle Videos scannen und Metadaten-Übersicht anzeigen</value>
+  </data>
+
+  <!-- Import -->
+  <data name="Import_Cancelled" xml:space="preserve">
+    <value>Import abgebrochen</value>
+  </data>
+  <data name="Import_Failed" xml:space="preserve">
+    <value>Import fehlgeschlagen</value>
+  </data>
+  <data name="Import_FileSummary" xml:space="preserve">
+    <value>{0} Dateien · {1} · {2}</value>
+  </data>
+  <data name="Import_MtpResultFiles" xml:space="preserve">
+    <value>{0} Dateien, {1} MB</value>
+  </data>
+  <data name="Import_MtpErrorFailed" xml:space="preserve">
+    <value>Fehler ({0} fehlgeschlagen)</value>
+  </data>
+  <data name="Import_MtpPhaseProgress" xml:space="preserve">
+    <value>{0} ({1}/{2})</value>
+  </data>
+  <data name="Import_MultiDriveSummary" xml:space="preserve">
+    <value>{0} Dateien · {1} ({2} Laufwerke)</value>
+  </data>
+  <data name="Import_NoLabel" xml:space="preserve">
+    <value>(Kein Label)</value>
+  </data>
+
+  <!-- Camera -->
+  <data name="Camera_Pause" xml:space="preserve">
+    <value>Pause</value>
+  </data>
+  <data name="Camera_Resume" xml:space="preserve">
+    <value>Fortsetzen</value>
+  </data>
+  <data name="Camera_NoDevices" xml:space="preserve">
+    <value>Keine Geräte zugewiesen</value>
+  </data>
+  <data name="Camera_FixedPathSource" xml:space="preserve">
+    <value>Fester Pfad</value>
+  </data>
+
+  <!-- Camera Groups -->
+  <data name="CameraGroup_Action" xml:space="preserve">
+    <value>Action-Kameras</value>
+  </data>
+  <data name="CameraGroup_Drone" xml:space="preserve">
+    <value>Drohnen</value>
+  </data>
+  <data name="CameraGroup_Mirrorless" xml:space="preserve">
+    <value>Spiegellose Kameras</value>
+  </data>
+  <data name="CameraGroup_DSLR" xml:space="preserve">
+    <value>DSLR-Kameras</value>
+  </data>
+  <data name="CameraGroup_Dashcam" xml:space="preserve">
+    <value>Dashcams</value>
+  </data>
+
+  <!-- Main -->
+  <data name="Main_CameraStatusText" xml:space="preserve">
+    <value>{0}/{1} Kameras aktiv</value>
+  </data>
+  <data name="Main_CameraGroupCount_Singular" xml:space="preserve">
+    <value>{0} Kamera</value>
+  </data>
+  <data name="Main_CameraGroupCount_Plural" xml:space="preserve">
+    <value>{0} Kameras</value>
+  </data>
+  <data name="Main_DeleteCameraConfirm" xml:space="preserve">
+    <value>Kamera '{0}' löschen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
+  <data name="Main_DeleteCameraTitle" xml:space="preserve">
+    <value>Kamera löschen</value>
+  </data>
+  <data name="Main_AppModeEasyDesc" xml:space="preserve">
+    <value>Einfach Dateien kopieren</value>
+  </data>
+  <data name="Main_AppModeStandardDesc" xml:space="preserve">
+    <value>Automatisch erkennen + umbenennen</value>
+  </data>
+  <data name="Main_AppModeAdvancedDesc" xml:space="preserve">
+    <value>Volle Kontrolle</value>
+  </data>
+
+  <!-- Tools -->
+  <data name="Tools_GpsPathSaved" xml:space="preserve">
+    <value>GPS-Track-Pfad gespeichert</value>
+  </data>
+  <data name="Tools_LogLevelSaved" xml:space="preserve">
+    <value>Log-Level gespeichert</value>
+  </data>
+  <data name="Tools_SelectGpsFolder" xml:space="preserve">
+    <value>GPS-Track-Ordner wählen</value>
+  </data>
+  <data name="Tools_AlreadyInstalledTitle" xml:space="preserve">
+    <value>Tool bereits installiert</value>
+  </data>
+  <data name="Tools_FoundExistingPath" xml:space="preserve">
+    <value>Vorhandene Installation gefunden — Pfad konfiguriert</value>
+  </data>
+  <data name="Tools_LanguageSaved" xml:space="preserve">
+    <value>Sprache gespeichert — Neustart erforderlich</value>
+  </data>
+
+  <!-- Devices -->
+  <data name="Devices_Removed" xml:space="preserve">
+    <value>Gerät entfernt</value>
+  </data>
+  <data name="Device_NoDrivesFound" xml:space="preserve">
+    <value>Keine Wechseldatentraeger gefunden — SD-Karte zuerst einlegen.</value>
+  </data>
+
+  <!-- Profiles -->
+  <data name="Profile_DeleteTitle" xml:space="preserve">
+    <value>Profil löschen</value>
+  </data>
+  <data name="Profile_CannotDeleteTitle" xml:space="preserve">
+    <value>Profil kann nicht geloescht werden</value>
+  </data>
+  <data name="BurstProfiles_DeleteProfile" xml:space="preserve">
+    <value>Dieses Profil löschen</value>
+  </data>
+
+  <!-- Wizard -->
+  <data name="Wizard_WelcomeTitle" xml:space="preserve">
+    <value>Willkommen</value>
+  </data>
+  <data name="Wizard_WelcomeDescription" xml:space="preserve">
+    <value>Wähle, wie du Universal Media Import nutzen möchtest.</value>
+  </data>
+  <data name="Wizard_WorkbenchTitle" xml:space="preserve">
+    <value>Arbeitsordner</value>
+  </data>
+  <data name="Wizard_WorkbenchDescription" xml:space="preserve">
+    <value>Wähle einen Ordner, in dem deine importierten Medien gespeichert werden.</value>
+  </data>
+  <data name="Wizard_SummaryDescription" xml:space="preserve">
+    <value>Prüfe deine Konfiguration vor Abschluss des Setups.</value>
+  </data>
+  <data name="Wizard_ConnectCamera" xml:space="preserve">
+    <value>Kamera anschließen oder SD-Karte einlegen...</value>
+  </data>
+
+  <!-- Burst -->
+  <data name="Burst_NewProfileDescription" xml:space="preserve">
+    <value>Neues Serienerkennungsprofil</value>
+  </data>
+
+  <!-- Source Detection Badges -->
+  <data name="SourceDetection_ViaUsb" xml:space="preserve">
+    <value>via USB</value>
+  </data>
+  <data name="SourceDetection_ViaExif" xml:space="preserve">
+    <value>via EXIF</value>
+  </data>
+  <data name="SourceDetection_ViaLabel" xml:space="preserve">
+    <value>via Label</value>
+  </data>
+  <data name="ProcessTab_Title" xml:space="preserve">
+    <value>Verarbeitung</value>
+  </data>
+  <data name="ProcessTab_DateRange" xml:space="preserve">
+    <value>Datumsbereich</value>
+  </data>
+  <data name="ProcessTab_ClearDateFilter" xml:space="preserve">
+    <value>Datumsfilter entfernen</value>
+  </data>
+  <data name="ProcessTab_Run" xml:space="preserve">
+    <value>Ausführen</value>
+  </data>
+  <data name="ProcessTab_RunTooltip" xml:space="preserve">
+    <value>Diese Aktion ausführen</value>
+  </data>
+  <data name="ProcessTab_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ProcessTab_CancelTooltip" xml:space="preserve">
+    <value>Diese Aktion abbrechen</value>
+  </data>
+  <data name="ProcessTab_DateRangeTooltip" xml:space="preserve">
+    <value>Verarbeitungs-Datumsfilter setzen</value>
+  </data>
+  <data name="ProcessTab_ProcessDateRange" xml:space="preserve">
+    <value>Verarbeitungs-Datumsbereich</value>
+  </data>
+  <data name="ProcessTab_DateHeader" xml:space="preserve">
+    <value>Datum</value>
+  </data>
+  <data name="ProcessTab_SourceHeader" xml:space="preserve">
+    <value>Quelle</value>
+  </data>
+  <data name="ProcessTab_FileHeader" xml:space="preserve">
+    <value>Datei</value>
+  </data>
+  <data name="ProcessTab_StatusHeader" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="ProcessTab_EisHeader" xml:space="preserve">
+    <value>EIS</value>
+  </data>
+  <data name="ProcessTab_GpsHeader" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="ProcessTab_BackupHeader" xml:space="preserve">
+    <value>Backup</value>
+  </data>
+  <data name="ProcessTab_IntegrityHeader" xml:space="preserve">
+    <value>Integrität</value>
+  </data>
+  <data name="ProcessTab_ShowDetails" xml:space="preserve">
+    <value>&#x25B8; Details anzeigen</value>
+  </data>
+  <data name="ProcessTab_HideDetails" xml:space="preserve">
+    <value>&#x25BE; Details ausblenden</value>
+  </data>
+  <data name="ProcessTab_GroupVideo" xml:space="preserve">
+    <value>Video Tools</value>
+  </data>
+  <data name="ProcessTab_GroupPhoto" xml:space="preserve">
+    <value>Foto Tools</value>
+  </data>
+  <data name="ProcessTab_GroupTools" xml:space="preserve">
+    <value>Nach dem Import</value>
+  </data>
+  <data name="BurstVis_Title" xml:space="preserve">
+    <value>BURST STUDIO</value>
+  </data>
+  <data name="BurstVis_Browse" xml:space="preserve">
+    <value>Durchsuchen</value>
+  </data>
+  <data name="BurstVis_Load" xml:space="preserve">
+    <value>Laden</value>
+  </data>
+  <data name="BurstVis_Profile" xml:space="preserve">
+    <value>Profil:</value>
+  </data>
+  <data name="BurstVis_Size" xml:space="preserve">
+    <value>Größe:</value>
+  </data>
+  <data name="BurstVis_SelectPhotos" xml:space="preserve">
+    <value>Fotos auswählen</value>
+  </data>
+  <data name="BurstVis_SelectPhotosTooltip" xml:space="preserve">
+    <value>Klicken für Auswahlmodus. Fotos auswählen um Burst-Regeln automatisch zu generieren.</value>
+  </data>
+  <data name="BurstVis_GeneratePreset" xml:space="preserve">
+    <value>Voreinstellung generieren</value>
+  </data>
+  <data name="BurstVis_Clear" xml:space="preserve">
+    <value>Leeren</value>
+  </data>
+  <data name="BurstVis_SelectionHint" xml:space="preserve">
+    <value>Fotos per Klick auswählen (oder Shift+Klick für Bereich), dann 'Voreinstellung generieren' in der Werkzeugleiste klicken.</value>
+  </data>
+  <data name="BurstVis_PresetPreview" xml:space="preserve">
+    <value>GENERIERTE VOREINSTELLUNGS-VORSCHAU</value>
+  </data>
+  <data name="BurstVis_AcceptSave" xml:space="preserve">
+    <value>Übernehmen &amp; Speichern</value>
+  </data>
+  <data name="BurstVis_Discard" xml:space="preserve">
+    <value>Verwerfen</value>
+  </data>
+  <data name="BurstVis_Edit" xml:space="preserve">
+    <value>Bearbeiten</value>
+  </data>
+  <data name="BurstVis_Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="BurstVis_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ToolsConfig_ExternalTools" xml:space="preserve">
+    <value>Externe Tools</value>
+  </data>
+  <data name="ToolsConfig_ExternalToolsDesc" xml:space="preserve">
+    <value>Pfade zu externen Programmen für Import und Nachbearbeitung konfigurieren.</value>
+  </data>
+  <data name="ToolsConfig_ExifTool" xml:space="preserve">
+    <value>ExifTool</value>
+  </data>
+  <data name="ToolsConfig_Required" xml:space="preserve">
+    <value>ERFORDERLICH</value>
+  </data>
+  <data name="ToolsConfig_ExifReadWrite" xml:space="preserve">
+    <value>EXIF Lesen/Schreiben</value>
+  </data>
+  <data name="ToolsConfig_NotConfiguredRequired" xml:space="preserve">
+    <value>Nicht konfiguriert — für Metadaten-Operationen erforderlich</value>
+  </data>
+  <data name="ToolsConfig_Default" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="ToolsConfig_ResetExifToolTooltip" xml:space="preserve">
+    <value>Auf mitgeliefertes ExifTool zurücksetzen</value>
+  </data>
+  <data name="ToolsConfig_Browse" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="ToolsConfig_Gyroflow" xml:space="preserve">
+    <value>Gyroflow</value>
+  </data>
+  <data name="ToolsConfig_Optional" xml:space="preserve">
+    <value>OPTIONAL</value>
+  </data>
+  <data name="ToolsConfig_VideoStabilization" xml:space="preserve">
+    <value>Videostabilisierung</value>
+  </data>
+  <data name="ToolsConfig_NotConfigured" xml:space="preserve">
+    <value>Nicht konfiguriert</value>
+  </data>
+  <data name="ToolsConfig_Install" xml:space="preserve">
+    <value>Installieren</value>
+  </data>
+  <data name="ToolsConfig_DownloadGyroflowTooltip" xml:space="preserve">
+    <value>Gyroflow automatisch herunterladen und installieren</value>
+  </data>
+  <data name="ToolsConfig_FFprobe" xml:space="preserve">
+    <value>FFprobe</value>
+  </data>
+  <data name="ToolsConfig_MediaProbe" xml:space="preserve">
+    <value>Medienanalyse / Codec-Info</value>
+  </data>
+  <data name="ToolsConfig_DownloadFFprobeTooltip" xml:space="preserve">
+    <value>FFprobe automatisch herunterladen und installieren</value>
+  </data>
+  <data name="ToolsConfig_GpsTracks" xml:space="preserve">
+    <value>GPS-Tracks</value>
+  </data>
+  <data name="ToolsConfig_GpxSourceFolder" xml:space="preserve">
+    <value>GPX-Quellordner</value>
+  </data>
+  <data name="ToolsConfig_Options" xml:space="preserve">
+    <value>Optionen</value>
+  </data>
+  <data name="ToolsConfig_OptionsDesc" xml:space="preserve">
+    <value>Allgemeine Import-Optionen und Protokollierung.</value>
+  </data>
+  <data name="ToolsConfig_LogLevel" xml:space="preserve">
+    <value>Protokollierung</value>
+  </data>
+  <data name="ToolsConfig_LogLevelDesc" xml:space="preserve">
+    <value>Neustart nötig zum Übernehmen</value>
+  </data>
+  <data name="ToolsConfig_LogLevel_Off" xml:space="preserve">
+    <value>Kein Log</value>
+  </data>
+  <data name="ToolsConfig_LogLevel_Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="ToolsConfig_LogLevel_Debug" xml:space="preserve">
+    <value>Debug</value>
+  </data>
+  <data name="RuleEditor_RuleBuilder" xml:space="preserve">
+    <value>REGEL-EDITOR</value>
+  </data>
+  <data name="RuleEditor_Logic" xml:space="preserve">
+    <value>Logik</value>
+  </data>
+  <data name="RuleEditor_ExifField" xml:space="preserve">
+    <value>EXIF-Feld</value>
+  </data>
+  <data name="RuleEditor_Op" xml:space="preserve">
+    <value>Op</value>
+  </data>
+  <data name="RuleEditor_Value" xml:space="preserve">
+    <value>Wert</value>
+  </data>
+  <data name="RuleEditor_NoRules" xml:space="preserve">
+    <value>Keine Regeln definiert — alle Fotos werden berücksichtigt.</value>
+  </data>
+  <data name="RuleEditor_AddRule" xml:space="preserve">
+    <value>Regel hinzufügen</value>
+  </data>
+  <data name="RuleEditor_AddRuleTooltip" xml:space="preserve">
+    <value>Leere Regelzeile hinzufügen</value>
+  </data>
+  <data name="RuleEditor_Grouping" xml:space="preserve">
+    <value>GRUPPIERUNG</value>
+  </data>
+  <data name="RuleEditor_MaxGap" xml:space="preserve">
+    <value>Max. Abstand (s):</value>
+  </data>
+  <data name="RuleEditor_MaxGapTooltip" xml:space="preserve">
+    <value>Maximaler Abstand in Sekunden zwischen Fotos in einer Sequenz</value>
+  </data>
+  <data name="RuleEditor_MinCount" xml:space="preserve">
+    <value>Min. Anzahl:</value>
+  </data>
+  <data name="RuleEditor_MinCountTooltip" xml:space="preserve">
+    <value>Minimale Anzahl an Fotos für eine Burst-Sequenz</value>
+  </data>
+  <data name="RuleEditor_AdaptiveThreshold" xml:space="preserve">
+    <value>Adaptiver Schwellwert</value>
+  </data>
+  <data name="RuleEditor_AdaptiveThresholdTooltip" xml:space="preserve">
+    <value>Wenn aktiviert, wird der Durchschnitt × Multiplikator als Schwellwert genutzt (begrenzt durch Max. Abstand)</value>
+  </data>
+  <data name="RuleEditor_Multiplier" xml:space="preserve">
+    <value>Multiplikator:</value>
+  </data>
+  <data name="RuleEditor_MultiplierTooltip" xml:space="preserve">
+    <value>Durchschnittlichen Abstand mit diesem Wert multiplizieren</value>
+  </data>
+  <data name="RuleEditor_StableFields" xml:space="preserve">
+    <value>STABILE FELDER</value>
+  </data>
+  <data name="RuleEditor_StableFieldsDesc" xml:space="preserve">
+    <value>Felder die innerhalb einer Sequenz konstant sein müssen (z.B. gleiche Brennweite)</value>
+  </data>
+  <data name="RuleEditor_StableFieldTooltip" xml:space="preserve">
+    <value>EXIF-Feld auswählen das innerhalb von Sequenzen konstant sein muss</value>
+  </data>
+  <data name="RuleEditor_Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="RuleEditor_ExifFieldTooltip" xml:space="preserve">
+    <value>EXIF-Feldname (z.B. ContinuousDrive, ISO)</value>
+  </data>
+  <data name="RuleEditor_NumericThresholdTooltip" xml:space="preserve">
+    <value>Numerischer Schwellwert</value>
+  </data>
+  <data name="RuleEditor_RemoveRuleTooltip" xml:space="preserve">
+    <value>Diese Regel entfernen</value>
+  </data>
+  <data name="ProfilesTab_Title" xml:space="preserve">
+    <value>Kameratyp-Profile</value>
+  </data>
+  <data name="ProfilesTab_Desc" xml:space="preserve">
+    <value>Standard-Features und Aussehen für jeden Kameratyp bearbeiten.</value>
+  </data>
+  <data name="ProfilesTab_Color" xml:space="preserve">
+    <value>Farbe:</value>
+  </data>
+  <data name="ProfilesTab_Feature" xml:space="preserve">
+    <value>Feature</value>
+  </data>
+  <data name="ProfilesTab_Available" xml:space="preserve">
+    <value>Verfügbar</value>
+  </data>
+  <data name="ProfilesTab_DefaultCol" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="ProfilesTab_OnCard" xml:space="preserve">
+    <value>Auf Karte</value>
+  </data>
+  <data name="ProfilesTab_AssignedCameras" xml:space="preserve">
+    <value>Zugewiesene Kameras</value>
+  </data>
+  <data name="ProfilesTab_NoCameras" xml:space="preserve">
+    <value>Keine Kameras zugewiesen</value>
+  </data>
+  <data name="ProfilesTab_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="ProfilesTab_Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="ProfilesTab_SaveDirty" xml:space="preserve">
+    <value>Speichern *</value>
+  </data>
+  <data name="ProfilesTab_ExpandCollapse" xml:space="preserve">
+    <value>Auf-/Zuklappen</value>
+  </data>
+  <data name="ProfilesTab_TypeNameTooltip" xml:space="preserve">
+    <value>Profiltypname</value>
+  </data>
+  <data name="ProfilesTab_EditTooltip" xml:space="preserve">
+    <value>Dieses Profil bearbeiten</value>
+  </data>
+  <data name="ProfilesTab_SaveTooltip" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="ProfilesTab_CancelTooltip" xml:space="preserve">
+    <value>Abbrechen — ungespeicherte Änderungen verwerfen</value>
+  </data>
+  <data name="ProfilesTab_DescriptionTooltip" xml:space="preserve">
+    <value>Kameratyp-Beschreibung</value>
+  </data>
+  <data name="ProfilesTab_ColorTooltip" xml:space="preserve">
+    <value>Hex-Farbe (z.B. #f97316)</value>
+  </data>
+  <data name="ProfilesTab_AvailableTooltip" xml:space="preserve">
+    <value>Dieses Feature für Kameras dieses Typs erlauben</value>
+  </data>
+  <data name="ProfilesTab_DefaultTooltip" xml:space="preserve">
+    <value>Dieses Feature standardmäßig für neue Kameras dieses Typs aktivieren</value>
+  </data>
+  <data name="ProfilesTab_OnCardTooltip" xml:space="preserve">
+    <value>Dieses Feature auf der eingeklappten Kamerakarte anzeigen</value>
+  </data>
+  <data name="ProfilesTab_AvailableColTooltip" xml:space="preserve">
+    <value>Dieses Feature für Kameras dieses Typs erlauben</value>
+  </data>
+  <data name="ProfilesTab_DefaultColTooltip" xml:space="preserve">
+    <value>Standardmäßig für Kameras dieses Typs aktivieren</value>
+  </data>
+  <data name="ProfilesTab_OnCardColTooltip" xml:space="preserve">
+    <value>Auf eingeklappter Kamerakarte anzeigen</value>
+  </data>
+  <data name="ImportTab_WatchTooltip" xml:space="preserve">
+    <value>Dateisystem-Überwachung starten</value>
+  </data>
+  <data name="ImportTab_StopWatchTooltip" xml:space="preserve">
+    <value>Dateisystem-Überwachung stoppen</value>
+  </data>
+  <data name="ImportTab_QuickImportTooltip" xml:space="preserve">
+    <value>Einmaliger Import aller erkannten Medien</value>
+  </data>
+  <data name="ImportTab_PauseResumeTooltip" xml:space="preserve">
+    <value>Alle aktiven Imports pausieren oder fortsetzen</value>
+  </data>
+  <data name="ImportTab_CancelAllTooltip" xml:space="preserve">
+    <value>Alle aktiven Imports abbrechen</value>
+  </data>
+  <data name="ImportTab_DateFilterTooltip" xml:space="preserve">
+    <value>Import-Datumsfilter setzen</value>
+  </data>
+  <data name="ImportTab_ClearDateFilter" xml:space="preserve">
+    <value>Datumsfilter entfernen</value>
+  </data>
+  <data name="ImportTab_ImportDateRange" xml:space="preserve">
+    <value>Import-Datumsbereich</value>
+  </data>
+  <data name="AddDevice_Title" xml:space="preserve">
+    <value>Gerät hinzufügen</value>
+  </data>
+  <data name="AddDevice_Desc" xml:space="preserve">
+    <value>Gerät anschließen und Kamera für die Zuordnung auswählen.</value>
+  </data>
+  <data name="AddDevice_SdCards" xml:space="preserve">
+    <value>SD-KARTEN</value>
+  </data>
+  <data name="AddDevice_SdCardsLive" xml:space="preserve">
+    <value>Live — Karte einstecken um sie hier zu sehen</value>
+  </data>
+  <data name="AddDevice_Registered" xml:space="preserve">
+    <value>Registriert</value>
+  </data>
+  <data name="AddDevice_NoCameraFloating" xml:space="preserve">
+    <value>(Keine Kamera — frei zuordenbar)</value>
+  </data>
+  <data name="AddDevice_Register" xml:space="preserve">
+    <value>Registrieren</value>
+  </data>
+  <data name="AddDevice_NoSdCards" xml:space="preserve">
+    <value>Keine Wechseldatenträger erkannt. SD-Karte oder USB-Laufwerk anschließen.</value>
+  </data>
+  <data name="AddDevice_MtpDevices" xml:space="preserve">
+    <value>MTP-GERÄTE</value>
+  </data>
+  <data name="AddDevice_Refresh" xml:space="preserve">
+    <value>Aktualisieren</value>
+  </data>
+  <data name="AddDevice_NoMtpDevices" xml:space="preserve">
+    <value>Keine MTP-Geräte erkannt. Gerät per USB verbinden und Aktualisieren klicken.</value>
+  </data>
+  <data name="AddDevice_FixedPath" xml:space="preserve">
+    <value>FESTER PFAD</value>
+  </data>
+  <data name="AddDevice_SelectFolder" xml:space="preserve">
+    <value>Quellordner auswählen...</value>
+  </data>
+  <data name="AddDevice_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AddCamera_Title" xml:space="preserve">
+    <value>Kamera hinzufügen</value>
+  </data>
+  <data name="AddCamera_Desc" xml:space="preserve">
+    <value>Name und ID eingeben, dann ein Profil auswählen.</value>
+  </data>
+  <data name="AddCamera_Identity" xml:space="preserve">
+    <value>KAMERA-IDENTITÄT</value>
+  </data>
+  <data name="AddCamera_CameraId" xml:space="preserve">
+    <value>Kamera-ID</value>
+  </data>
+  <data name="AddCamera_DisplayName" xml:space="preserve">
+    <value>Anzeigename</value>
+  </data>
+  <data name="AddCamera_DisplayNameHint" xml:space="preserve">
+    <value>Optional — wird bei leerem Feld auf Kamera-ID gesetzt.</value>
+  </data>
+  <data name="AddCamera_Profile" xml:space="preserve">
+    <value>KAMERA-PROFIL</value>
+  </data>
+  <data name="AddCamera_NoProfiles" xml:space="preserve">
+    <value>Keine Kameraprofile gefunden. Sicherstellen dass Presets/types/*.umi Dateien installiert sind.</value>
+  </data>
+  <data name="AddCamera_AssignSdCard" xml:space="preserve">
+    <value>SD-KARTE ZUWEISEN</value>
+  </data>
+  <data name="AddCamera_AssignHint" xml:space="preserve">
+    <value>Optional — bei Erstellung zuweisen</value>
+  </data>
+  <data name="AddCamera_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="AddCamera_AddCamera" xml:space="preserve">
+    <value>Kamera hinzufügen</value>
+  </data>
+  <data name="FloatingCard_Title" xml:space="preserve">
+    <value>Kamera auswählen</value>
+  </data>
+  <data name="FloatingCard_WhichCamera" xml:space="preserve">
+    <value>Für welche Kamera soll diese Karte importiert werden?</value>
+  </data>
+  <data name="FloatingCard_MultipleUsed" xml:space="preserve">
+    <value>Diese frei zuordenbare Karte wurde mit mehreren Kameras verwendet.</value>
+  </data>
+  <data name="FloatingCard_Unknown" xml:space="preserve">
+    <value>UNBEKANNT</value>
+  </data>
+  <data name="FloatingCard_Floating" xml:space="preserve">
+    <value>FREI</value>
+  </data>
+  <data name="FloatingCard_ExifPrefix" xml:space="preserve">
+    <value>EXIF: </value>
+  </data>
+  <data name="FloatingCard_CameraLabel" xml:space="preserve">
+    <value>KAMERA</value>
+  </data>
+  <data name="FloatingCard_Exif" xml:space="preserve">
+    <value>EXIF</value>
+  </data>
+  <data name="FloatingCard_AlwaysUse" xml:space="preserve">
+    <value>Immer diese Kamera für diese Karte verwenden</value>
+  </data>
+  <data name="FloatingCard_RegisterFloating" xml:space="preserve">
+    <value>Als frei zuordenbare Karte registrieren (jedes Mal fragen)</value>
+  </data>
+  <data name="FloatingCard_Skip" xml:space="preserve">
+    <value>Überspringen</value>
+  </data>
+  <data name="FloatingCard_Import" xml:space="preserve">
+    <value>Importieren</value>
+  </data>
+  <data name="CardMgmt_Title" xml:space="preserve">
+    <value>Speichergeräte</value>
+  </data>
+  <data name="CardMgmt_SdCards" xml:space="preserve">
+    <value>SD-KARTEN</value>
+  </data>
+  <data name="CardMgmt_NoSdCards" xml:space="preserve">
+    <value>Keine SD-Karten dieser Kamera zugewiesen</value>
+  </data>
+  <data name="CardMgmt_VolumeSerial" xml:space="preserve">
+    <value>Datenträger-Seriennummer</value>
+  </data>
+  <data name="CardMgmt_LabelOptional" xml:space="preserve">
+    <value>Bezeichnung (optional)</value>
+  </data>
+  <data name="CardMgmt_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="CardMgmt_Add" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="CardMgmt_AddCard" xml:space="preserve">
+    <value>+ Karte hinzufügen...</value>
+  </data>
+  <data name="CardMgmt_MtpDevices" xml:space="preserve">
+    <value>MTP-GERÄTE</value>
+  </data>
+  <data name="CardMgmt_NoMtpDevices" xml:space="preserve">
+    <value>Keine MTP-Geräte dieser Kamera zugewiesen</value>
+  </data>
+  <data name="CardMgmt_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="ConfigTab_Cameras" xml:space="preserve">
+    <value>Kameras</value>
+  </data>
+  <data name="ConfigTab_CamerasHeader" xml:space="preserve">
+    <value>Kameras</value>
+  </data>
+  <data name="ConfigTab_CamerasDesc" xml:space="preserve">
+    <value>Kamerakonfigurationen und Feature-Einstellungen verwalten.</value>
+  </data>
+  <data name="ConfigTab_RestartWizard" xml:space="preserve">
+    <value>Setup-Assistenten neu starten</value>
+  </data>
+  <data name="ConfigTab_AddCamera" xml:space="preserve">
+    <value>Kamera hinzufügen</value>
+  </data>
+  <data name="ConfigTab_Profiles" xml:space="preserve">
+    <value>Profile</value>
+  </data>
+  <data name="ConfigTab_Devices" xml:space="preserve">
+    <value>Geräte</value>
+  </data>
+  <data name="ConfigTab_Tools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="ConfigTab_Burst" xml:space="preserve">
+    <value>Burst</value>
+  </data>
+  <data name="DateFilter_Today" xml:space="preserve">
+    <value>Heute</value>
+  </data>
+  <data name="DateFilter_Yesterday" xml:space="preserve">
+    <value>Gestern</value>
+  </data>
+  <data name="DateFilter_From" xml:space="preserve">
+    <value>Von</value>
+  </data>
+  <data name="DateFilter_To" xml:space="preserve">
+    <value>Bis</value>
+  </data>
+  <data name="DateFilter_FromFormat" xml:space="preserve">
+    <value>ab {0}</value>
+  </data>
+  <data name="DateFilter_ToFormat" xml:space="preserve">
+    <value>bis {0}</value>
+  </data>
+  <data name="DateFilter_RangeFormat" xml:space="preserve">
+    <value>{0} – {1}</value>
+  </data>
+  <data name="DateFilter_TimeTooltip" xml:space="preserve">
+    <value>Uhrzeit (HH:mm)</value>
+  </data>
+  <data name="DateFilter_Clear" xml:space="preserve">
+    <value>Filter entfernen</value>
+  </data>
+  <data name="Wizard_Title" xml:space="preserve">
+    <value>Setup-Assistent</value>
+  </data>
+  <data name="Wizard_Subtitle" xml:space="preserve">
+    <value>Universal Media Import — Ersteinrichtung</value>
+  </data>
+  <data name="Wizard_Back" xml:space="preserve">
+    <value>Zurück</value>
+  </data>
+  <data name="Wizard_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Wizard_Next" xml:space="preserve">
+    <value>Weiter</value>
+  </data>
+  <data name="Wizard_Finish" xml:space="preserve">
+    <value>Setup abschließen</value>
+  </data>
+  <data name="About_AppName" xml:space="preserve">
+    <value>Universal Media Import</value>
+  </data>
+  <data name="About_Description" xml:space="preserve">
+    <value>Automatisierter Medienimport und -organisation für Action-Kameras, Drohnen und mehr.</value>
+  </data>
+  <data name="About_Copyright" xml:space="preserve">
+    <value>Copyright by Dirk Schelhasse</value>
+  </data>
+  <data name="About_LicensedUnder" xml:space="preserve">
+    <value>Lizenziert unter </value>
+  </data>
+  <data name="About_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Wizard_WorkbenchLabel" xml:space="preserve">
+    <value>Arbeitsordner</value>
+  </data>
+  <data name="Wizard_WorkbenchHint" xml:space="preserve">
+    <value>Hier werden die importierten Medien organisiert.</value>
+  </data>
+  <data name="Wizard_WorkbenchBrowse" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="Wizard_InsertSdCard" xml:space="preserve">
+    <value>SD-Karte der Kamera einlegen</value>
+  </data>
+  <data name="Wizard_WaitingSd" xml:space="preserve">
+    <value>Warte auf SD-Karte...</value>
+  </data>
+  <data name="Wizard_SkipSd" xml:space="preserve">
+    <value>Überspringen — Kameras später manuell hinzufügen</value>
+  </data>
+  <data name="Wizard_DetectedDrive" xml:space="preserve">
+    <value>Erkanntes Laufwerk</value>
+  </data>
+  <data name="Wizard_ScanningExif" xml:space="preserve">
+    <value>Mediendateien werden nach EXIF-Daten durchsucht...</value>
+  </data>
+  <data name="Wizard_CameraConfirmLabel" xml:space="preserve">
+    <value>ERKANNTE KAMERA</value>
+  </data>
+  <data name="Wizard_CameraName" xml:space="preserve">
+    <value>Kameraname</value>
+  </data>
+  <data name="Wizard_CameraType" xml:space="preserve">
+    <value>Kameratyp</value>
+  </data>
+  <data name="Wizard_CameraId" xml:space="preserve">
+    <value>Kamera-ID</value>
+  </data>
+  <data name="Wizard_ConfirmCamera" xml:space="preserve">
+    <value>Kamera bestätigen</value>
+  </data>
+  <data name="Wizard_ChangeName" xml:space="preserve">
+    <value>Name oder Typ vor der Bestätigung ändern.</value>
+  </data>
+  <data name="Wizard_MoreCameras" xml:space="preserve">
+    <value>Möchtest du weitere Kameras hinzufügen?</value>
+  </data>
+  <data name="Wizard_YesAddMore" xml:space="preserve">
+    <value>Ja — nächste SD-Karte einlegen</value>
+  </data>
+  <data name="Wizard_NoDone" xml:space="preserve">
+    <value>Nein — alle Kameras hinzugefügt</value>
+  </data>
+  <data name="Wizard_ToolsTitle" xml:space="preserve">
+    <value>EXTERNE TOOLS</value>
+  </data>
+  <data name="Wizard_ToolsHint" xml:space="preserve">
+    <value>UMI verwendet externe Tools für einige Aufgaben. Du kannst sie jetzt oder später in den Einstellungen konfigurieren.</value>
+  </data>
+  <data name="Wizard_ExifTool" xml:space="preserve">
+    <value>ExifTool</value>
+  </data>
+  <data name="Wizard_ExifToolRequired" xml:space="preserve">
+    <value>Erforderlich</value>
+  </data>
+  <data name="Wizard_ExifToolDesc" xml:space="preserve">
+    <value>Liest und schreibt EXIF-Metadaten</value>
+  </data>
+  <data name="Wizard_Gyroflow" xml:space="preserve">
+    <value>Gyroflow</value>
+  </data>
+  <data name="Wizard_GyroflowOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="Wizard_GyroflowDesc" xml:space="preserve">
+    <value>Stabilisiert Action-Kamera-Videos</value>
+  </data>
+  <data name="Wizard_FFprobe" xml:space="preserve">
+    <value>FFprobe</value>
+  </data>
+  <data name="Wizard_FFprobeOptional" xml:space="preserve">
+    <value>Optional</value>
+  </data>
+  <data name="Wizard_FFprobeDesc" xml:space="preserve">
+    <value>Medien-Codec-Analyse</value>
+  </data>
+  <data name="Wizard_BrowseTool" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="Wizard_AutoDetected" xml:space="preserve">
+    <value>Automatisch erkannt</value>
+  </data>
+  <data name="Wizard_GpsTitle" xml:space="preserve">
+    <value>GPS-TRACKS</value>
+  </data>
+  <data name="Wizard_GpsHint" xml:space="preserve">
+    <value>Wenn du GPS-Tracks aufzeichnest (z.B. mit einer Handy-App), kann UMI Koordinaten in deine Mediendateien injizieren.</value>
+  </data>
+  <data name="Wizard_GpsFolder" xml:space="preserve">
+    <value>GPX-Track-Ordner</value>
+  </data>
+  <data name="Wizard_GpsBrowse" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="Wizard_GpsSkip" xml:space="preserve">
+    <value>Überspringen — Ich nutze keine GPS-Tracks</value>
+  </data>
+  <data name="Wizard_SummaryTitle" xml:space="preserve">
+    <value>SETUP-ZUSAMMENFASSUNG</value>
+  </data>
+  <data name="Wizard_SummaryHint" xml:space="preserve">
+    <value>Konfiguration überprüfen. Du kannst alles später in den Einstellungen ändern.</value>
+  </data>
+  <data name="Wizard_SummaryMode" xml:space="preserve">
+    <value>Modus</value>
+  </data>
+  <data name="Wizard_SummaryWorkbench" xml:space="preserve">
+    <value>Arbeitsordner</value>
+  </data>
+  <data name="Wizard_SummaryCameras" xml:space="preserve">
+    <value>Kameras</value>
+  </data>
+  <data name="Wizard_SummaryTools" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Wizard_SummaryGps" xml:space="preserve">
+    <value>GPS</value>
+  </data>
+  <data name="Wizard_NoCameras" xml:space="preserve">
+    <value>Keine Kameras konfiguriert</value>
+  </data>
+  <data name="Wizard_Configured" xml:space="preserve">
+    <value>konfiguriert</value>
+  </data>
+  <data name="Wizard_NotConfigured" xml:space="preserve">
+    <value>nicht konfiguriert</value>
+  </data>
+
+
+  <!-- ToolsConfig Language -->
+  <data name="ToolsConfig_Language" xml:space="preserve">
+    <value>Sprache</value>
+  </data>
+  <data name="ToolsConfig_LanguageDesc" xml:space="preserve">
+    <value>Anzeigesprache der Benutzeroberfläche</value>
+  </data>
+  <data name="ToolsConfig_RestartRequired" xml:space="preserve">
+    <value>Neustart erforderlich</value>
+  </data>
+
+  <!-- Batch 2: WizardSteps, CameraCard, DevicesTab, BurstTab -->
+  <data name="Wizard_WorkbenchFolder" xml:space="preserve">
+    <value>Arbeitsordner</value>
+  </data>
+  <data name="Wizard_WorkbenchFolderDesc" xml:space="preserve">
+    <value>Alle importierten Medien werden in Unterordnern dieses Verzeichnisses organisiert.</value>
+  </data>
+  <data name="Wizard_FolderCreatedHint" xml:space="preserve">
+    <value>Der Ordner wird erstellt, falls er noch nicht existiert.</value>
+  </data>
+  <data name="Wizard_ConnectCameraPrompt" xml:space="preserve">
+    <value>Kamera anschließen oder SD-Karten einlegen...</value>
+  </data>
+  <data name="Wizard_ShowAllDrives" xml:space="preserve">
+    <value>Mein Laufwerk wird nicht angezeigt — alle anzeigen</value>
+  </data>
+  <data name="Wizard_EnterManually" xml:space="preserve">
+    <value>Kameradetails manuell eingeben</value>
+  </data>
+  <data name="Wizard_CameraTypeLabel" xml:space="preserve">
+    <value>Kameratyp</value>
+  </data>
+  <data name="Wizard_CameraNameLabel" xml:space="preserve">
+    <value>Kameraname</value>
+  </data>
+  <data name="Wizard_NameYourCamera" xml:space="preserve">
+    <value>Kamera benennen</value>
+  </data>
+  <data name="Wizard_ImportFolderLabel" xml:space="preserve">
+    <value>Importordner</value>
+  </data>
+  <data name="Wizard_ImportFolderHint" xml:space="preserve">
+    <value>Ordner für importierte Dateien</value>
+  </data>
+  <data name="Wizard_RegisteredCameras" xml:space="preserve">
+    <value>REGISTRIERTE KAMERAS</value>
+  </data>
+  <data name="Wizard_NoCamerasYet" xml:space="preserve">
+    <value>Noch keine Kameras registriert.</value>
+  </data>
+  <data name="Wizard_AddAnotherCamera" xml:space="preserve">
+    <value>Weitere Kamera hinzufügen</value>
+  </data>
+  <data name="Wizard_OrClickNext" xml:space="preserve">
+    <value>Oder klicke auf Weiter um ohne weitere Kameras fortzufahren.</value>
+  </data>
+  <data name="Wizard_ExifToolName" xml:space="preserve">
+    <value>ExifTool</value>
+  </data>
+  <data name="Wizard_ExifReadWrite" xml:space="preserve">
+    <value> — EXIF Lesen/Schreiben</value>
+  </data>
+  <data name="Wizard_GyroflowName" xml:space="preserve">
+    <value>Gyroflow</value>
+  </data>
+  <data name="Wizard_VideoStab" xml:space="preserve">
+    <value> — Videostabilisierung</value>
+  </data>
+  <data name="Wizard_FFprobeName" xml:space="preserve">
+    <value>FFprobe</value>
+  </data>
+  <data name="Wizard_MediaAnalysis" xml:space="preserve">
+    <value> — Medienanalyse</value>
+  </data>
+  <data name="Wizard_GpxTracksFolder" xml:space="preserve">
+    <value>GPX-Tracks-Ordner</value>
+  </data>
+  <data name="Wizard_GpxTracksFolderDesc" xml:space="preserve">
+    <value>UMI sucht hier nach .gpx Dateien um GPS-Koordinaten in deine Medien zu injizieren.</value>
+  </data>
+  <data name="Wizard_GpsOptionalHint" xml:space="preserve">
+    <value>Dies ist optional — du kannst diesen Schritt überspringen und GPS-Tracks später in den Einstellungen konfigurieren.</value>
+  </data>
+  <data name="Wizard_RegisterSdCards" xml:space="preserve">
+    <value>SD-Karten registrieren für</value>
+  </data>
+  <data name="Wizard_AssignedCards" xml:space="preserve">
+    <value>ZUGEWIESENE KARTEN</value>
+  </data>
+  <data name="Wizard_NoCardsYet" xml:space="preserve">
+    <value>Noch keine Karten zugewiesen.</value>
+  </data>
+  <data name="Wizard_AvailableDrives" xml:space="preserve">
+    <value>VERFÜGBARE LAUFWERKE</value>
+  </data>
+  <data name="Wizard_AddButton" xml:space="preserve">
+    <value>Hinzufügen</value>
+  </data>
+  <data name="Wizard_InsertAnotherSd" xml:space="preserve">
+    <value>Weitere SD-Karte einlegen — sie erscheint automatisch unter Verfügbare Laufwerke.</value>
+  </data>
+  <data name="Wizard_SummaryModeLabel" xml:space="preserve">
+    <value>MODUS</value>
+  </data>
+  <data name="Wizard_SummaryWorkbenchLabel" xml:space="preserve">
+    <value>ARBEITSORDNER</value>
+  </data>
+  <data name="Wizard_SummaryCamerasLabel" xml:space="preserve">
+    <value>KAMERAS</value>
+  </data>
+  <data name="Wizard_SummaryNoCameras" xml:space="preserve">
+    <value>Keine Kameras konfiguriert.</value>
+  </data>
+  <data name="Wizard_SummaryGpsLabel" xml:space="preserve">
+    <value>GPS-TRACKS</value>
+  </data>
+  <data name="Wizard_SummaryReady" xml:space="preserve">
+    <value>Alles sieht gut aus — klicke auf Setup abschließen um deine Konfiguration zu übernehmen.</value>
+  </data>
+  <data name="Wizard_NotConfiguredRequired" xml:space="preserve">
+    <value>Nicht konfiguriert — für Metadaten-Operationen erforderlich</value>
+  </data>
+  <data name="Wizard_InstallButton" xml:space="preserve">
+    <value>Installieren</value>
+  </data>
+  <data name="Wizard_InstallGyroflowTooltip" xml:space="preserve">
+    <value>Gyroflow automatisch herunterladen und installieren</value>
+  </data>
+  <data name="Wizard_InstallFFprobeTooltip" xml:space="preserve">
+    <value>FFprobe automatisch herunterladen und installieren</value>
+  </data>
+  <data name="Wizard_SourceConnectPrompt" xml:space="preserve">
+    <value>Kamera anschließen oder SD-Karten einlegen...</value>
+  </data>
+  <data name="Wizard_SourceNewCardAnalysing" xml:space="preserve">
+    <value>Neue Karte erkannt: {0} — wird analysiert...</value>
+  </data>
+  <data name="Wizard_SourceErrorAnalysing" xml:space="preserve">
+    <value>Fehler bei der Kartenanalyse: {0}</value>
+  </data>
+  <data name="Wizard_SourceAnalysing" xml:space="preserve">
+    <value>Analysiere {0}...</value>
+  </data>
+  <data name="Wizard_SourceDetectedUsb" xml:space="preserve">
+    <value>Erkannt über USB-Deskriptor: {0}</value>
+  </data>
+  <data name="Wizard_SourceDetectedExif" xml:space="preserve">
+    <value>Erkannt über EXIF: {0}</value>
+  </data>
+  <data name="Wizard_SourceDetectedVolume" xml:space="preserve">
+    <value>Erkannt über Volume-Label: {0}</value>
+  </data>
+  <data name="Wizard_SourceNoDetected" xml:space="preserve">
+    <value>Keine Quellen erkannt. Kamera anschließen oder SD-Karte einlegen.</value>
+  </data>
+  <data name="Wizard_CameraDefaultName" xml:space="preserve">
+    <value>Meine Kamera</value>
+  </data>
+  <data name="Wizard_CameraDefaultProfile" xml:space="preserve">
+    <value>Unbekannt</value>
+  </data>
+  <data name="Wizard_GpsSelectFolder" xml:space="preserve">
+    <value>GPX-Track-Ordner auswählen</value>
+  </data>
+  <data name="Wizard_PathErrorEmpty" xml:space="preserve">
+    <value>Bitte wähle einen Ordner aus.</value>
+  </data>
+  <data name="Wizard_PathErrorInvalidChars" xml:space="preserve">
+    <value>Der Pfad enthält ungültige Zeichen.</value>
+  </data>
+  <data name="Wizard_PathErrorNotAbsolute" xml:space="preserve">
+    <value>Bitte gib einen absoluten Pfad ein.</value>
+  </data>
+  <data name="Wizard_PathErrorInvalidFormat" xml:space="preserve">
+    <value>Das Pfadformat ist ungültig.</value>
+  </data>
+  <data name="Wizard_ModeEasyDesc" xml:space="preserve">
+    <value>Einfach Dateien kopieren — ohne Schnickschnack.</value>
+  </data>
+  <data name="Wizard_ModeStandardDesc" xml:space="preserve">
+    <value>Kameras automatisch erkennen, Dateien umbenennen, Basis-Tools.</value>
+  </data>
+  <data name="Wizard_ModeAdvancedDesc" xml:space="preserve">
+    <value>Volle Kontrolle — GPS-Injektion, Gyroflow, Burst-Erkennung.</value>
+  </data>
+  <data name="Wizard_NoCardsAssigned" xml:space="preserve">
+    <value>Keine Karten zugewiesen</value>
+  </data>
+  <data name="AppMode_Easy" xml:space="preserve">
+    <value>Einfacher Modus</value>
+  </data>
+  <data name="AppMode_Standard" xml:space="preserve">
+    <value>Standard</value>
+  </data>
+  <data name="AppMode_Advanced" xml:space="preserve">
+    <value>Erweitert</value>
+  </data>
+  <data name="Wizard_GpsStepTitle" xml:space="preserve">
+    <value>GPS-Tracks</value>
+  </data>
+  <data name="Wizard_ToolsStepTitle" xml:space="preserve">
+    <value>Tools</value>
+  </data>
+  <data name="Wizard_SummaryStepTitle" xml:space="preserve">
+    <value>Zusammenfassung</value>
+  </data>
+  <data name="CameraCard_NoFeatures" xml:space="preserve">
+    <value>Keine Features konfiguriert</value>
+  </data>
+  <data name="CameraCard_Advanced" xml:space="preserve">
+    <value>Erweitert</value>
+  </data>
+  <data name="CameraCard_Features" xml:space="preserve">
+    <value>Features</value>
+  </data>
+  <data name="CameraCard_GyroflowPreset" xml:space="preserve">
+    <value>Gyroflow-Voreinstellung</value>
+  </data>
+  <data name="CameraCard_CameraType" xml:space="preserve">
+    <value>Kameratyp:</value>
+  </data>
+  <data name="CameraCard_FileTypes" xml:space="preserve">
+    <value>Dateitypen</value>
+  </data>
+  <data name="CameraCard_Video" xml:space="preserve">
+    <value>Video:</value>
+  </data>
+  <data name="CameraCard_Photo" xml:space="preserve">
+    <value>Foto:</value>
+  </data>
+  <data name="CameraCard_FolderName" xml:space="preserve">
+    <value>Ordnername</value>
+  </data>
+  <data name="CameraCard_FolderNameHint" xml:space="preserve">
+    <value>Wird beim Import als Ordnername verwendet</value>
+  </data>
+  <data name="CameraCard_Storage" xml:space="preserve">
+    <value>Speicher</value>
+  </data>
+  <data name="CameraCard_NoStorage" xml:space="preserve">
+    <value>Keine Speichergeräte zugewiesen</value>
+  </data>
+  <data name="CameraCard_FeatureHint" xml:space="preserve">
+    <value>Features oben umschalten · Kamera bearbeiten um Änderungen zu speichern</value>
+  </data>
+  <data name="CameraCard_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="CameraCard_Manage" xml:space="preserve">
+    <value>Verwalten...</value>
+  </data>
+  <data name="CameraCard_EditCam" xml:space="preserve">
+    <value>Kamera bearbeiten</value>
+  </data>
+  <data name="CameraCard_Paused" xml:space="preserve">
+    <value>Pausiert</value>
+  </data>
+  <data name="CameraCard_NoPreset" xml:space="preserve">
+    <value>Keine Voreinstellung ausgewählt</value>
+  </data>
+  <data name="CameraCard_EnableTooltip" xml:space="preserve">
+    <value>Kamera für Import aktivieren / deaktivieren</value>
+  </data>
+  <data name="CameraCard_EditTooltip" xml:space="preserve">
+    <value>Diese Kamera bearbeiten</value>
+  </data>
+  <data name="CameraCard_SaveTooltip" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="CameraCard_CancelTooltip" xml:space="preserve">
+    <value>Abbrechen — ungespeicherte Änderungen verwerfen</value>
+  </data>
+  <data name="CameraCard_DeleteTooltip" xml:space="preserve">
+    <value>Diese Kamera löschen</value>
+  </data>
+  <data name="CameraCard_CancelImport" xml:space="preserve">
+    <value>Diesen Import abbrechen</value>
+  </data>
+  <data name="CameraCard_BrowsePresetTooltip" xml:space="preserve">
+    <value>Nach einer .gyroflow Preset-Datei suchen</value>
+  </data>
+  <data name="CameraCard_RemovePresetTooltip" xml:space="preserve">
+    <value>Voreinstellung entfernen</value>
+  </data>
+  <data name="CameraCard_EditCamTooltip" xml:space="preserve">
+    <value>Diese Kamera in den Einstellungen öffnen</value>
+  </data>
+  <data name="CameraCard_DeleteCamTooltip" xml:space="preserve">
+    <value>Diese Kamera löschen</value>
+  </data>
+  <data name="DevicesTab_ImportHistory" xml:space="preserve">
+    <value>Import-Verlauf</value>
+  </data>
+  <data name="DevicesTab_NoImports" xml:space="preserve">
+    <value>Keine Imports aufgezeichnet</value>
+  </data>
+  <data name="DevicesTab_Camera" xml:space="preserve">
+    <value>Kamera</value>
+  </data>
+  <data name="DevicesTab_Imports" xml:space="preserve">
+    <value>Imports</value>
+  </data>
+  <data name="DevicesTab_Percent" xml:space="preserve">
+    <value>%</value>
+  </data>
+  <data name="DevicesTab_LastUsed" xml:space="preserve">
+    <value>Zuletzt verwendet</value>
+  </data>
+  <data name="DevicesTab_Label" xml:space="preserve">
+    <value>Bezeichnung</value>
+  </data>
+  <data name="DevicesTab_CameraField" xml:space="preserve">
+    <value>Kamera</value>
+  </data>
+  <data name="DevicesTab_DeviceIdLabel" xml:space="preserve">
+    <value>Geräte-ID</value>
+  </data>
+  <data name="DevicesTab_Relearn" xml:space="preserve">
+    <value>Neu lernen</value>
+  </data>
+  <data name="DevicesTab_DiskSerial" xml:space="preserve">
+    <value>Datenträger-Seriennummer</value>
+  </data>
+  <data name="DevicesTab_Capacity" xml:space="preserve">
+    <value>Kapazität</value>
+  </data>
+  <data name="DevicesTab_Title" xml:space="preserve">
+    <value>Speichergeräte</value>
+  </data>
+  <data name="DevicesTab_Desc" xml:space="preserve">
+    <value>Registrierte SD-Karten, MTP-Geräte und Festpfad-Quellen verwalten.</value>
+  </data>
+  <data name="DevicesTab_AddDevice" xml:space="preserve">
+    <value>Gerät hinzufügen</value>
+  </data>
+  <data name="DevicesTab_SdCards" xml:space="preserve">
+    <value>SD-KARTEN</value>
+  </data>
+  <data name="DevicesTab_NoSdCards" xml:space="preserve">
+    <value>Keine SD-Karten registriert. 'Gerät hinzufügen' klicken.</value>
+  </data>
+  <data name="DevicesTab_MtpDevices" xml:space="preserve">
+    <value>MTP-GERÄTE</value>
+  </data>
+  <data name="DevicesTab_NoMtpDevices" xml:space="preserve">
+    <value>Keine MTP-Geräte registriert. 'Gerät hinzufügen' klicken.</value>
+  </data>
+  <data name="DevicesTab_FixedPaths" xml:space="preserve">
+    <value>FESTE PFADE</value>
+  </data>
+  <data name="DevicesTab_NoFixedPaths" xml:space="preserve">
+    <value>Keine Festpfad-Quellen registriert. 'Gerät hinzufügen' um einen Ordner einer Kamera zuzuweisen.</value>
+  </data>
+  <data name="DevicesTab_Fixed" xml:space="preserve">
+    <value>FEST</value>
+  </data>
+  <data name="DevicesTab_Floating" xml:space="preserve">
+    <value>FREI</value>
+  </data>
+  <data name="DevicesTab_NoCameraFloating" xml:space="preserve">
+    <value>(Keine Kamera — frei zuordenbar)</value>
+  </data>
+  <data name="DevicesTab_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="DevicesTab_Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="DevicesTab_Remove" xml:space="preserve">
+    <value>Entfernen</value>
+  </data>
+  <data name="DevicesTab_DragTooltip" xml:space="preserve">
+    <value>Zum Sortieren ziehen</value>
+  </data>
+  <data name="DevicesTab_HistoryTooltip" xml:space="preserve">
+    <value>Import-Verlauf</value>
+  </data>
+  <data name="DevicesTab_EnableTooltip" xml:space="preserve">
+    <value>Kamera für Import aktivieren / deaktivieren</value>
+  </data>
+  <data name="DevicesTab_EditTooltip" xml:space="preserve">
+    <value>Dieses Gerät bearbeiten</value>
+  </data>
+  <data name="DevicesTab_SaveTooltip" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="DevicesTab_CancelTooltip" xml:space="preserve">
+    <value>Abbrechen — ungespeicherte Änderungen verwerfen</value>
+  </data>
+  <data name="DevicesTab_DeleteTooltip" xml:space="preserve">
+    <value>Dieses Gerät löschen</value>
+  </data>
+  <data name="DevicesTab_ExpandTooltip" xml:space="preserve">
+    <value>Auf-/Zuklappen</value>
+  </data>
+  <data name="DevicesTab_ReadVsnTooltip" xml:space="preserve">
+    <value>VSN von der aktuell eingelegten SD-Karte lesen</value>
+  </data>
+  <data name="BurstTab_Title" xml:space="preserve">
+    <value>Serienerkennungs-Profile</value>
+  </data>
+  <data name="BurstTab_Desc" xml:space="preserve">
+    <value>Erkennungsregeln, Gruppierungsparameter und Vorschau der Serienerkennung pro Profil definieren.</value>
+  </data>
+  <data name="BurstTab_AddProfile" xml:space="preserve">
+    <value>Profil hinzufügen</value>
+  </data>
+  <data name="BurstTab_NoProfiles" xml:space="preserve">
+    <value>Noch keine Burst-Profile. 'Profil hinzufügen' klicken.</value>
+  </data>
+  <data name="BurstTab_Browse" xml:space="preserve">
+    <value>Durchsuchen</value>
+  </data>
+  <data name="BurstTab_Scan" xml:space="preserve">
+    <value>Scannen</value>
+  </data>
+  <data name="BurstTab_AddSelectedToRules" xml:space="preserve">
+    <value>Ausgewählte zu Regeln hinzufügen</value>
+  </data>
+  <data name="BurstTab_Load" xml:space="preserve">
+    <value>Laden</value>
+  </data>
+  <data name="BurstTab_DetectedSequences" xml:space="preserve">
+    <value>Erkannte Sequenzen</value>
+  </data>
+  <data name="BurstTab_NoSequences" xml:space="preserve">
+    <value>Keine Sequenzen mit aktuellen Regeln und Gruppierung erkannt.</value>
+  </data>
+  <data name="BurstTab_UnmatchedPhotos" xml:space="preserve">
+    <value>Nicht zugeordnete Fotos</value>
+  </data>
+  <data name="BurstTab_None" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="BurstTab_NoFolderSelected" xml:space="preserve">
+    <value>Kein Ordner ausgewählt</value>
+  </data>
+  <data name="BurstTab_Grid" xml:space="preserve">
+    <value>Raster</value>
+  </data>
+  <data name="BurstTab_List" xml:space="preserve">
+    <value>Liste</value>
+  </data>
+  <data name="BurstTab_Detail" xml:space="preserve">
+    <value>Detail</value>
+  </data>
+  <data name="BurstTab_Compact" xml:space="preserve">
+    <value>Kompakt</value>
+  </data>
+  <data name="BurstTab_Cancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="BurstTab_Save" xml:space="preserve">
+    <value>Speichern</value>
+  </data>
+  <data name="BurstTab_DragTooltip" xml:space="preserve">
+    <value>Zum Sortieren ziehen</value>
+  </data>
+  <data name="BurstTab_ProfileNameTooltip" xml:space="preserve">
+    <value>Profilname (wird als Dateiname verwendet)</value>
+  </data>
+  <data name="BurstTab_EditTooltip" xml:space="preserve">
+    <value>Dieses Profil bearbeiten</value>
+  </data>
+  <data name="BurstTab_SaveTooltip" xml:space="preserve">
+    <value>Änderungen speichern</value>
+  </data>
+  <data name="BurstTab_CancelTooltip" xml:space="preserve">
+    <value>Abbrechen — ungespeicherte Änderungen verwerfen</value>
+  </data>
+  <data name="BurstTab_ExpandTooltip" xml:space="preserve">
+    <value>Auf-/Zuklappen</value>
+  </data>
+  <data name="BurstTab_ColorLabel" xml:space="preserve">
+    <value>Farbe:</value>
+  </data>
+  <data name="BurstTab_DescriptionTooltip" xml:space="preserve">
+    <value>Profilbeschreibung (optional)</value>
+  </data>
+  <data name="BurstTab_BrowseScanTooltip" xml:space="preserve">
+    <value>Ordner zum Scannen auswählen</value>
+  </data>
+  <data name="BurstTab_ScanExifTooltip" xml:space="preserve">
+    <value>Ordner nach EXIF-Feldern scannen</value>
+  </data>
+  <data name="BurstTab_AddSelectedTooltip" xml:space="preserve">
+    <value>Ausgewählte numerische Felder als Regelzeilen hinzufügen</value>
+  </data>
+  <data name="BurstTab_BrowsePreviewTooltip" xml:space="preserve">
+    <value>Foto-Ordner für Burst-Vorschau auswählen</value>
+  </data>
+  <data name="BurstTab_LoadExifTooltip" xml:space="preserve">
+    <value>EXIF-Daten aus dem ausgewählten Ordner laden</value>
+  </data>
+  <data name="BurstTab_ToggleViewTooltip" xml:space="preserve">
+    <value>Zwischen Listen- und Rasteransicht wechseln</value>
+  </data>
+  <data name="BurstTab_ToggleDetailTooltip" xml:space="preserve">
+    <value>Zwischen Detail- und Kompaktansicht wechseln</value>
+  </data>
+
+  <!-- Workbench -->
+  <data name="Workbench_CameraFirst" xml:space="preserve">
+    <value>Kamera zuerst</value>
+  </data>
+  <data name="Workbench_TypeFirst" xml:space="preserve">
+    <value>Typ zuerst</value>
+  </data>
+  <data name="Workbench_SortCameraFirst" xml:space="preserve">
+    <value>Datum / Kamera / Medientyp</value>
+  </data>
+  <data name="Workbench_SortTypeFirst" xml:space="preserve">
+    <value>Datum / Medientyp / Kamera</value>
+  </data>
+  <data name="Workbench_SelectFolder" xml:space="preserve">
+    <value>Workbench-Ordner auswählen</value>
+  </data>
+
+  <!-- ExifScanner -->
+  <data name="ExifScanner_SelectFolder" xml:space="preserve">
+    <value>Ordner zum Scannen von EXIF-Feldern auswählen</value>
+  </data>
+  <data name="ExifScanner_Scanning" xml:space="preserve">
+    <value>Scanne…</value>
+  </data>
+  <data name="ExifScanner_ScanProgress" xml:space="preserve">
+    <value>Scanne {0}/{1}: {2}</value>
+  </data>
+  <data name="ExifScanner_FoundFields" xml:space="preserve">
+    <value>{0} Felder gefunden ({1} numerisch) in {2} Fotos</value>
+  </data>
+  <data name="ExifScanner_ScanCancelled" xml:space="preserve">
+    <value>Scan abgebrochen</value>
+  </data>
+
+  <!-- BurstVisualizer V2 -->
+  <data name="BurstViz_SelectFolder" xml:space="preserve">
+    <value>Ordner für Burst-Erkennung auswählen</value>
+  </data>
+  <data name="BurstViz_Loading" xml:space="preserve">
+    <value>Lade…</value>
+  </data>
+  <data name="BurstViz_LoadProgress" xml:space="preserve">
+    <value>Lade {0}/{1}: {2}</value>
+  </data>
+  <data name="BurstViz_Loaded" xml:space="preserve">
+    <value>{0} Fotos geladen</value>
+  </data>
+  <data name="BurstViz_LoadCancelled" xml:space="preserve">
+    <value>Laden abgebrochen</value>
+  </data>
+  <data name="BurstViz_AutoDescription" xml:space="preserve">
+    <value>Automatisch generiert vom Burst Visualizer</value>
+  </data>
+  <data name="BurstViz_ProfileSaved" xml:space="preserve">
+    <value>Profil '{0}' gespeichert</value>
+  </data>
+  <data name="BurstViz_ErrorSavingProfile" xml:space="preserve">
+    <value>Fehler beim Speichern des Profils: {0}</value>
+  </data>
+  <data name="BurstViz_EvaluationError" xml:space="preserve">
+    <value>Auswertungsfehler: {0}</value>
+  </data>
+
+  <!-- Visualizer -->
+  <data name="Visualizer_SelectFolder" xml:space="preserve">
+    <value>Ordner für Burst-Vorschau auswählen</value>
+  </data>
+  <data name="Visualizer_LoadingExif" xml:space="preserve">
+    <value>Lade EXIF-Daten…</value>
+  </data>
+  <data name="Visualizer_LoadProgress" xml:space="preserve">
+    <value>Lade {0}/{1}: {2}</value>
+  </data>
+  <data name="Visualizer_Loaded" xml:space="preserve">
+    <value>{0} Fotos geladen — Regeln anpassen für Vorschau</value>
+  </data>
+  <data name="Visualizer_LoadedShared" xml:space="preserve">
+    <value>{0} Fotos geladen (geteilt)</value>
+  </data>
+  <data name="Visualizer_LoadCancelled" xml:space="preserve">
+    <value>Laden abgebrochen</value>
+  </data>
+  <data name="Visualizer_EvaluationError" xml:space="preserve">
+    <value>Auswertungsfehler: {0}</value>
+  </data>
+
+  <!-- CameraSetup -->
+  <data name="CameraSetup_NoSpaces" xml:space="preserve">
+    <value>Kamera-ID darf keine Leerzeichen enthalten.</value>
+  </data>
+  <data name="CameraSetup_AlreadyRegistered" xml:space="preserve">
+    <value>„{0}" ist bereits in der Konfiguration registriert.</value>
+  </data>
+  <data name="CameraSetup_AlreadyAddedWizard" xml:space="preserve">
+    <value>„{0}" wurde bereits in dieser Wizard-Sitzung hinzugefügt.</value>
+  </data>
+
+  <!-- AddCamera -->
+  <data name="AddCamera_Added" xml:space="preserve">
+    <value>Kamera „{0}" hinzugefügt ({1})</value>
+  </data>
+  <data name="AddCamera_CannotReadVsnWarning" xml:space="preserve">
+    <value>Warnung: SD-Karten-Seriennummer von {0} konnte nicht gelesen werden — manuell unter Geräte zuweisen.</value>
+  </data>
+  <data name="AddCamera_IdAlreadyInUse" xml:space="preserve">
+    <value>„{0}" wird bereits verwendet.</value>
+  </data>
+  <data name="AddCamera_IdNoSpaces" xml:space="preserve">
+    <value>Kamera-ID darf keine Leerzeichen enthalten.</value>
+  </data>
+  <data name="AddCamera_SelectProfileHint" xml:space="preserve">
+    <value>Profil auswählen, um die Beschreibung zu sehen.</value>
+  </data>
+
+  <!-- AddDevice -->
+  <data name="AddDevice_FixedPathRegistered" xml:space="preserve">
+    <value>Fester Pfad für Kamera „{0}" registriert</value>
+  </data>
+  <data name="AddDevice_MtpRegistered" xml:space="preserve">
+    <value>MTP-Gerät „{0}" für {1} registriert</value>
+  </data>
+  <data name="AddDevice_SdRegistered" xml:space="preserve">
+    <value>SD-Karte „{0}" registriert ({1}){2}</value>
+  </data>
+  <data name="AddDevice_SelectSourceFolder" xml:space="preserve">
+    <value>Quellordner auswählen</value>
+  </data>
+
+  <!-- Camera -->
+  <data name="Camera_GpsHintDefault" xml:space="preserve">
+    <value>GPS-Daten werden aus GPX-Dateien im GPS-Ordner gelesen</value>
+  </data>
+  <data name="Camera_GpsHintDrone" xml:space="preserve">
+    <value>GPS-Daten werden aus eingebetteten Drohnen-Metadaten extrahiert</value>
+  </data>
+  <data name="Camera_GyroflowPresetFilter" xml:space="preserve">
+    <value>Gyroflow-Presets (*.gyroflow)|*.gyroflow|Alle Dateien (*.*)|*.*</value>
+  </data>
+  <data name="Camera_MtpDeviceAssigned" xml:space="preserve">
+    <value>1 MTP-Gerät zugewiesen</value>
+  </data>
+  <data name="Camera_MtpDevicesAssigned" xml:space="preserve">
+    <value>{0} MTP-Geräte zugewiesen</value>
+  </data>
+  <data name="Camera_SdAndMtp" xml:space="preserve">
+    <value>1 SD-Karte, 1 MTP-Gerät</value>
+  </data>
+  <data name="Camera_SdAndMtpMultiple" xml:space="preserve">
+    <value>{0} SD-Karten, {1} MTP-Geräte</value>
+  </data>
+  <data name="Camera_SdCardAssigned" xml:space="preserve">
+    <value>1 SD-Karte zugewiesen</value>
+  </data>
+  <data name="Camera_SdCardsAssigned" xml:space="preserve">
+    <value>{0} SD-Karten zugewiesen</value>
+  </data>
+  <data name="Camera_SdMtpFixed" xml:space="preserve">
+    <value>{0} SD, {1} MTP, fester Pfad</value>
+  </data>
+  <data name="Camera_SelectGyroflowPreset" xml:space="preserve">
+    <value>Gyroflow-Preset auswählen</value>
+  </data>
+
+  <!-- Device -->
+  <data name="Device_CannotReadVsn" xml:space="preserve">
+    <value>VSN von {0} konnte nicht gelesen werden.</value>
+  </data>
+  <data name="Device_CannotReadVsnAny" xml:space="preserve">
+    <value>VSN von keinem angeschlossenen Laufwerk lesbar.</value>
+  </data>
+  <data name="Device_ReLearnedFirstDrive" xml:space="preserve">
+    <value>Neu gelernt (erstes Laufwerk): {0}</value>
+  </data>
+  <data name="Device_ReLearnedVsn" xml:space="preserve">
+    <value>Neu gelernt: {0}</value>
+  </data>
+  <data name="Device_VsnUnchanged" xml:space="preserve">
+    <value>VSN unverändert: {0}</value>
+  </data>
+  <data name="Devices_RemoveConfirm" xml:space="preserve">
+    <value>„{0}" entfernen?</value>
+  </data>
+
+  <!-- GPS -->
+  <data name="Gps_BuildingProgress" xml:space="preserve">
+    <value>GPX erstellen {0}/{1}</value>
+  </data>
+  <data name="Gps_ResultGpxBuilt" xml:space="preserve">
+    <value>{0} GPX erstellt</value>
+  </data>
+  <data name="Gps_ResultInjected" xml:space="preserve">
+    <value>{0} injiziert</value>
+  </data>
+  <data name="Gps_ResultSkipped" xml:space="preserve">
+    <value>{0} übersprungen (kein passender Track)</value>
+  </data>
+  <data name="Gps_StatusGpxBuilt" xml:space="preserve">
+    <value>GPX erstellt</value>
+  </data>
+  <data name="Gps_StatusInjected" xml:space="preserve">
+    <value>GPS injiziert</value>
+  </data>
+  <data name="Gps_StatusSkippedError" xml:space="preserve">
+    <value>Übersprungen — Fehler</value>
+  </data>
+  <data name="Gps_StatusSkippedNoDir" xml:space="preserve">
+    <value>Übersprungen — kein GPX-Ordner</value>
+  </data>
+  <data name="Gps_StatusSkippedNoTrack" xml:space="preserve">
+    <value>Übersprungen — kein passender Track</value>
+  </data>
+
+  <!-- Main -->
+  <data name="Main_ErrorDeletingCamera" xml:space="preserve">
+    <value>Fehler beim Löschen: {0}</value>
+  </data>
+  <data name="Main_ErrorLoadingConfig" xml:space="preserve">
+    <value>Fehler beim Laden der Konfiguration:</value>
+  </data>
+  <data name="Main_NoConfigFound" xml:space="preserve">
+    <value>Keine config.json gefunden.</value>
+  </data>
+  <data name="Main_WizardErrorMessage" xml:space="preserve">
+    <value>Setup-Assistent konnte nicht geöffnet werden:</value>
+  </data>
+  <data name="Main_WizardErrorTitle" xml:space="preserve">
+    <value>UMI — Fehler</value>
+  </data>
+
+  <!-- Profile -->
+  <data name="Profile_CannotDeleteMessage" xml:space="preserve">
+    <value>Profil „{0}" kann nicht gelöscht werden. Verwendet von Kameras: {1}. Zuerst Kamera-Zuweisungen entfernen.</value>
+  </data>
+  <data name="Profile_DeleteConfirm" xml:space="preserve">
+    <value>Profil „{0}" löschen? Dies kann nicht rückgängig gemacht werden.</value>
+  </data>
+
+  <!-- Restore -->
+  <data name="Restore_NoVideosProcessed" xml:space="preserve">
+    <value>Keine Videos verarbeitet</value>
+  </data>
+  <data name="Restore_RestoringProgress" xml:space="preserve">
+    <value>Wiederherstellen {0}/{1}</value>
+  </data>
+  <data name="Restore_ResultFailed" xml:space="preserve">
+    <value>{0} fehlgeschlagen</value>
+  </data>
+  <data name="Restore_ResultNoBackup" xml:space="preserve">
+    <value>{0} kein Backup</value>
+  </data>
+  <data name="Restore_ResultNotNeeded" xml:space="preserve">
+    <value>{0} nicht nötig</value>
+  </data>
+  <data name="Restore_ResultRestored" xml:space="preserve">
+    <value>{0} wiederhergestellt</value>
+  </data>
+  <data name="Restore_StatusFailed" xml:space="preserve">
+    <value>Wiederherstellung fehlgeschlagen ({0})</value>
+  </data>
+  <data name="Restore_StatusNoBackup" xml:space="preserve">
+    <value>Kein Backup vorhanden</value>
+  </data>
+  <data name="Restore_StatusNoBackupFound" xml:space="preserve">
+    <value>Kein Backup gefunden</value>
+  </data>
+  <data name="Restore_StatusNotNeeded" xml:space="preserve">
+    <value>Nicht nötig</value>
+  </data>
+  <data name="Restore_StatusRestored" xml:space="preserve">
+    <value>Metadaten wiederhergestellt</value>
+  </data>
+
+  <!-- Stabilize -->
+  <data name="Stabilize_EisInfoPrefix" xml:space="preserve">
+    <value>EIS-Scan: {0} gescannt, {1} EIS-aus → {2}/. </value>
+  </data>
+  <data name="Stabilize_EisScanDoneAllEnabled" xml:space="preserve">
+    <value>EIS-Scan abgeschlossen — alle {0} Videos haben EIS aktiviert</value>
+  </data>
+  <data name="Stabilize_EisScanDoneMoved" xml:space="preserve">
+    <value>EIS-Scan abgeschlossen — {0}/{1} Video(s) nach {2}/ verschoben</value>
+  </data>
+  <data name="Stabilize_EisScanInfo" xml:space="preserve">
+    <value>EIS-Scan: {0} gescannt, {1} EIS-aus. </value>
+  </data>
+  <data name="Stabilize_EisScanNoCandidates" xml:space="preserve">
+    <value>EIS-Scan: keine Kandidaten gefunden</value>
+  </data>
+  <data name="Stabilize_EisScanProgress" xml:space="preserve">
+    <value>EIS-Scan: {0}/{1} Videos</value>
+  </data>
+  <data name="Stabilize_EisScanSearching" xml:space="preserve">
+    <value>EIS-Scan: suche Videos…</value>
+  </data>
+  <data name="Stabilize_NoVideosInGyroflow" xml:space="preserve">
+    <value>Keine Videos in Gyroflow-Ordnern gefunden</value>
+  </data>
+  <data name="Stabilize_QueuedWaiting" xml:space="preserve">
+    <value>{0} Video(s) eingereiht — warte auf GPU…</value>
+  </data>
+  <data name="Stabilize_Rendering" xml:space="preserve">
+    <value>Rendern {0}/{1}</value>
+  </data>
+  <data name="Stabilize_RenderingQueued" xml:space="preserve">
+    <value>Rendern {0}/{1} — {2} in Warteschlange</value>
+  </data>
+  <data name="Stabilize_ResultSuccess" xml:space="preserve">
+    <value>{0} Video(s) erfolgreich stabilisiert</value>
+  </data>
+  <data name="Stabilize_ResultWithFailures" xml:space="preserve">
+    <value>{0} stabilisiert, {1} fehlgeschlagen</value>
+  </data>
+  <data name="Stabilize_ResumedFromPrevious" xml:space="preserve">
+    <value>Von vorheriger Sitzung fortgesetzt</value>
+  </data>
+  <data name="Stabilize_ResumedProgress" xml:space="preserve">
+    <value>Fortgesetzt: {0}/{1} stabilisiert</value>
+  </data>
+  <data name="Stabilize_ResumedSuccess" xml:space="preserve">
+    <value>Fortgesetzt: {0} Video(s) erfolgreich stabilisiert</value>
+  </data>
+  <data name="Stabilize_ResumedWithFailures" xml:space="preserve">
+    <value>Fortgesetzt: {0} stabilisiert, {1} fehlgeschlagen</value>
+  </data>
+  <data name="Stabilize_ResumingQueued" xml:space="preserve">
+    <value>{0} eingereihte(s) Video(s) werden fortgesetzt…</value>
+  </data>
+  <data name="Stabilize_Stabilized" xml:space="preserve">
+    <value>Stabilisiert {0}/{1}</value>
+  </data>
+  <data name="Stabilize_StabilizedQueued" xml:space="preserve">
+    <value>Stabilisiert {0}/{1} — {2} in Warteschlange</value>
+  </data>
+  <data name="Stabilize_StabilizingVideos" xml:space="preserve">
+    <value>{0} Video(s) werden via Gyroflow stabilisiert…</value>
+  </data>
+
+  <!-- Statistics -->
+  <data name="Statistics_AwaitingGrading" xml:space="preserve">
+    <value>Wartet auf Grading</value>
+  </data>
+  <data name="Statistics_AwaitingGyroflow" xml:space="preserve">
+    <value>Warte auf Gyroflow</value>
+  </data>
+  <data name="Statistics_EisChecked" xml:space="preserve">
+    <value>EIS geprüft</value>
+  </data>
+  <data name="Statistics_GpsInjected" xml:space="preserve">
+    <value>GPS injiziert</value>
+  </data>
+  <data name="Statistics_Graded" xml:space="preserve">
+    <value>Grading fertig</value>
+  </data>
+  <data name="Statistics_GradedRunFinalize" xml:space="preserve">
+    <value>Grading fertig — Finalisieren ausführen</value>
+  </data>
+  <data name="Statistics_GpsNo" xml:space="preserve">
+    <value>Nein</value>
+  </data>
+  <data name="Statistics_GpsYes" xml:space="preserve">
+    <value>Ja</value>
+  </data>
+  <data name="Statistics_GpsBuilt" xml:space="preserve">
+    <value>Erstellt</value>
+  </data>
+  <data name="Statistics_BackupMissing" xml:space="preserve">
+    <value>Fehlt</value>
+  </data>
+  <data name="Statistics_Imported" xml:space="preserve">
+    <value>Importiert</value>
+  </data>
+  <data name="Statistics_InGyroflowQueue" xml:space="preserve">
+    <value>In Gyroflow-Warteschlange</value>
+  </data>
+  <data name="Statistics_Ready" xml:space="preserve">
+    <value>Bereit</value>
+  </data>
+  <data name="Statistics_ReadyToUse" xml:space="preserve">
+    <value>Einsatzbereit</value>
+  </data>
+  <data name="Statistics_ScanningProgress" xml:space="preserve">
+    <value>Scannen {0}/{1}</value>
+  </data>
+  <data name="Statistics_ScanningVideos" xml:space="preserve">
+    <value>{0} Video(s) werden gescannt…</value>
+  </data>
+  <data name="Statistics_Stabilized" xml:space="preserve">
+    <value>Stabilisiert</value>
+  </data>
+  <data name="Statistics_VideosScanned" xml:space="preserve">
+    <value>{0} Video(s) gescannt</value>
+  </data>
+  <data name="Statistics_VideosScannedStatus" xml:space="preserve">
+    <value>{0} Videos gescannt</value>
+  </data>
+
+  <!-- Tools -->
+  <data name="Tools_AlreadyInstalledMessage" xml:space="preserve">
+    <value>{0} wurde gefunden unter:</value>
+  </data>
+  <data name="Tools_Downloading" xml:space="preserve">
+    <value>{0} wird heruntergeladen...</value>
+  </data>
+  <data name="Tools_ExeNotFound" xml:space="preserve">
+    <value>Fehler: {0} nicht im Archiv gefunden</value>
+  </data>
+  <data name="Tools_ExecutableFilter" xml:space="preserve">
+    <value>Ausführbare Dateien (*.exe)|*.exe|Alle Dateien (*.*)|*.*</value>
+  </data>
+  <data name="Tools_Extracting" xml:space="preserve">
+    <value>{0} wird entpackt...</value>
+  </data>
+  <data name="Tools_InstalledSuccess" xml:space="preserve">
+    <value>{0} erfolgreich installiert!</value>
+  </data>
+  <data name="Tools_PathSaved" xml:space="preserve">
+    <value>{0}-Pfad gespeichert</value>
+  </data>
+  <data name="Tools_SelectExecutable" xml:space="preserve">
+    <value>{0}-Programm auswählen</value>
+  </data>
+
+  <!-- Wizard -->
+  <data name="Wizard_AddCardsAssigned" xml:space="preserve">
+    <value>Karte {0} wurde {1} zugewiesen.</value>
+  </data>
+  <data name="Wizard_AddCardsDescription" xml:space="preserve">
+    <value>SD-Karten der gerade konfigurierten Kamera zuweisen. Dieser Schritt ist optional.</value>
+  </data>
+  <data name="Wizard_AddCardsInsertAnother" xml:space="preserve">
+    <value>Weitere SD-Karte einstecken zum Registrieren, oder Weiter klicken.</value>
+  </data>
+  <data name="Wizard_AddCardsNewDetected" xml:space="preserve">
+    <value>Neue Karte erkannt: {0} — auf Hinzufügen klicken zum Zuweisen.</value>
+  </data>
+  <data name="Wizard_AddCardsTitle" xml:space="preserve">
+    <value>SD-Karten registrieren</value>
+  </data>
+  <data name="Wizard_AddCardsUnassigned" xml:space="preserve">
+    <value>Karte {0} nicht zugewiesen.</value>
+  </data>
+  <data name="Wizard_AnalysingCard" xml:space="preserve">
+    <value>{0} wird analysiert...</value>
+  </data>
+  <data name="Wizard_CameraConfirmDescription" xml:space="preserve">
+    <value>Kameratyp auswählen — den Rest erledigen wir.</value>
+  </data>
+  <data name="Wizard_CameraConfirmTitle" xml:space="preserve">
+    <value>Kamera benennen</value>
+  </data>
+  <data name="Wizard_DetectedViaExif" xml:space="preserve">
+    <value>Erkannt via EXIF: {0}</value>
+  </data>
+  <data name="Wizard_DetectedViaLabel" xml:space="preserve">
+    <value>Erkannt via Datenträgerbezeichnung: {0}</value>
+  </data>
+  <data name="Wizard_DetectedViaUsb" xml:space="preserve">
+    <value>Erkannt via USB-Deskriptor: {0}</value>
+  </data>
+  <data name="Wizard_ErrorAnalysing" xml:space="preserve">
+    <value>Fehler bei der Kartenanalyse: {0}</value>
+  </data>
+  <data name="Wizard_GpsDescription" xml:space="preserve">
+    <value>Ordner mit GPX-Trackdateien angeben.</value>
+  </data>
+  <data name="Wizard_ManualEntry" xml:space="preserve">
+    <value>Manuelle Eingabe gewählt — Kameradetails im nächsten Schritt ausfüllen.</value>
+  </data>
+  <data name="Wizard_MoreCamerasDescription" xml:space="preserve">
+    <value>Möchtest du eine weitere Kamera registrieren?</value>
+  </data>
+  <data name="Wizard_MoreCamerasTitle" xml:space="preserve">
+    <value>Weitere Kameras hinzufügen?</value>
+  </data>
+  <data name="Wizard_NewCardDetected" xml:space="preserve">
+    <value>Neue Karte erkannt: {0} — wird analysiert...</value>
+  </data>
+  <data name="Wizard_NoSourcesDetected" xml:space="preserve">
+    <value>Keine Quellen erkannt. Kamera anschließen oder SD-Karte einstecken.</value>
+  </data>
+  <data name="Wizard_PathInvalidChars" xml:space="preserve">
+    <value>Der Pfad enthält ungültige Zeichen.</value>
+  </data>
+  <data name="Wizard_PathInvalidFormat" xml:space="preserve">
+    <value>Das Pfadformat ist ungültig.</value>
+  </data>
+  <data name="Wizard_PathNotAbsolute" xml:space="preserve">
+    <value>Bitte einen absoluten Pfad eingeben.</value>
+  </data>
+  <data name="Wizard_PathRequired" xml:space="preserve">
+    <value>Bitte einen Ordner auswählen.</value>
+  </data>
+  <data name="Wizard_SelectGpxFolder" xml:space="preserve">
+    <value>GPX-Trackordner auswählen</value>
+  </data>
+  <data name="Wizard_SourceDetectedUnknown" xml:space="preserve">
+    <value>Quelle erkannt — Kameramodell unbekannt. Quelle auswählen oder manuell eingeben.</value>
+  </data>
+  <data name="Wizard_SourceDetectionDescription" xml:space="preserve">
+    <value>Kamera anschließen oder SD-Karten einstecken. Erkannte Quellen werden unten angezeigt.</value>
+  </data>
+  <data name="Wizard_SourceDetectionTitle" xml:space="preserve">
+    <value>Kameraquelle erkennen</value>
+  </data>
+  <data name="Wizard_ToolsDescription" xml:space="preserve">
+    <value>Pfade zu optionalen Verarbeitungstools konfigurieren.</value>
+  </data>
+  <data name="Wizard_UnknownCamera" xml:space="preserve">
+    <value>Unbekannte Kamera</value>
+  </data>
+  <data name="Wizard_WorkbenchSelectFolder" xml:space="preserve">
+    <value>Arbeitsordner auswählen</value>
+  </data>
+
+  <!-- Help Window -->
+  <data name="Help_WindowTitle" xml:space="preserve">
+    <value>Hilfe — Universal Media Import</value>
+  </data>
+  <data name="Help_SearchPlaceholder" xml:space="preserve">
+    <value>Suchen…</value>
+  </data>
+  <data name="Help_SidebarTitle" xml:space="preserve">
+    <value>Inhalt</value>
+  </data>
+  <data name="Help_Close" xml:space="preserve">
+    <value>Schließen</value>
+  </data>
+  <data name="Help_NotFound" xml:space="preserve">
+    <value>Hilfedatei nicht gefunden. Bitte die Anwendung neu installieren.</value>
+  </data>
+  <data name="Help_TooltipButton" xml:space="preserve">
+    <value>Hilfe</value>
+  </data>
+  <data name="Help_LearnMore" xml:space="preserve">
+    <value>Mehr erfahren</value>
+  </data>
+  <data name="Help_AnchorImport" xml:space="preserve">
+    <value>chapter:import</value>
+  </data>
+  <data name="Help_AnchorProcess" xml:space="preserve">
+    <value>chapter:advanced</value>
+  </data>
+  <data name="Help_AnchorSettings" xml:space="preserve">
+    <value>chapter:advanced</value>
+  </data>
+  <data name="Help_AnchorTools" xml:space="preserve">
+    <value>chapter:tools</value>
+  </data>
+  <data name="Help_AnchorFeatureBubbles" xml:space="preserve">
+    <value>Feature-Bubbles</value>
+  </data>
+  <data name="Help_AnchorGyroflow" xml:space="preserve">
+    <value>Gyroflow-Stabilisierung</value>
+  </data>
+  <data name="Help_AnchorBurst" xml:space="preserve">
+    <value>chapter:burst</value>
+  </data>
+  <data name="Help_AnchorProcessTab" xml:space="preserve">
+    <value>chapter:advanced</value>
+  </data>
+  <data name="Help_AnchorDevices" xml:space="preserve">
+    <value>chapter:devices</value>
+  </data>
+  <data name="Help_AnchorSequenceReviewer" xml:space="preserve">
+    <value>chapter:reviewer</value>
+  </data>
+  <data name="Help_AnchorReviewerNavigation" xml:space="preserve">
+    <value>Navigation</value>
+  </data>
+  <data name="Help_AnchorReviewerTagging" xml:space="preserve">
+    <value>Bewerten und Taggen</value>
+  </data>
+  <data name="Help_AnchorReviewerOverview" xml:space="preserve">
+    <value>Sequenz-Übersicht</value>
+  </data>
+  <data name="Help_AnchorReviewerProfiles" xml:space="preserve">
+    <value>Profile und Farben</value>
+  </data>
+  <data name="Help_AnchorReviewerShortcuts" xml:space="preserve">
+    <value>Tastenkürzel</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Field Tooltips -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="Tooltip_StabilizeEis" xml:space="preserve">
+    <value>Videos auf elektronische Bildstabilisierung scannen vor der Gyroflow-Verarbeitung</value>
+  </data>
+  <data name="Tooltip_RestoreForce" xml:space="preserve">
+    <value>Metadaten überschreiben, auch wenn die Datei bereits wiederhergestellt wurde</value>
+  </data>
+  <data name="Tooltip_SortOrder" xml:space="preserve">
+    <value>Bestimmt Ordnerstruktur: Kamera/Typ oder Typ/Kamera</value>
+  </data>
+  <data name="Tooltip_Workbench" xml:space="preserve">
+    <value>Arbeitsverzeichnis für importierte und verarbeitete Dateien</value>
+  </data>
+  <data name="Tooltip_FolderName" xml:space="preserve">
+    <value>Eigener Ordnername für Importe dieser Kamera (Standard: Kamera-ID)</value>
+  </data>
+  <data name="Tooltip_AppMode" xml:space="preserve">
+    <value>App-Modus wechseln: Easy / Standard / Advanced</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Sequence Reviewer -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="SequenceReviewer_Title" xml:space="preserve">
+    <value>Sequenz-Reviewer</value>
+  </data>
+  <data name="SequenceReviewer_Description" xml:space="preserve">
+    <value>Burst-Sequenzen sichten — Favoriten markieren, Müll aussortieren, Fotos bewerten</value>
+  </data>
+  <data name="SequenceReviewer_SequenceOf" xml:space="preserve">
+    <value>Sequenz {0}/{1}</value>
+  </data>
+  <data name="SequenceReviewer_PhotoOf" xml:space="preserve">
+    <value>Foto {0}/{1}</value>
+  </data>
+  <data name="SequenceReviewer_FilterAll" xml:space="preserve">
+    <value>Alle</value>
+  </data>
+  <data name="SequenceReviewer_FilterFavorites" xml:space="preserve">
+    <value>Favoriten</value>
+  </data>
+  <data name="SequenceReviewer_FilterTrash" xml:space="preserve">
+    <value>Müll</value>
+  </data>
+  <data name="SequenceReviewer_FilterRating" xml:space="preserve">
+    <value>Bewertung</value>
+  </data>
+  <data name="SequenceReviewer_Delete" xml:space="preserve">
+    <value>Löschen</value>
+  </data>
+  <data name="SequenceReviewer_EnableDelete" xml:space="preserve">
+    <value>Löschen aktivieren</value>
+  </data>
+  <data name="SequenceReviewer_NoSequences" xml:space="preserve">
+    <value>Keine Sequenzen gefunden. Zuerst ein Burst-Profil auswerten.</value>
+  </data>
+  <data name="SequenceReviewer_NoFilterResults" xml:space="preserve">
+    <value>Keine Fotos für diesen Filter.</value>
+  </data>
+  <data name="SequenceReviewer_Scanning" xml:space="preserve">
+    <value>Scanne Fotos...</value>
+  </data>
+  <data name="SequenceReviewer_SelectFolder" xml:space="preserve">
+    <value>Foto-Ordner zum Sichten auswählen</value>
+  </data>
+  <data name="SequenceReviewer_PrevSequence" xml:space="preserve">
+    <value>Vorherige Sequenz (↑)</value>
+  </data>
+  <data name="SequenceReviewer_NextSequence" xml:space="preserve">
+    <value>Nächste Sequenz (↓)</value>
+  </data>
+  <data name="SequenceReviewer_DateRange" xml:space="preserve">
+    <value>Foto-Datumsbereich</value>
+  </data>
+  <data name="SequenceReviewer_DateFilter" xml:space="preserve">
+    <value>Datumsfilter</value>
+  </data>
+  <data name="SequenceReviewer_AllCameras" xml:space="preserve">
+    <value>Alle Kameras</value>
+  </data>
+  <data name="SequenceReviewer_Camera" xml:space="preserve">
+    <value>Kamera</value>
+  </data>
+  <data name="SequenceReviewer_Profile" xml:space="preserve">
+    <value>Profil</value>
+  </data>
+  <data name="SequenceReviewer_OnlySequences" xml:space="preserve">
+    <value>Nur Sequenzen</value>
+  </data>
+  <data name="SequenceReviewer_AllPhotos" xml:space="preserve">
+    <value>Alle Fotos</value>
+  </data>
+  <data name="SequenceReviewer_Orphans" xml:space="preserve">
+    <value>Einzelbilder (erkannt)</value>
+  </data>
+  <data name="SequenceReviewer_AllSequences" xml:space="preserve">
+    <value>Alle Sequenzen</value>
+  </data>
+  <data name="SequenceReviewer_Unmatched" xml:space="preserve">
+    <value>Nicht zugeordnet</value>
+  </data>
+  <data name="SequenceReviewer_Overview" xml:space="preserve">
+    <value>Übersicht</value>
+  </data>
+  <data name="SequenceReviewer_BackToPhoto" xml:space="preserve">
+    <value>Zurück zum Foto</value>
+  </data>
+  <data name="SequenceReviewer_FilterAllSeq" xml:space="preserve">
+    <value>Alle Sequenzen</value>
+  </data>
+  <data name="SequenceReviewer_FilterRated" xml:space="preserve">
+    <value>Bewertet</value>
+  </data>
+  <data name="SequenceReviewer_FilterUnrated" xml:space="preserve">
+    <value>Unbewertet</value>
+  </data>
+  <data name="SequenceReviewer_SeqPhotos" xml:space="preserve">
+    <value>{0} Fotos</value>
+  </data>
+  <data name="SequenceReviewer_NoFilteredSeq" xml:space="preserve">
+    <value>Keine Sequenzen für diesen Filter.</value>
+  </data>
+  <data name="SequenceReviewer_Export" xml:space="preserve">
+    <value>Exportieren...</value>
+  </data>
+  <data name="SequenceReviewer_ExportTitle" xml:space="preserve">
+    <value>Fotos exportieren</value>
+  </data>
+  <data name="SequenceReviewer_ExportAction" xml:space="preserve">
+    <value>Aktion</value>
+  </data>
+  <data name="SequenceReviewer_ExportCopy" xml:space="preserve">
+    <value>Kopieren</value>
+  </data>
+  <data name="SequenceReviewer_ExportMove" xml:space="preserve">
+    <value>Verschieben</value>
+  </data>
+  <data name="SequenceReviewer_ExportKeepSequences" xml:space="preserve">
+    <value>Sequenz-Ordner beibehalten</value>
+  </data>
+  <data name="SequenceReviewer_ExportTagFilter" xml:space="preserve">
+    <value>Fotos</value>
+  </data>
+  <data name="SequenceReviewer_ExportFavoritesOnly" xml:space="preserve">
+    <value>Nur Favoriten</value>
+  </data>
+  <data name="SequenceReviewer_ExportUntaggedOnly" xml:space="preserve">
+    <value>Nur unmarkiert</value>
+  </data>
+  <data name="SequenceReviewer_ExportAllExclTrash" xml:space="preserve">
+    <value>Alle (ohne Papierkorb)</value>
+  </data>
+  <data name="SequenceReviewer_ExportMinRating" xml:space="preserve">
+    <value>Mindest-Bewertung</value>
+  </data>
+  <data name="SequenceReviewer_ExportDestination" xml:space="preserve">
+    <value>Zielordner</value>
+  </data>
+  <data name="SequenceReviewer_ExportBrowse" xml:space="preserve">
+    <value>Durchsuchen...</value>
+  </data>
+  <data name="SequenceReviewer_ExportCancel" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="SequenceReviewer_ExportPreview" xml:space="preserve">
+    <value>{0} Fotos ausgewählt</value>
+  </data>
+  <data name="SequenceReviewer_ExportProgress" xml:space="preserve">
+    <value>{0} von {1} exportiert...</value>
+  </data>
+  <data name="SequenceReviewer_ExportDone" xml:space="preserve">
+    <value>{0} Fotos nach {1} exportiert</value>
+  </data>
+  <data name="SequenceReviewer_ExportErrors" xml:space="preserve">
+    <value>{0} Dateien konnten nicht exportiert werden</value>
+  </data>
+
+  <!-- ThumbnailGenerate action -->
+  <data name="ThumbnailGenerate_Title" xml:space="preserve">
+    <value>Thumbnails generieren</value>
+  </data>
+  <data name="ThumbnailGenerate_Description" xml:space="preserve">
+    <value>Vorschaubilder für RAW-Dateien generieren und cachen</value>
+  </data>
+  <data name="ThumbnailGenerate_Progress" xml:space="preserve">
+    <value>Verarbeitet: {0} Dateien...</value>
+  </data>
+  <data name="ThumbnailGenerate_Complete" xml:space="preserve">
+    <value>{0} Thumbnails generiert</value>
+  </data>
+  <data name="ThumbnailGenerate_WorkbenchMissing" xml:space="preserve">
+    <value>Workbench-Pfad ist nicht gesetzt oder existiert nicht</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Main Tab Headers -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="MainTab_Import" xml:space="preserve">
+    <value>Import</value>
+  </data>
+  <data name="MainTab_Process" xml:space="preserve">
+    <value>Verarbeitung</value>
+  </data>
+  <data name="MainTab_Settings" xml:space="preserve">
+    <value>Einstellungen</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Update Banner -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="Update_BannerText" xml:space="preserve">
+    <value>Version {0} verfügbar — Download läuft im Hintergrund…</value>
+  </data>
+  <data name="Update_BannerReady" xml:space="preserve">
+    <value>Version {0} ist bereit zur Installation</value>
+  </data>
+  <data name="Update_Install" xml:space="preserve">
+    <value>Installieren</value>
+  </data>
+  <data name="Update_Download" xml:space="preserve">
+    <value>Herunterladen</value>
+  </data>
+  <data name="Update_Later" xml:space="preserve">
+    <value>Später</value>
+  </data>
+  <data name="Update_Downloading" xml:space="preserve">
+    <value>Update wird heruntergeladen…</value>
+  </data>
+  <data name="Update_CancelDownload" xml:space="preserve">
+    <value>Abbrechen</value>
+  </data>
+  <data name="Update_ConfirmInstall_Title" xml:space="preserve">
+    <value>Update installieren</value>
+  </data>
+  <data name="Update_ConfirmInstall_Message" xml:space="preserve">
+    <value>Das Update wurde heruntergeladen. Jetzt installieren? UMI wird automatisch beendet.</value>
+  </data>
+  <data name="Update_DownloadError" xml:space="preserve">
+    <value>Download fehlgeschlagen: {0}</value>
+  </data>
+  <data name="Update_DownloadCanceled" xml:space="preserve">
+    <value>Download abgebrochen.</value>
+  </data>
+
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Config Tab — App Settings Section -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="ConfigTab_AppSettings" xml:space="preserve">
+    <value>Anwendung</value>
+  </data>
+  <data name="ConfigTab_AppSettingsDesc" xml:space="preserve">
+    <value>Allgemeines Anwendungsverhalten</value>
+  </data>
+  <data name="ConfigTab_CheckForUpdates" xml:space="preserve">
+    <value>Beim Start auf Updates prüfen</value>
+  </data>
+
+</root>

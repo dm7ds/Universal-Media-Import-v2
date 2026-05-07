@@ -1,0 +1,26 @@
+{
+  "_use_case": "Drohne mit GPS aus SRT-Sidecars",
+  "_description": "DJI-Drohnen schreiben GPS-Daten in SRT-Dateien neben den Videos. UMI konvertiert diese automatisch zu GPX und injiziert die Koordinaten in die Video-Metadaten.",
+  "_camera_config": {
+    "DroneX": {
+      "name": "DJI Mini 4 Pro",
+      "manufacturer": "DJI",
+      "camera_type": "Drone",
+      "enabled": true,
+      "features": {
+        "gps_injection": true,
+        "metadata_backup": true
+      },
+      "file_types": {
+        "video": [".mp4", ".mov"],
+        "photo": [".jpg", ".dng"]
+      },
+      "paths": {
+        "sd_source": "D:\\SDCards\\Drone"
+      },
+      "custom_settings": {
+        "import_srt_sidecars": true
+      }
+    }
+  }
+}

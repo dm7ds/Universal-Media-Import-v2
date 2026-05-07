@@ -1,0 +1,46 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.SplashWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    Title="Universal Media Import"
+    Width="480"
+    Height="280"
+    WindowStyle="None"
+    AllowsTransparency="False"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterScreen"
+    UseLayoutRounding="True"
+    Background="{StaticResource BrushWhite}"
+    ShowInTaskbar="False">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <Image
+            Grid.Row="0"
+            Source="pack://application:,,,/Assets/UMI_Logo.png"
+            Stretch="Uniform"
+            RenderOptions.BitmapScalingMode="HighQuality"
+            SnapsToDevicePixels="True"
+            MaxWidth="320"
+            MaxHeight="200"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Center"
+            Margin="32,24,32,8" />
+
+        <TextBlock
+            Grid.Row="1"
+            Text="Universal Media Import — Loading..."
+            FontFamily="{StaticResource FontPrimary}"
+            FontSize="{StaticResource FontSizeCaption}"
+            Foreground="{StaticResource BrushTextMuted}"
+            HorizontalAlignment="Center"
+            VerticalAlignment="Bottom"
+            Margin="0,0,0,16" />
+    </Grid>
+</Window>

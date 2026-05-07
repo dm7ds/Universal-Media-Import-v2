@@ -1,0 +1,187 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.Views.AboutDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    Title="About — Universal Media Import"
+    Width="420"
+    Height="520"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False">
+
+    <Border CornerRadius="{StaticResource RadiusDialog}"
+            BorderThickness="1"
+            Margin="16">
+        <Border.Background>
+            <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{StaticResource ColorBorder}" />
+        </Border.BorderBrush>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                Direction="{StaticResource ShadowDialogDirection}"
+                Color="{StaticResource ColorShadow}"
+                Opacity="{StaticResource ShadowDialogOpacity}" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+
+                <RowDefinition Height="160" />
+
+                <RowDefinition Height="*" />
+
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <Border Grid.Row="0"
+                    Background="{StaticResource BrushWhite}"
+                    CornerRadius="{StaticResource RadiusDialogTop}">
+                <Image
+                    Source="pack://application:,,,/Assets/UMI_Logo.png"
+                    Stretch="Uniform"
+                    MaxWidth="300"
+                    MaxHeight="140"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Center"
+                    Margin="24,10"
+                    RenderOptions.BitmapScalingMode="HighQuality" />
+            </Border>
+
+            <StackPanel Grid.Row="1"
+                        Margin="28,10,28,0"
+                        HorizontalAlignment="Center">
+
+                <TextBlock
+                    Text="{helpers:Localize About_AppName}"
+                    FontSize="{StaticResource FontSizeLarge}"
+                    FontWeight="SemiBold"
+                    Foreground="{StaticResource BrushTextPrimary}"
+                    HorizontalAlignment="Center" />
+
+                <TextBlock
+                    x:Name="VersionText"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    FontFamily="{StaticResource FontMono}"
+                    Foreground="{StaticResource BrushTextMuted}"
+                    HorizontalAlignment="Center"
+                    Margin="0,3,0,0" />
+
+                <TextBlock
+                    Text="{helpers:Localize About_Description}"
+                    FontSize="{StaticResource FontSizeBase}"
+                    Foreground="{StaticResource BrushTextSecondary}"
+                    TextWrapping="Wrap"
+                    TextAlignment="Center"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0"
+                    LineHeight="20" />
+
+                <TextBlock
+                    Text="{helpers:Localize About_Copyright}"
+                    FontSize="{StaticResource FontSizeSmall}"
+                    Foreground="{StaticResource BrushTextMuted}"
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0" />
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Margin="0,4,0,0">
+                    <Run Text="{helpers:Localize About_LicensedUnder}"
+                         FontSize="{StaticResource FontSizeSmall}"
+                         Foreground="{StaticResource BrushTextMuted}" />
+                    <Hyperlink
+                        x:Name="LicenseLink"
+                        Style="{StaticResource HyperlinkAccent}"
+                        NavigateUri="https://www.gnu.org/licenses/gpl-3.0.html"
+                        RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="GPLv3"
+                             FontSize="{StaticResource FontSizeSmall}" />
+                    </Hyperlink>
+                </TextBlock>
+
+                <TextBlock
+                    HorizontalAlignment="Center"
+                    Margin="0,8,0,0">
+                    <Hyperlink
+                        x:Name="GitHubLink"
+                        Style="{StaticResource HyperlinkAccent}"
+                        NavigateUri="https://github.com/dm7ds/Universal-Media-Import-v2"
+                        RequestNavigate="Hyperlink_RequestNavigate">
+                        <Run Text="github.com/dm7ds/Universal-Media-Import-v2"
+                             FontFamily="{StaticResource FontMono}"
+                             FontSize="{StaticResource FontSizeSmall}" />
+                    </Hyperlink>
+                </TextBlock>
+
+            </StackPanel>
+
+            <Button Grid.Row="2"
+                    Content="{helpers:Localize About_Close}"
+                    Click="CloseButton_Click"
+                    HorizontalAlignment="Center"
+                    Margin="0,10,0,14"
+                    Padding="28,7"
+                    Cursor="Hand">
+                <Button.Style>
+                    <Style TargetType="Button">
+                        <Setter Property="Background">
+                            <Setter.Value>
+                                <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                            </Setter.Value>
+                        </Setter>
+                        <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                        <Setter Property="FontSize" Value="{StaticResource FontSizeBase}" />
+                        <Setter Property="FontWeight" Value="SemiBold" />
+                        <Setter Property="BorderThickness" Value="1" />
+                        <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}" />
+                        <Setter Property="Template">
+                            <Setter.Value>
+                                <ControlTemplate TargetType="Button">
+                                    <Border
+                                        x:Name="ButtonBorder"
+                                        Background="{TemplateBinding Background}"
+                                        BorderBrush="{TemplateBinding BorderBrush}"
+                                        BorderThickness="{TemplateBinding BorderThickness}"
+                                        CornerRadius="{StaticResource RadiusGroup}"
+                                        Padding="{TemplateBinding Padding}">
+                                        <ContentPresenter
+                                            HorizontalAlignment="Center"
+                                            VerticalAlignment="Center" />
+                                    </Border>
+                                    <ControlTemplate.Triggers>
+                                        <Trigger Property="IsMouseOver" Value="True">
+                                            <Setter TargetName="ButtonBorder" Property="Background">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource ColorBgCardHover}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                        </Trigger>
+                                        <Trigger Property="IsPressed" Value="True">
+                                            <Setter TargetName="ButtonBorder" Property="Background">
+                                                <Setter.Value>
+                                                    <SolidColorBrush Color="{StaticResource ColorBgCard}" />
+                                                </Setter.Value>
+                                            </Setter>
+                                        </Trigger>
+                                    </ControlTemplate.Triggers>
+                                </ControlTemplate>
+                            </Setter.Value>
+                        </Setter>
+                    </Style>
+                </Button.Style>
+            </Button>
+
+        </Grid>
+    </Border>
+</Window>

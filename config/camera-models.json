@@ -1,0 +1,309 @@
+{
+  "version": "1.0",
+  "known_models": {
+    "FC220": { "camera_type": "Drone", "display_name": "DJI Mavic Pro" },
+    "FC330": { "camera_type": "Drone", "display_name": "DJI Phantom 4" },
+    "FC350": { "camera_type": "Drone", "display_name": "DJI Inspire 1 (Zenmuse X3)" },
+    "FC550": { "camera_type": "Drone", "display_name": "DJI Inspire 1 (Zenmuse X5)" },
+    "FC6310": { "camera_type": "Drone", "display_name": "DJI Phantom 4 Pro" },
+    "FC6310S": { "camera_type": "Drone", "display_name": "DJI Phantom 4 Pro V2.0" },
+    "FC7303": { "camera_type": "Drone", "display_name": "DJI Mini 2" },
+    "FC2103": { "camera_type": "Drone", "display_name": "DJI Mavic Air" },
+    "FC3170": { "camera_type": "Drone", "display_name": "DJI Air 2S" },
+    "FC3411": { "camera_type": "Drone", "display_name": "DJI Mini 3" },
+    "FC3582": { "camera_type": "Drone", "display_name": "DJI Mini 3 Pro" },
+    "FC3680": { "camera_type": "Drone", "display_name": "DJI Mavic 3 Classic" },
+    "FC3690": { "camera_type": "Drone", "display_name": "DJI Mavic 3" },
+    "FC3692": { "camera_type": "Drone", "display_name": "DJI Mavic 3 Cine" },
+    "FC4170": { "camera_type": "Drone", "display_name": "DJI Mavic 3 Pro" },
+    "FC8284": { "camera_type": "Drone", "display_name": "DJI Mini 4 Pro" },
+    "FC2204": { "camera_type": "Drone", "display_name": "DJI Mavic Air 2" },
+    "L1D-20c": { "camera_type": "Drone", "display_name": "DJI Mavic 2 Pro" },
+    "L2D-20c": { "camera_type": "Drone", "display_name": "DJI Mavic 3 (Hasselblad)" },
+    "L3D-20c": { "camera_type": "Drone", "display_name": "DJI Mavic 3 Pro (Hasselblad)" },
+    "Osmo Action": { "camera_type": "Action", "display_name": "DJI Osmo Action" },
+    "OsmoAction": { "camera_type": "Action", "display_name": "DJI Osmo Action 6" },
+    "Osmo Action 2": { "camera_type": "Action", "display_name": "DJI Osmo Action 2" },
+    "Osmo Action 3": { "camera_type": "Action", "display_name": "DJI Osmo Action 3" },
+    "Osmo Action 4": { "camera_type": "Action", "display_name": "DJI Osmo Action 4" },
+    "Osmo Action 5 Pro": { "camera_type": "Action", "display_name": "DJI Osmo Action 5 Pro" },
+    "Osmo Action 6": { "camera_type": "Action", "display_name": "DJI Osmo Action 6" },
+    "DJI OA6": { "camera_type": "Action", "display_name": "DJI Osmo Action 6" },
+    "OA6": { "camera_type": "Action", "display_name": "DJI Osmo Action 6" },
+    "DJI OA5": { "camera_type": "Action", "display_name": "DJI Osmo Action 5 Pro" },
+    "OA5": { "camera_type": "Action", "display_name": "DJI Osmo Action 5 Pro" },
+    "OA5 Pro": { "camera_type": "Action", "display_name": "DJI Osmo Action 5 Pro" },
+    "Osmo Pocket": { "camera_type": "Action", "display_name": "DJI Osmo Pocket" },
+    "Osmo Pocket 2": { "camera_type": "Action", "display_name": "DJI Osmo Pocket 2" },
+    "Osmo Pocket 3": { "camera_type": "Action", "display_name": "DJI Osmo Pocket 3" },
+    "Action 2": { "camera_type": "Action", "display_name": "DJI Action 2" },
+    "Action 360": { "camera_type": "Action", "display_name": "DJI Action 360" },
+    "HERO3": { "camera_type": "Action", "display_name": "GoPro HERO3" },
+    "HERO4": { "camera_type": "Action", "display_name": "GoPro HERO4" },
+    "HERO5 Black": { "camera_type": "Action", "display_name": "GoPro HERO5 Black" },
+    "HERO6 Black": { "camera_type": "Action", "display_name": "GoPro HERO6 Black" },
+    "HERO7 Black": { "camera_type": "Action", "display_name": "GoPro HERO7 Black" },
+    "HERO8 Black": { "camera_type": "Action", "display_name": "GoPro HERO8 Black" },
+    "HERO9 Black": { "camera_type": "Action", "display_name": "GoPro HERO9 Black" },
+    "HERO10 Black": { "camera_type": "Action", "display_name": "GoPro HERO10 Black" },
+    "HERO11 Black": { "camera_type": "Action", "display_name": "GoPro HERO11 Black" },
+    "HERO11 Black Mini": { "camera_type": "Action", "display_name": "GoPro HERO11 Black Mini" },
+    "HERO12 Black": { "camera_type": "Action", "display_name": "GoPro HERO12 Black" },
+    "HERO13 Black": { "camera_type": "Action", "display_name": "GoPro HERO13 Black" },
+    "GoPro MAX": { "camera_type": "Action", "display_name": "GoPro MAX (360)" },
+    "FUSION": { "camera_type": "Action", "display_name": "GoPro Fusion (360)" },
+    "ONE X": { "camera_type": "Action", "display_name": "Insta360 ONE X" },
+    "ONE X2": { "camera_type": "Action", "display_name": "Insta360 ONE X2" },
+    "ONE X3": { "camera_type": "Action", "display_name": "Insta360 ONE X3" },
+    "X4": { "camera_type": "Action", "display_name": "Insta360 X4" },
+    "ONE RS": { "camera_type": "Action", "display_name": "Insta360 ONE RS" },
+    "ONE R": { "camera_type": "Action", "display_name": "Insta360 ONE R" },
+    "Ace": { "camera_type": "Action", "display_name": "Insta360 Ace" },
+    "Ace Pro": { "camera_type": "Action", "display_name": "Insta360 Ace Pro" },
+    "Ace Pro 2": { "camera_type": "Action", "display_name": "Insta360 Ace Pro 2" },
+    "GO 2": { "camera_type": "Action", "display_name": "Insta360 GO 2" },
+    "GO 3": { "camera_type": "Action", "display_name": "Insta360 GO 3" },
+    "ILCE-7M3": { "camera_type": "Mirrorless", "display_name": "Sony A7 III" },
+    "ILCE-7M4": { "camera_type": "Mirrorless", "display_name": "Sony A7 IV" },
+    "ILCE-7RM4": { "camera_type": "Mirrorless", "display_name": "Sony A7R IV" },
+    "ILCE-7RM4A": { "camera_type": "Mirrorless", "display_name": "Sony A7R IVA" },
+    "ILCE-7RM5": { "camera_type": "Mirrorless", "display_name": "Sony A7R V" },
+    "ILCE-7SM3": { "camera_type": "Mirrorless", "display_name": "Sony A7S III" },
+    "ILCE-7CM2": { "camera_type": "Mirrorless", "display_name": "Sony A7C II" },
+    "ILCE-7CR": { "camera_type": "Mirrorless", "display_name": "Sony A7C R" },
+    "ILCE-9": { "camera_type": "Mirrorless", "display_name": "Sony A9" },
+    "ILCE-9M2": { "camera_type": "Mirrorless", "display_name": "Sony A9 II" },
+    "ILCE-9M3": { "camera_type": "Mirrorless", "display_name": "Sony A9 III" },
+    "ILCE-6700": { "camera_type": "Mirrorless", "display_name": "Sony A6700" },
+    "ZV-E10": { "camera_type": "Mirrorless", "display_name": "Sony ZV-E10" },
+    "ZV-E10M2": { "camera_type": "Mirrorless", "display_name": "Sony ZV-E10 II" },
+    "HDR-AS50": { "camera_type": "Action", "display_name": "Sony Action Cam HDR-AS50" },
+    "HDR-AS300": { "camera_type": "Action", "display_name": "Sony Action Cam HDR-AS300" },
+    "FDR-X3000": { "camera_type": "Action", "display_name": "Sony Action Cam FDR-X3000" },
+    "Canon EOS R": { "camera_type": "Mirrorless", "display_name": "Canon EOS R" },
+    "Canon EOS R5": { "camera_type": "Mirrorless", "display_name": "Canon EOS R5" },
+    "Canon EOS R5 Mark II": { "camera_type": "Mirrorless", "display_name": "Canon EOS R5 Mark II" },
+    "Canon EOS R6": { "camera_type": "Mirrorless", "display_name": "Canon EOS R6" },
+    "Canon EOS R6 Mark II": { "camera_type": "Mirrorless", "display_name": "Canon EOS R6 Mark II" },
+    "Canon EOS R3": { "camera_type": "Mirrorless", "display_name": "Canon EOS R3" },
+    "Canon EOS R7": { "camera_type": "Mirrorless", "display_name": "Canon EOS R7" },
+    "Canon EOS R8": { "camera_type": "Mirrorless", "display_name": "Canon EOS R8" },
+    "Canon EOS R10": { "camera_type": "Mirrorless", "display_name": "Canon EOS R10" },
+    "Canon EOS R50": { "camera_type": "Mirrorless", "display_name": "Canon EOS R50" },
+    "Canon EOS R100": { "camera_type": "Mirrorless", "display_name": "Canon EOS R100" },
+    "Canon EOS 5D Mark IV": { "camera_type": "DSLR", "display_name": "Canon EOS 5D Mark IV" },
+    "Canon EOS 6D Mark II": { "camera_type": "DSLR", "display_name": "Canon EOS 6D Mark II" },
+    "Canon EOS 90D": { "camera_type": "DSLR", "display_name": "Canon EOS 90D" },
+    "Canon EOS 850D": { "camera_type": "DSLR", "display_name": "Canon EOS 850D" },
+    "Nikon Z5": { "camera_type": "Mirrorless", "display_name": "Nikon Z5" },
+    "Nikon Z5II": { "camera_type": "Mirrorless", "display_name": "Nikon Z5 II" },
+    "Nikon Z6": { "camera_type": "Mirrorless", "display_name": "Nikon Z6" },
+    "Nikon Z6II": { "camera_type": "Mirrorless", "display_name": "Nikon Z6 II" },
+    "Nikon Z6III": { "camera_type": "Mirrorless", "display_name": "Nikon Z6 III" },
+    "Nikon Z7": { "camera_type": "Mirrorless", "display_name": "Nikon Z7" },
+    "Nikon Z7II": { "camera_type": "Mirrorless", "display_name": "Nikon Z7 II" },
+    "Nikon Z8": { "camera_type": "Mirrorless", "display_name": "Nikon Z8" },
+    "Nikon Z9": { "camera_type": "Mirrorless", "display_name": "Nikon Z9" },
+    "Nikon Z30": { "camera_type": "Mirrorless", "display_name": "Nikon Z30" },
+    "Nikon Z50": { "camera_type": "Mirrorless", "display_name": "Nikon Z50" },
+    "Nikon Z50II": { "camera_type": "Mirrorless", "display_name": "Nikon Z50 II" },
+    "Nikon Z fc": { "camera_type": "Mirrorless", "display_name": "Nikon Z fc" },
+    "NIKON D850": { "camera_type": "DSLR", "display_name": "Nikon D850" },
+    "NIKON D750": { "camera_type": "DSLR", "display_name": "Nikon D750" },
+    "NIKON D780": { "camera_type": "DSLR", "display_name": "Nikon D780" },
+    "NIKON D7500": { "camera_type": "DSLR", "display_name": "Nikon D7500" },
+    "X-T5": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-T5" },
+    "X-T4": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-T4" },
+    "X-T3": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-T3" },
+    "X-S20": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-S20" },
+    "X-S10": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-S10" },
+    "X-H2": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-H2" },
+    "X-H2S": { "camera_type": "Mirrorless", "display_name": "Fujifilm X-H2S" },
+    "GFX 100S": { "camera_type": "Mirrorless", "display_name": "Fujifilm GFX 100S" },
+    "GFX 100S II": { "camera_type": "Mirrorless", "display_name": "Fujifilm GFX 100S II" },
+    "GFX 50S II": { "camera_type": "Mirrorless", "display_name": "Fujifilm GFX 50S II" },
+    "DC-S5": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix S5" },
+    "DC-S5M2": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix S5 II" },
+    "DC-S5M2X": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix S5 IIX" },
+    "DC-GH6": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix GH6" },
+    "DC-GH7": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix GH7" },
+    "DC-G9M2": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix G9 II" },
+    "DC-S9": { "camera_type": "Mirrorless", "display_name": "Panasonic Lumix S9" },
+    "BlackVue DR900X-2CH": { "camera_type": "Dashcam", "display_name": "BlackVue DR900X-2CH" },
+    "BlackVue DR900X-1CH": { "camera_type": "Dashcam", "display_name": "BlackVue DR900X-1CH" },
+    "BlackVue DR750X-2CH": { "camera_type": "Dashcam", "display_name": "BlackVue DR750X-2CH" },
+    "BlackVue DR590X-2CH": { "camera_type": "Dashcam", "display_name": "BlackVue DR590X-2CH" },
+    "70mai A800S": { "camera_type": "Dashcam", "display_name": "70mai A800S" },
+    "70mai A810": { "camera_type": "Dashcam", "display_name": "70mai A810" },
+    "VIOFO A129 Pro Duo": { "camera_type": "Dashcam", "display_name": "Viofo A129 Pro Duo" },
+    "VIOFO A139 Pro": { "camera_type": "Dashcam", "display_name": "Viofo A139 Pro" },
+    "Garmin Dash Cam 67W": { "camera_type": "Dashcam", "display_name": "Garmin Dash Cam 67W" },
+    "Garmin Dash Cam Tandem": { "camera_type": "Dashcam", "display_name": "Garmin Dash Cam Tandem" },
+    "VIRB Ultra 30": { "camera_type": "Action", "display_name": "Garmin VIRB Ultra 30" },
+    "VIRB X": { "camera_type": "Action", "display_name": "Garmin VIRB X" },
+    "Rollei Actioncam 500": { "camera_type": "Action", "display_name": "Rollei Actioncam 500" },
+    "Rollei Actioncam 6S Plus": { "camera_type": "Action", "display_name": "Rollei Actioncam 6S Plus" }
+  },
+  "make_rules": [
+    {
+      "make": "DJI",
+      "model_pattern": "^FC\\d",
+      "camera_type": "Drone"
+    },
+    {
+      "make": "DJI",
+      "model_pattern": "^L\\d[A-Z]-",
+      "camera_type": "Drone"
+    },
+    {
+      "make": "DJI",
+      "model_pattern": "(?i)osmo\\s*action|^Action\\s*\\d",
+      "camera_type": "Action"
+    },
+    {
+      "make": "DJI",
+      "model_pattern": "(?i)osmo\\s*pocket",
+      "camera_type": "Action"
+    },
+    {
+      "make": "DJI",
+      "model_pattern": "(?i)action\\s*360",
+      "camera_type": "Action"
+    },
+    {
+      "make": "GoPro",
+      "model_pattern": "(?i)^HERO|^GoPro\\s*HERO",
+      "camera_type": "Action"
+    },
+    {
+      "make": "GoPro",
+      "model_pattern": "(?i)^(GoPro\\s*)?MAX$|^FUSION$",
+      "camera_type": "Action"
+    },
+    {
+      "make": "Insta360",
+      "model_pattern": "(?i)ONE\\s*X|^X\\d|ONE\\s*R|ONE\\s*RS",
+      "camera_type": "Action"
+    },
+    {
+      "make": "Insta360",
+      "model_pattern": "(?i)^Ace|^GO\\s*\\d",
+      "camera_type": "Action"
+    },
+    {
+      "make": "SONY",
+      "model_pattern": "^ILCE-",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "SONY",
+      "model_pattern": "^ZV-E",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "SONY",
+      "model_pattern": "^HDR-AS|^FDR-X",
+      "camera_type": "Action"
+    },
+    {
+      "make": "Canon",
+      "model_pattern": "(?i)EOS\\s*R\\d*\\b|EOS\\s*R\\b",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "Canon",
+      "model_pattern": "(?i)EOS\\s*[0-9]",
+      "camera_type": "DSLR"
+    },
+    {
+      "make": "NIKON CORPORATION",
+      "model_pattern": "^NIKON\\s+Z|^Nikon\\s+Z",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "NIKON CORPORATION",
+      "model_pattern": "^NIKON\\s+D\\d",
+      "camera_type": "DSLR"
+    },
+    {
+      "make": "Nikon",
+      "model_pattern": "^Nikon\\s+Z|^Z\\d",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "Nikon",
+      "model_pattern": "^NIKON\\s+D\\d|^Nikon\\s+D\\d",
+      "camera_type": "DSLR"
+    },
+    {
+      "make": "FUJIFILM",
+      "model_pattern": "^X-|^GFX",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "Panasonic",
+      "model_pattern": "^DC-",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "Olympus",
+      "model_pattern": ".*",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "OM Digital Solutions",
+      "model_pattern": ".*",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "OM System",
+      "model_pattern": ".*",
+      "camera_type": "Mirrorless"
+    },
+    {
+      "make": "Pittasoft",
+      "model_pattern": "(?i)blackvue|DR\\d",
+      "camera_type": "Dashcam"
+    },
+    {
+      "make": "70mai",
+      "model_pattern": ".*",
+      "camera_type": "Dashcam"
+    },
+    {
+      "make": "VIOFO",
+      "model_pattern": ".*",
+      "camera_type": "Dashcam"
+    },
+    {
+      "make": "Garmin",
+      "model_pattern": "(?i)dash\\s*cam",
+      "camera_type": "Dashcam"
+    },
+    {
+      "make": "Garmin",
+      "model_pattern": "(?i)VIRB",
+      "camera_type": "Action"
+    },
+    {
+      "make": "Rollei",
+      "model_pattern": "(?i)actioncam",
+      "camera_type": "Action"
+    }
+  ],
+  "volume_label_rules": [
+    { "pattern": "(?i)^DJI.*(ACTION|OSMO)", "camera_type": "Action", "make": "DJI" },
+    { "pattern": "(?i)^DJI\\s*OA\\d*", "camera_type": "Action", "make": "DJI", "display_name": "DJI Osmo Action" },
+    { "pattern": "(?i)^DJI.*(MINI|AIR|MAVIC|PHANTOM|INSPIRE)", "camera_type": "Drone", "make": "DJI" },
+    { "pattern": "(?i)^DJI", "camera_type": "Action", "make": "DJI" },
+    { "pattern": "(?i)^Osmo\\s*Action", "camera_type": "Action", "make": "DJI", "display_name": "DJI Osmo Action" },
+    { "pattern": "(?i)^(Mavic|MINI|AIR\\s*\\d|PHANTOM|INSPIRE)", "camera_type": "Drone", "make": "DJI" },
+    { "pattern": "(?i)^(HERO\\d*|GP_CARD|GOPRO)", "camera_type": "Action", "make": "GoPro" },
+    { "pattern": "(?i)^Insta360", "camera_type": "Action", "make": "Insta360" },
+    { "pattern": "(?i)^EOS", "camera_type": "DSLR", "make": "Canon" },
+    { "pattern": "(?i)^NIKON", "camera_type": "DSLR", "make": "Nikon" },
+    { "pattern": "(?i)^(LUMIX|DC-)", "camera_type": "Mirrorless", "make": "Panasonic" },
+    { "pattern": "(?i)^(ILCE|ZV-E|FDR|HDR-AS)", "camera_type": "Mirrorless", "make": "SONY" },
+    { "pattern": "(?i)^FUJI", "camera_type": "Mirrorless", "make": "FUJIFILM" }
+  ]
+}

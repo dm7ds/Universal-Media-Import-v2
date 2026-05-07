@@ -1,0 +1,65 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>Exe</OutputType>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>12</LangVersion>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AssemblyName>umi</AssemblyName>
+    <!-- Version is inherited from Directory.Build.props (SSOT). -->
+    <SourceRevisionId Condition="'$(SourceRevisionId)' == ''">unknown</SourceRevisionId>
+
+    <!-- Framework-dependent Build (erfordert .NET 8 Runtime) -->
+    <PublishSingleFile>false</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+
+    <!-- Nur englische + deutsche Lokalisierung -->
+    <SatelliteResourceLanguages>en;de</SatelliteResourceLanguages>
+
+    <!-- Nur Windows x64 Runtime (killt runtimes/ für Linux/macOS/ARM/WASM) -->
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+  </PropertyGroup>
+
+  <!-- Git-Hash zur Build-Zeit ermitteln -->
+  <Target Name="SetSourceRevisionId" BeforeTargets="InitializeSourceControlInformation">
+    <Exec Command="git rev-parse --short HEAD" ConsoleToMSBuild="true" IgnoreExitCode="true" StandardOutputImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="SourceRevisionId" />
+    </Exec>
+  </Target>
+
+  <!-- HINWEIS: Clean wird von build.ps1 Script übernommen -->
+  <!-- MSBuild CleanPublishDir Target hatte Timing-Probleme -->
+
+  <ItemGroup>
+    <ProjectReference Include="..\UMI.Core\UMI.Core.csproj" />
+    <ProjectReference Include="..\UMI.Cameras\UMI.Cameras.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Spectre.Console" Version="0.54.0" />
+    <PackageReference Include="System.CommandLine" Version="2.0.0-beta4.22272.1" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="8.0.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\CliStrings.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CliStrings.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+    <Compile Update="Resources\CliStrings.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>CliStrings.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <!-- Config + Presets mitkopieren beim Publish (Wildcard, OHNE User-Profile) -->
+  <ItemGroup>
+    <Content Include="..\..\config\**\*"
+             Exclude="..\..\config\presets\profiles\**"
+             Link="config\%(RecursiveDir)%(Filename)%(Extension)">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>
