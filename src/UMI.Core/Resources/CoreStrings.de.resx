@@ -90,10 +90,6 @@
     <value>EIS-Erkennung</value>
     <comment>Display label for EIS detection feature</comment>
   </data>
-  <data name="Feature_LensCorrection" xml:space="preserve">
-    <value>Linsenkorrektur</value>
-    <comment>Display label for lens correction feature</comment>
-  </data>
   <data name="Feature_PostProcess" xml:space="preserve">
     <value>Nachbearbeitung</value>
     <comment>Display label for post-processing feature</comment>
@@ -125,10 +121,6 @@
   <data name="Feature_EisDetection_Desc" xml:space="preserve">
     <value>Erkennt EIS-aktivierte Videos und verschiebt sie für Gyroflow in einen separaten Ordner</value>
     <comment>Tooltip description for EIS detection feature</comment>
-  </data>
-  <data name="Feature_LensCorrection_Desc" xml:space="preserve">
-    <value>Wendet Linsenverzerrungskorrektur an (kommt bald)</value>
-    <comment>Tooltip description for lens correction feature</comment>
   </data>
   <data name="Feature_PostProcess_Desc" xml:space="preserve">
     <value>Exportiert verarbeitete Videos via DaVinci Resolve DVR zum Color Grading</value>

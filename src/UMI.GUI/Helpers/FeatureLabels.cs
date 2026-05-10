@@ -31,7 +31,6 @@ namespace UMI.GUI.Helpers;
 ///   "Burst"  → BrushBadgeBurst  / BrushBadgeBurstBg
 ///   "Meta"   → BrushBadgeMeta   / BrushBadgeMetaBg
 ///   "Eis"    → BrushBadgeEis    / BrushBadgeEisBg
-///   "Lens"   → BrushBadgeLens   / BrushBadgeLensBg
 ///   "Post"   → BrushBadgePost   / BrushBadgePostBg
 ///   "Rename" → BrushBadgeRename / BrushBadgeRenameBg
 ///   "GoPro"  → BrushBadgeGoPro  / BrushBadgeGoProBg
@@ -51,7 +50,6 @@ public static class FeatureLabels
             [FeatureKeys.BurstDetection] = "Burst",
             [FeatureKeys.MetadataBackup] = "Meta",
             [FeatureKeys.EisDetection]   = "Eis",
-            [FeatureKeys.LensCorrection] = "Lens",
             [FeatureKeys.PostProcess]    = "Post",
             [FeatureKeys.RenameVideos]   = "Rename",
             [FeatureKeys.GoProRename]        = "GoPro",

@@ -106,7 +106,6 @@ public class CameraViewModel : ViewModelBase
         _editBurstDetection = config.Features.BurstDetection;
         _editMetadataBackup = config.Features.MetadataBackup;
         _editEisDetection  = config.Features.EisDetection;
-        _editLensCorrection = config.Features.LensCorrection;
         _editPostProcess   = config.Features.PostProcess;
         _editRenameVideos  = config.Features.RenameVideos;
         _editGoProRename   = config.Features.GoProRename;
@@ -118,7 +117,6 @@ public class CameraViewModel : ViewModelBase
         ToggleBurstCommand       = new RelayCommand(() => SetEditFlag(FeatureKeys.BurstDetection, !GetEditFlag(FeatureKeys.BurstDetection)));
         ToggleMetadataCommand    = new RelayCommand(() => SetEditFlag(FeatureKeys.MetadataBackup, !GetEditFlag(FeatureKeys.MetadataBackup)));
         ToggleEisCommand         = new RelayCommand(() => SetEditFlag(FeatureKeys.EisDetection,   !GetEditFlag(FeatureKeys.EisDetection)));
-        ToggleLensCommand        = new RelayCommand(() => SetEditFlag(FeatureKeys.LensCorrection, !GetEditFlag(FeatureKeys.LensCorrection)));
         TogglePostProcessCommand  = new RelayCommand(() => SetEditFlag(FeatureKeys.PostProcess,   !GetEditFlag(FeatureKeys.PostProcess)));
         ToggleRenameVideosCommand = new RelayCommand(() => SetEditFlag(FeatureKeys.RenameVideos,  !GetEditFlag(FeatureKeys.RenameVideos)));
         ToggleGoProRenameCommand  = new RelayCommand(() => SetEditFlag(FeatureKeys.GoProRename,   !GetEditFlag(FeatureKeys.GoProRename)));
@@ -128,7 +126,6 @@ public class CameraViewModel : ViewModelBase
         ToggleBurstSimpleOnCardCommand        = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.BurstDetection, !GetSimpleOnCard(FeatureKeys.BurstDetection)));
         ToggleMetadataSimpleOnCardCommand     = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.MetadataBackup, !GetSimpleOnCard(FeatureKeys.MetadataBackup)));
         ToggleEisSimpleOnCardCommand          = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.EisDetection,   !GetSimpleOnCard(FeatureKeys.EisDetection)));
-        ToggleLensSimpleOnCardCommand         = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.LensCorrection, !GetSimpleOnCard(FeatureKeys.LensCorrection)));
         TogglePostProcessSimpleOnCardCommand  = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.PostProcess,    !GetSimpleOnCard(FeatureKeys.PostProcess)));
         ToggleRenameVideosSimpleOnCardCommand = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.RenameVideos,   !GetSimpleOnCard(FeatureKeys.RenameVideos)));
         ToggleGoProRenameSimpleOnCardCommand  = new RelayCommand(() => SetSimpleOnCard(FeatureKeys.GoProRename,    !GetSimpleOnCard(FeatureKeys.GoProRename)));
@@ -145,7 +142,6 @@ public class CameraViewModel : ViewModelBase
             _burstBeforeEdit       = EditBurstDetection;
             _metadataBeforeEdit    = EditMetadataBackup;
             _eisBeforeEdit         = EditEisDetection;
-            _lensBeforeEdit        = EditLensCorrection;
             _postProcessBeforeEdit = EditPostProcess;
             _renameVideosBeforeEdit = EditRenameVideos;
             _goProRenameBeforeEdit = EditGoProRename;
@@ -434,7 +430,6 @@ public class CameraViewModel : ViewModelBase
     private bool _burstBeforeEdit;
     private bool _metadataBeforeEdit;
     private bool _eisBeforeEdit;
-    private bool _lensBeforeEdit;
     private bool _postProcessBeforeEdit;
     private bool _renameVideosBeforeEdit;
     private bool _goProRenameBeforeEdit;
@@ -546,7 +541,6 @@ public class CameraViewModel : ViewModelBase
     public ICommand ToggleBurstCommand       { get; }
     public ICommand ToggleMetadataCommand    { get; }
     public ICommand ToggleEisCommand         { get; }
-    public ICommand ToggleLensCommand        { get; }
     public ICommand TogglePostProcessCommand { get; }
     public ICommand ToggleRenameVideosCommand { get; }
     public ICommand ToggleGoProRenameCommand { get; }
@@ -556,7 +550,6 @@ public class CameraViewModel : ViewModelBase
     public ICommand ToggleBurstSimpleOnCardCommand       { get; }
     public ICommand ToggleMetadataSimpleOnCardCommand    { get; }
     public ICommand ToggleEisSimpleOnCardCommand         { get; }
-    public ICommand ToggleLensSimpleOnCardCommand        { get; }
     public ICommand TogglePostProcessSimpleOnCardCommand { get; }
     public ICommand ToggleRenameVideosSimpleOnCardCommand { get; }
     public ICommand ToggleGoProRenameSimpleOnCardCommand { get; }
@@ -798,7 +791,6 @@ public class CameraViewModel : ViewModelBase
         FeatureKeys.RenameVideos   => ToggleRenameVideosCommand,
         FeatureKeys.GoProRename    => ToggleGoProRenameCommand,
         FeatureKeys.PostProcess    => TogglePostProcessCommand,
-        FeatureKeys.LensCorrection => ToggleLensCommand,
         _                          => new RelayCommand(() => { }),
     };
 
@@ -817,7 +809,6 @@ public class CameraViewModel : ViewModelBase
         FeatureKeys.RenameVideos   => ToggleRenameVideosSimpleOnCardCommand,
         FeatureKeys.GoProRename    => ToggleGoProRenameSimpleOnCardCommand,
         FeatureKeys.PostProcess    => TogglePostProcessSimpleOnCardCommand,
-        FeatureKeys.LensCorrection => ToggleLensSimpleOnCardCommand,
         _                          => new RelayCommand(() => { }),
     };
 
@@ -835,7 +826,6 @@ public class CameraViewModel : ViewModelBase
         FeatureKeys.RenameVideos   => _editRenameVideos,
         FeatureKeys.GoProRename    => _editGoProRename,
         FeatureKeys.PostProcess    => _editPostProcess,
-        FeatureKeys.LensCorrection => _editLensCorrection,
         _                          => false,
     };
 
@@ -925,7 +915,6 @@ public class CameraViewModel : ViewModelBase
             case FeatureKeys.RenameVideos:   EditRenameVideos   = value; break;
             case FeatureKeys.GoProRename:    EditGoProRename    = value; break;
             case FeatureKeys.PostProcess:    EditPostProcess    = value; break;
-            case FeatureKeys.LensCorrection: EditLensCorrection = value; break;
         }
 
         SyncSingleBubbleState(featureKey, value);
@@ -1242,13 +1231,6 @@ public class CameraViewModel : ViewModelBase
         set { if (SetProperty(ref _editEisDetection, value)) { OnPropertyChanged(nameof(IsDirty)); } }
     }
 
-    private bool _editLensCorrection;
-    public bool EditLensCorrection
-    {
-        get => _editLensCorrection;
-        set { if (SetProperty(ref _editLensCorrection, value)) { OnPropertyChanged(nameof(IsDirty)); } }
-    }
-
     private bool _editPostProcess;
     public bool EditPostProcess
     {
@@ -1351,7 +1333,6 @@ public class CameraViewModel : ViewModelBase
         _editBurstDetection != _config.Features.BurstDetection ||
         _editMetadataBackup != _config.Features.MetadataBackup ||
         _editEisDetection   != _config.Features.EisDetection ||
-        _editLensCorrection != _config.Features.LensCorrection ||
         _editPostProcess    != _config.Features.PostProcess ||
         _editRenameVideos   != _config.Features.RenameVideos ||
         _editGoProRename    != _config.Features.GoProRename ||
@@ -1371,7 +1352,6 @@ public class CameraViewModel : ViewModelBase
         _config.Features.BurstDetection = _editBurstDetection;
         _config.Features.MetadataBackup = _editMetadataBackup;
         _config.Features.EisDetection   = _editEisDetection;
-        _config.Features.LensCorrection = _editLensCorrection;
         _config.Features.PostProcess    = _editPostProcess;
         _config.Features.RenameVideos   = _editRenameVideos;
         _config.Features.GoProRename    = _editGoProRename;
@@ -1411,7 +1391,6 @@ public class CameraViewModel : ViewModelBase
         EditBurstDetection = _config.Features.BurstDetection;
         EditMetadataBackup = _config.Features.MetadataBackup;
         EditEisDetection   = _config.Features.EisDetection;
-        EditLensCorrection = _config.Features.LensCorrection;
         EditPostProcess    = _config.Features.PostProcess;
         EditRenameVideos   = _config.Features.RenameVideos;
         EditGoProRename    = _config.Features.GoProRename;

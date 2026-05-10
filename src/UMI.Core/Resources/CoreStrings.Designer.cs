@@ -95,12 +95,6 @@ public static class CoreStrings
         => ResourceManager.GetString("Feature_EisDetection", resourceCulture) ?? string.Empty;
 
     /// <summary>
-    ///   Looks up a localized string: display label for lens correction feature.
-    /// </summary>
-    public static string Feature_LensCorrection
-        => ResourceManager.GetString("Feature_LensCorrection", resourceCulture) ?? string.Empty;
-
-    /// <summary>
     ///   Looks up a localized string: display label for post-processing feature.
     /// </summary>
     public static string Feature_PostProcess
@@ -147,12 +141,6 @@ public static class CoreStrings
     /// </summary>
     public static string Feature_EisDetection_Desc
         => ResourceManager.GetString("Feature_EisDetection_Desc", resourceCulture) ?? string.Empty;
-
-    /// <summary>
-    ///   Looks up a localized string: tooltip description for lens correction feature.
-    /// </summary>
-    public static string Feature_LensCorrection_Desc
-        => ResourceManager.GetString("Feature_LensCorrection_Desc", resourceCulture) ?? string.Empty;
 
     /// <summary>
     ///   Looks up a localized string: tooltip description for post-processing feature.

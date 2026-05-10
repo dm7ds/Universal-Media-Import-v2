@@ -92,7 +92,6 @@ Pre- and post-processing runs over registered processors — no monolithic code,
 | Processor | Condition |
 |-----------|-----------|
 | `GyroflowPostProcessor` | `features.gyroflow: true`, via GPU Queue |
-| `RacerenderPostProcessor` | Stub (not yet production-ready) |
 
 `PreProcessingOrchestrator` and `PostProcessingOrchestrator` orchestrate the chain — new processors are only registered, no core code changed.
 
@@ -460,7 +459,7 @@ First-run wizard that guides users through initial configuration.
 
 Full English + German localization.
 
-- **3 .resx pairs:** GUI (771 keys), CLI (381 keys), Core (23 keys) — EN + DE parity
+- **3 .resx pairs:** GUI (771 keys), CLI (381 keys), Core (21 keys) — EN + DE parity
 - **XAML:** `{helpers:Localize Key}` extension
 - **Language setting:** `AppSettings.Language` (default `"en"`), Language dropdown in **Settings → Tools**
 - **Feature labels:** Dynamic via `CoreStrings`
@@ -569,4 +568,4 @@ UMI.Core has **no dependency** on System.CommandLine, Spectre.Console, or Consol
 
 ---
 
-*Last updated: 2026-05-07 | v2.1.1*
+*Last updated: 2026-05-10 | v2.1.4*

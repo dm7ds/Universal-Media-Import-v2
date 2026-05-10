@@ -121,8 +121,6 @@ public static class ServiceCollectionExtensions
                 sp.GetRequiredService<ConfigPathResolver>(),
                 sp.GetRequiredService<IProcessHistoryService>(),
                 sp.GetService<ILogger<GyroflowPostProcessor>>()));
-        services.AddSingleton<IPostProcessor, RacerenderPostProcessor>();
-
         services.AddSingleton<IPostProcessingOrchestrator>(sp =>
             new PostProcessingOrchestrator(
                 sp.GetServices<IPostProcessor>(),

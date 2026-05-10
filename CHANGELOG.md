@@ -4,6 +4,19 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.1.4] — 2026-05-10
+
+### Removed
+
+- **LensCorrection-Feature aus dem Camera-Card entfernt.** Der Toggle hatte
+  kein Backend — Tooltip war ehrlich mit "(coming soon)" markiert, aber UMI
+  ist nicht der richtige Ort dafür. Lightroom macht das beim Import. Configs
+  mit `features.lens_correction=true` bleiben gültig (Schema-kompatibel),
+  das Feld wird nur nicht mehr im UI angeboten.
+- **Racerender-PostProcessor-Stub aus der DI-Registration entfernt.** Der
+  Stub bleibt im Code für eine eventuelle spätere Integration, läuft aber
+  nicht mehr automatisch — kein Stub-Log mehr im Default-Betrieb.
+
 ## [2.1.3] — 2026-05-10
 
 ### Added
