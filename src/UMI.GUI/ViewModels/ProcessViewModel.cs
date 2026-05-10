@@ -104,6 +104,7 @@ public class ProcessViewModel : ViewModelBase
         IThumbnailCacheService thumbnailCache,
         BurstProfileLoader burstProfileLoader,
         GlobalPaths globalPaths,
+        IFolderSortService folderSortService,
         IConfigWriterService? configWriter = null,
         ConfigPathResolver? configPaths = null)
     {
@@ -124,7 +125,7 @@ public class ProcessViewModel : ViewModelBase
 
         ToolActions = new ObservableCollection<ProcessActionViewModel>
         {
-            new SortActionViewModel(),
+            new SortActionViewModel(folderSortService, config),
             new StatisticsActionViewModel(mp4Parser, historyService, config, DateFilter),
             new ThumbnailGenerateActionViewModel(thumbnailCache, config, DateFilter),
         };

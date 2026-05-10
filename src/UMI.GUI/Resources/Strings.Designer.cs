@@ -3753,15 +3753,6 @@ namespace UMI.GUI.Resources {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Not yet available in GUI.
-        /// </summary>
-        public static string Sort_NotAvailable {
-            get {
-                return ResourceManager.GetString("Sort_NotAvailable", resourceCulture);
-            }
-        }
-
-        /// <summary>
         ///   Looks up a localized string similar to Organize.
         /// </summary>
         public static string Sort_Title {
@@ -3776,6 +3767,69 @@ namespace UMI.GUI.Resources {
         public static string Sort_ToggleBurst {
             get {
                 return ResourceManager.GetString("Sort_ToggleBurst", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Scanning files….
+        /// </summary>
+        public static string Sort_StatusScanning {
+            get {
+                return ResourceManager.GetString("Sort_StatusScanning", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to Sorting files….
+        /// </summary>
+        public static string Sort_StatusSorting {
+            get {
+                return ResourceManager.GetString("Sort_StatusSorting", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to No media files found in the workbench..
+        /// </summary>
+        public static string Sort_NoMediaFiles {
+            get {
+                return ResourceManager.GetString("Sort_NoMediaFiles", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} moved into {1} date folders.
+        /// </summary>
+        public static string Sort_ResultMoved {
+            get {
+                return ResourceManager.GetString("Sort_ResultMoved", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} skipped.
+        /// </summary>
+        public static string Sort_ResultSkipped {
+            get {
+                return ResourceManager.GetString("Sort_ResultSkipped", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} errors.
+        /// </summary>
+        public static string Sort_ResultErrors {
+            get {
+                return ResourceManager.GetString("Sort_ResultErrors", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} photo series detected.
+        /// </summary>
+        public static string Sort_ResultSequences {
+            get {
+                return ResourceManager.GetString("Sort_ResultSequences", resourceCulture);
             }
         }
 

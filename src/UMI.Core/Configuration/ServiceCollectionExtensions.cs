@@ -68,6 +68,7 @@ public static class ServiceCollectionExtensions
         services.AddSingleton<IExifFieldAnalyzerService, ExifFieldAnalyzerService>();
         services.AddSingleton<BurstProfileLoader>();
         services.AddSingleton<AutoPresetGenerator>();
+        services.AddSingleton<IFolderSortService, FolderSortService>();
 
         services.AddSingleton<MetadataMigrationService>();
 

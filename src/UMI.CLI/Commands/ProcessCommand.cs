@@ -17,7 +17,6 @@
 //     along with UMI - Universal Media Import.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.CommandLine;
-using System.Globalization;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using UMI.CLI.Helpers;
@@ -322,8 +321,8 @@ public static class ProcessCommand
         {
             Console.WriteLine();
             ConsoleHelper.WriteSeparator();
-            var exifTool = serviceProvider.GetRequiredService<IExifToolWrapper>();
-            await SortFilesAsync(workbench, sortMode.Value, config, exifTool, dryRun, ct);
+            var sortService = serviceProvider.GetRequiredService<IFolderSortService>();
+            await SortFilesAsync(workbench, sortMode.Value, config, sortService, dryRun, ct);
         }
 
         Console.WriteLine();
@@ -332,6 +331,7 @@ public static class ProcessCommand
 
     /// <summary>
     /// Sortiert alle Mediendateien im Arbeitsordner nach EXIF-Datum.
+    /// Delegiert an <see cref="IFolderSortService"/> (SSOT — wird auch vom GUI-Process-Tab genutzt).
     /// <para>
     /// <c>full</c>: <c>{workbench}/yyyy-MM-dd/{Camera}/{Type}/datei.ext</c><br/>
     /// <c>date</c>: <c>{workbench}/yyyy-MM-dd/{relative Substruktur}/datei.ext</c>
@@ -341,205 +341,53 @@ public static class ProcessCommand
         string workbench,
         SortMode sortMode,
         UmiConfig config,
-        IExifToolWrapper exifTool,
+        IFolderSortService sortService,
         bool dryRun,
         CancellationToken ct)
     {
         Console.WriteLine(string.Format("  {0}...", CliStrings.Process_SortingFiles));
 
-        var knownExtensions = config.Cameras.Values
-            .SelectMany(c => c.FileTypes.Video.Concat(c.FileTypes.Photo))
-            .Select(e => e.ToLowerInvariant())
-            .ToHashSet();
+        var lastTotal = 0;
+        var progress = new Progress<FolderSortProgress>(p =>
+        {
+            lastTotal = p.Total;
+            if (p.Total > 0)
+                Console.Write($"\r  [{p.Phase}] {p.Current}/{p.Total}: {p.CurrentFile,-40}");
+        });
 
-        if (knownExtensions.Count == 0)
-            knownExtensions = FileExtensions.Videos
-                .Concat(FileExtensions.Photos)
-                .Select(e => e.ToLowerInvariant())
-                .ToHashSet();
+        var request = new FolderSortRequest(
+            Workbench:    workbench,
+            Mode:         sortMode == SortMode.Full ? FolderSortMode.Full : FolderSortMode.Date,
+            Config:       config,
+            // CLI keeps the historic semantics: --sort doesn't trigger burst
+            // detection. The GUI exposes that via a toggle on the action card.
+            DetectBursts: false,
+            DryRun:       dryRun);
 
-        var allFiles = Directory.EnumerateFiles(workbench, "*.*", SearchOption.AllDirectories)
-            .Where(f => knownExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
-            .Select(f => Path.GetFullPath(f))
-            .ToList();
+        var result = await sortService.SortAsync(request, progress, ct);
 
-        if (allFiles.Count == 0)
+        Console.Write("\r" + new string(' ', 80) + "\r");
+
+        if (lastTotal == 0 && result.Moved == 0 && result.Skipped == 0)
         {
             ConsoleHelper.WriteInfo(CliStrings.Process_NoMediaFiles);
             return;
         }
 
-        Console.WriteLine($"  {allFiles.Count} Datei(en) gefunden");
-        Console.WriteLine();
+        Console.WriteLine(string.Format(
+            CliStrings.Process_SortResult,
+            result.Moved,
+            dryRun ? CliStrings.Process_DryRunWouldMove : CliStrings.Process_Sorted,
+            result.DateFolders));
 
-        var movedCount = 0;
-        var skippedCount = 0;
-        var errorCount = 0;
-        var dateFolders = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        if (result.Skipped > 0)
+            Console.WriteLine(string.Format(CliStrings.Process_SkippedAtTarget, result.Skipped));
 
-        var sourceDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
-
-        for (var i = 0; i < allFiles.Count; i++)
+        if (result.Errors > 0)
         {
-            ct.ThrowIfCancellationRequested();
-
-            var filePath = allFiles[i];
-            var fileName = Path.GetFileName(filePath);
-            var fileDir = Path.GetDirectoryName(filePath)!;
-
-            DateTime fileDate;
-            try
-            {
-                var metadata = await exifTool.ReadMetadataAsync(filePath, ["CreateDate"], ct);
-
-                if (metadata.TryGetValue("CreateDate", out var rawDate) && rawDate is string dateStr
-                    && DateTime.TryParseExact(dateStr, "yyyy:MM:dd HH:mm:ss",
-                        CultureInfo.InvariantCulture, DateTimeStyles.None, out var parsedDate))
-                {
-                    fileDate = parsedDate;
-                }
-                else
-                {
-
-                    fileDate = File.GetLastWriteTime(filePath);
-                }
-            }
-            catch
-            {
-                fileDate = File.GetLastWriteTime(filePath);
-            }
-
-            var dateStr2 = fileDate.ToString(DateFormatConstants.FolderFormat, CultureInfo.InvariantCulture);
-
-            string targetDir;
-            if (sortMode == SortMode.Full)
-            {
-
-                var cameraId = ExtractCameraIdFromPath(filePath, workbench, config);
-                var typeFolder = DetermineTypeFolder(fileName, config);
-                var procFolderName = config.Cameras.TryGetValue(cameraId, out var procCam)
-                    ? procCam.FolderName ?? cameraId
-                    : cameraId;
-
-                targetDir = Path.Combine(workbench, dateStr2, procFolderName, typeFolder);
-            }
-            else
-            {
-
-                var relativeDirToWorkbench = Path.GetRelativePath(workbench, fileDir);
-
-                if (relativeDirToWorkbench == ".")
-                {
-                    targetDir = Path.Combine(workbench, dateStr2);
-                }
-                else
-                {
-                    targetDir = Path.Combine(workbench, dateStr2, relativeDirToWorkbench);
-                }
-            }
-
-            var targetPath = Path.Combine(targetDir, fileName);
-
-            if (string.Equals(Path.GetFullPath(filePath), Path.GetFullPath(targetPath), StringComparison.OrdinalIgnoreCase))
-            {
-                skippedCount++;
-                continue;
-            }
-
-            Console.Write($"\r  {i + 1}/{allFiles.Count}: {fileName,-40} → {dateStr2}/");
-
-            if (File.Exists(targetPath))
-            {
-                skippedCount++;
-                continue;
-            }
-
-            dateFolders.Add(Path.Combine(workbench, dateStr2));
-            sourceDirs.Add(fileDir);
-
-            if (!dryRun)
-            {
-                try
-                {
-                    Directory.CreateDirectory(targetDir);
-                    File.Move(filePath, targetPath);
-                    movedCount++;
-                }
-                catch (Exception ex)
-                {
-                    errorCount++;
-                    Console.WriteLine();
-                    ConsoleHelper.WriteWarning(string.Format(CliStrings.Process_MoveError, fileName, ex.Message));
-                }
-            }
-            else
-            {
-                movedCount++;
-            }
+            ConsoleHelper.WriteWarning(string.Format(CliStrings.Process_MoveErrors, result.Errors));
+            foreach (var w in result.Warnings.Take(20))
+                ConsoleHelper.WriteWarning("  " + w);
         }
-
-        Console.Write("\r" + new string(' ', 80) + "\r");
-
-        if (!dryRun)
-        {
-            CleanEmptyDirectories(workbench, sourceDirs);
-        }
-
-        Console.WriteLine(string.Format(CliStrings.Process_SortResult, movedCount, dryRun ? CliStrings.Process_DryRunWouldMove : CliStrings.Process_Sorted, dateFolders.Count));
-        if (skippedCount > 0)
-            Console.WriteLine(string.Format(CliStrings.Process_SkippedAtTarget, skippedCount));
-        if (errorCount > 0)
-            ConsoleHelper.WriteWarning(string.Format(CliStrings.Process_MoveErrors, errorCount));
     }
-
-    /// <summary>
-    /// Extrahiert Camera-ID aus dem Ordnerpfad einer Datei.
-    /// Vergleicht Ordnernamen gegen <c>config.Cameras.Keys</c>.
-    /// Fallback: <c>_unsorted</c>.
-    /// </summary>
-    private static string ExtractCameraIdFromPath(string filePath, string workbench, UmiConfig config)
-    {
-
-        var relativePath = Path.GetRelativePath(workbench, filePath);
-        var segments = relativePath.Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries);
-
-        var cameraKeys = config.Cameras.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase);
-
-        foreach (var segment in segments)
-        {
-            if (cameraKeys.Contains(segment))
-                return config.Cameras.Keys.First(k => k.Equals(segment, StringComparison.OrdinalIgnoreCase));
-        }
-
-        return "_unsorted";
-    }
-
-    /// <summary>
-    /// Bestimmt Video oder Photo Typordner anhand der Dateiextension.
-    /// </summary>
-    private static string DetermineTypeFolder(string fileName, UmiConfig config)
-    {
-        var ext = Path.GetExtension(fileName).ToLowerInvariant();
-
-        var isVideo = config.Cameras.Values
-            .Any(c => c.FileTypes.Video.Any(v => v.Equals(ext, StringComparison.OrdinalIgnoreCase)));
-
-        if (isVideo)
-            return FolderNameConstants.Video;
-
-        var isPhoto = config.Cameras.Values
-            .Any(c => c.FileTypes.Photo.Any(p => p.Equals(ext, StringComparison.OrdinalIgnoreCase)));
-
-        if (isPhoto)
-            return FolderNameConstants.Photo;
-
-        return ext is ".mp4" or ".mov" or ".avi" or ".mkv" ? FolderNameConstants.Video : FolderNameConstants.Photo;
-    }
-
-    /// <summary>
-    /// Delegiert an <see cref="DirectoryCleanupHelper.CleanEmptyDirectories"/> (Core, SSOT).
-    /// Bleibt hier als private Methode damit der Aufruf-Kontext (workbench/sourceDirs) lokal bleibt.
-    /// </summary>
-    private static void CleanEmptyDirectories(string workbench, IEnumerable<string> sourceDirs)
-        => DirectoryCleanupHelper.CleanEmptyDirectories(workbench, sourceDirs);
 }

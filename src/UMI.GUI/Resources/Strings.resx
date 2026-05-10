@@ -360,8 +360,26 @@ Use the Setup Wizard or click 'Add Camera' to get started.</value>
   <data name="Sort_ToggleBurst" xml:space="preserve">
     <value>Detect Photo Series</value>
   </data>
-  <data name="Sort_NotAvailable" xml:space="preserve">
-    <value>Not yet available in GUI</value>
+  <data name="Sort_StatusScanning" xml:space="preserve">
+    <value>Scanning files…</value>
+  </data>
+  <data name="Sort_StatusSorting" xml:space="preserve">
+    <value>Sorting files…</value>
+  </data>
+  <data name="Sort_NoMediaFiles" xml:space="preserve">
+    <value>No media files found in the workbench.</value>
+  </data>
+  <data name="Sort_ResultMoved" xml:space="preserve">
+    <value>{0} moved into {1} date folders</value>
+  </data>
+  <data name="Sort_ResultSkipped" xml:space="preserve">
+    <value>{0} skipped</value>
+  </data>
+  <data name="Sort_ResultErrors" xml:space="preserve">
+    <value>{0} errors</value>
+  </data>
+  <data name="Sort_ResultSequences" xml:space="preserve">
+    <value>{0} photo series detected</value>
   </data>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->

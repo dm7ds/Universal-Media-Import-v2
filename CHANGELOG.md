@@ -4,6 +4,25 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.1.3] — 2026-05-10
+
+### Added
+
+- **GUI Process tab → "Organisieren" jetzt voll funktional.** Die Action-Karte
+  war bisher ein Stub mit *"In der GUI noch nicht verfügbar"*. Jetzt sortiert
+  sie den Workbench nach EXIF-Datum in `yyyy-MM-dd/{Kamera}/{Typ}/`-Bäume —
+  dieselbe Logik wie `umi process --sort full` auf der CLI. Status,
+  Fortschritt und Fehlerliste landen auf der Karte.
+- **Retroaktive Fotoserien-Erkennung.** Der Toggle *"Fotoserien erkennen"*
+  auf der Organisieren-Karte triggert eine Burst-Detection auf dem schon
+  importierten Workbench. Photos die zu einem Burst-Profil passen (Sport,
+  Astro, Timelapse, …) wandern in `<Mode>_HHmmss/`-Unterordner innerhalb
+  ihres Photo-Zielordners — exakt wie beim Import.
+- **`IFolderSortService` als SSOT für Sort-Logik.** Die Sort-Logik lebt jetzt
+  in `UMI.Core/Services/FolderSortService.cs`. CLI (`process --sort`) und
+  GUI rufen denselben Service auf — keine Doppelimplementierung mehr.
+  3 neue Smoke-Tests in `UMI.Core.Tests`.
+
 ## [2.1.2] — 2026-05-10
 
 ### Fixed

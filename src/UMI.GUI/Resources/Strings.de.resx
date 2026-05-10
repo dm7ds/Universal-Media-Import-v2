@@ -223,8 +223,26 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Sort_ToggleBurst" xml:space="preserve">
     <value>Fotoserien erkennen</value>
   </data>
-  <data name="Sort_NotAvailable" xml:space="preserve">
-    <value>In der GUI noch nicht verfügbar</value>
+  <data name="Sort_StatusScanning" xml:space="preserve">
+    <value>Dateien werden gescannt…</value>
+  </data>
+  <data name="Sort_StatusSorting" xml:space="preserve">
+    <value>Dateien werden sortiert…</value>
+  </data>
+  <data name="Sort_NoMediaFiles" xml:space="preserve">
+    <value>Keine Mediendateien im Arbeitsordner gefunden.</value>
+  </data>
+  <data name="Sort_ResultMoved" xml:space="preserve">
+    <value>{0} verschoben in {1} Tagesordner</value>
+  </data>
+  <data name="Sort_ResultSkipped" xml:space="preserve">
+    <value>{0} übersprungen</value>
+  </data>
+  <data name="Sort_ResultErrors" xml:space="preserve">
+    <value>{0} Fehler</value>
+  </data>
+  <data name="Sort_ResultSequences" xml:space="preserve">
+    <value>{0} Fotoserien erkannt</value>
   </data>
 
   <!-- Statistics -->
