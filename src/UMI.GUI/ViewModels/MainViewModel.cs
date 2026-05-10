@@ -513,6 +513,13 @@ public class MainViewModel : ViewModelBase
                 config = await _configWriter.LoadAsync(ConfigPath);
             }
 
+            // Auto-repair: cameras created via the Setup Wizard before the
+            // BuildFromPreset(null) bug got fixed have empty FileTypes lists,
+            // which makes DiscoverSourceFiles match nothing — user reports
+            // "lots of CR3/DNG files in the folder, UMI finds nothing". Pull
+            // the defaults from the camera-type preset and persist on the spot.
+            await RepairEmptyCameraFileTypesAsync(config);
+
             // AppVersion is set once from assembly metadata in the field initializer
             // (ResolveAssemblyVersion). config.Version is the JSON schema version and
             // belongs nowhere near the UI release-version display.
@@ -1012,6 +1019,48 @@ public class MainViewModel : ViewModelBase
     /// Called via DevicesTabViewModel.OnDeviceAssignmentsChanged after Save / Delete / Add-Device.
     /// The rescan ensures newly registered devices get a green dot immediately after the dialog closes.
     /// </summary>
+    /// <summary>
+    /// Walks the loaded config, finds cameras whose FileTypes were saved with
+    /// empty Photo + Video arrays (the BuildFromPreset(null) bug fixed in
+    /// SetupWizardViewModel.FinishAsync), backfills them from the matching
+    /// camera-type preset and persists. No-op when nothing is broken.
+    /// </summary>
+    private async Task RepairEmptyCameraFileTypesAsync(UmiConfig config)
+    {
+        if (_typeLoader is null) return;
+
+        var dirty = false;
+        foreach (var (id, cam) in config.Cameras)
+        {
+            var photoEmpty = cam.FileTypes.Photo is null || cam.FileTypes.Photo.Length == 0;
+            var videoEmpty = cam.FileTypes.Video is null || cam.FileTypes.Video.Length == 0;
+            if (!photoEmpty && !videoEmpty) continue;
+
+            var typeDef = _typeLoader.GetType(cam.CameraType);
+            if (typeDef?.DefaultFileTypes is null) continue;
+
+            var rebuilt = UMI.Core.CameraFileTypes.BuildFromPreset(typeDef.DefaultFileTypes);
+            // Only override the side that was empty — keep any user customisation.
+            if (photoEmpty && rebuilt.Photo is { Length: > 0 })
+                cam.FileTypes.Photo = rebuilt.Photo;
+            if (videoEmpty && rebuilt.Video is { Length: > 0 })
+                cam.FileTypes.Video = rebuilt.Video;
+
+            _logger?.LogInformation(
+                "Auto-repaired empty FileTypes on camera '{CameraId}' from type preset '{Type}': photo={Photo}, video={Video}",
+                id, cam.CameraType,
+                cam.FileTypes.Photo?.Length ?? 0,
+                cam.FileTypes.Video?.Length ?? 0);
+            dirty = true;
+        }
+
+        if (dirty)
+        {
+            try { await _configWriter.SaveAsync(); }
+            catch (Exception ex) { _logger?.LogWarning(ex, "Persisting auto-repaired FileTypes failed"); }
+        }
+    }
+
     private void RefreshAllStorageSummaries()
     {
         var config = _configWriter.Config;

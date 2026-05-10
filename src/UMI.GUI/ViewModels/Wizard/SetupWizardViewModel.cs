@@ -304,6 +304,20 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
         {
             await FinishAsync();
         }
+        catch (Exception ex)
+        {
+            // Without an explicit catch, async void exceptions bubble up to
+            // App.xaml.cs's DispatcherUnhandledException, which logs via Serilog
+            // and sets Handled=true. With the default LogLevel=Off the user sees
+            // exactly nothing — the click looks like it does nothing. Surface the
+            // error inline so the wizard can be debugged without a log file.
+            _toolsLogger?.LogError(ex, "Wizard FinishAsync failed");
+            System.Windows.MessageBox.Show(
+                $"Setup konnte nicht abgeschlossen werden:\n\n{ex.GetType().Name}: {ex.Message}\n\n{ex.StackTrace}",
+                "UMI Setup",
+                System.Windows.MessageBoxButton.OK,
+                System.Windows.MessageBoxImage.Error);
+        }
         finally
         {
             IsBusy = false;
@@ -350,14 +364,21 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
 
         foreach (var entry in Session.Cameras)
         {
+            // Pull the default Features + FileTypes from the camera-type preset
+            // (config/presets/types/<Type>.umi) so cameras created via the wizard
+            // come out with the right RAW extensions and feature flags. Passing
+            // null here used to leave Photo + Video lists empty — DiscoverSourceFiles
+            // then matched zero files, which is why "found nothing" reports keep
+            // happening with CR3/DNG-shooting bodies.
+            var typeDef = _typeLoader.GetType(entry.CameraType);
             var cameraConfig = new CameraConfig
             {
                 Name = entry.DisplayName,
                 CameraType = entry.CameraType,
                 Enabled = true,
                 FolderName = entry.FolderName,
-                Features = CameraFeatures.BuildFromPreset(null),
-                FileTypes = CameraFileTypes.BuildFromPreset(null),
+                Features = CameraFeatures.BuildFromPreset(typeDef?.Features),
+                FileTypes = CameraFileTypes.BuildFromPreset(typeDef?.DefaultFileTypes),
             };
 
             _configWriter.AddCamera(entry.CameraId, cameraConfig);

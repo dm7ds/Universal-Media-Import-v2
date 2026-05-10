@@ -42,9 +42,45 @@ public class MetadataReader
     /// <summary>
     /// Liest vollständige Metadaten (EXIF + Canon Makernotes + QuickTime).
     /// Für Burst-Detection, Sequenz-Erkennung und Import.
+    ///
+    /// Robust against unreadable files: when MetadataExtractor cannot parse the
+    /// file (corrupted, unsupported format, locked, IO error), returns a minimal
+    /// PhotoMetadata derived from filesystem information only. The previous
+    /// version let the underlying exception escape, which terminated the entire
+    /// Parallel.ForEachAsync scan loop on the first bad file in a batch.
     /// </summary>
     public PhotoMetadata ReadPhotoMetadata(string filePath)
-        => ReadPhotoMetadata(filePath, ImageMetadataReader.ReadMetadata(filePath));
+    {
+        try
+        {
+            return ReadPhotoMetadata(filePath, ImageMetadataReader.ReadMetadata(filePath));
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogDebug(ex,
+                "ReadMetadata fehlgeschlagen für {File} — falle auf Filesystem-Daten zurück", filePath);
+            return BuildFilesystemFallback(filePath);
+        }
+    }
+
+    /// <summary>
+    /// Returns a PhotoMetadata that contains only what the filesystem itself can give us
+    /// (capture-date approximated by LastWriteTime, no EXIF / Makernote / GPS data).
+    /// Used as the fallback when MetadataExtractor refuses the file.
+    /// </summary>
+    private static PhotoMetadata BuildFilesystemFallback(string filePath)
+    {
+        FileInfo? fi = null;
+        try { fi = new FileInfo(filePath); } catch { /* fall through with fi == null */ }
+
+        return new PhotoMetadata
+        {
+            FilePath   = filePath,
+            FileName   = fi?.Name ?? Path.GetFileName(filePath) ?? string.Empty,
+            CreateDate = fi is { Exists: true } ? fi.LastWriteTime : null,
+            FileSize   = fi is { Exists: true } ? fi.Length : 0,
+        };
+    }
 
     public PhotoMetadata ReadPhotoMetadata(string filePath, IReadOnlyList<MetadataExtractor.Directory> directories)
     {

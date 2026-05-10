@@ -443,6 +443,9 @@ Use the Setup Wizard or click 'Add Camera' to get started.</value>
   <data name="Import_FileSummary" xml:space="preserve">
     <value>{0} files · {1} · {2}</value>
   </data>
+  <data name="Import_FilesSkipped" xml:space="preserve">
+    <value> file(s) skipped during scan</value>
+  </data>
   <data name="Import_MtpResultFiles" xml:space="preserve">
     <value>{0} files, {1} MB</value>
   </data>

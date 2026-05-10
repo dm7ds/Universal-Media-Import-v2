@@ -33,5 +33,27 @@ public class ImportOrchestrationResult
     public int VideoCount { get; init; }
     public TimeSpan Duration { get; init; }
     public string? ErrorMessage { get; init; }
+
+    /// <summary>
+    /// One-line warnings raised during the run (failed copy-batches, pre-processor
+    /// errors, etc.). Surfaces verbatim in the import summary.
+    /// </summary>
     public List<string> Warnings { get; init; } = new();
+
+    /// <summary>
+    /// Files that the per-file scan body skipped due to read errors (corrupt EXIF,
+    /// IO error, locked file). Collected in ImportPipelineService.ScanSourceAsync
+    /// and rendered by the GUI as a collapsible list at the end of the import.
+    /// Each entry is "&lt;relative path&gt; (&lt;ExceptionTypeName&gt;: &lt;message&gt;)".
+    /// </summary>
+    public List<string> SkippedScanFiles { get; init; } = new();
+
+    /// <summary>
+    /// Set when ConfigWriterService.CreateBackupAsync hit an UnauthorizedAccess
+    /// or IO error (e.g. config.json lives under "Program Files" but UMI is not
+    /// running elevated). Save itself can still succeed — the failure is just
+    /// the .bak side-channel that nobody depends on at runtime. Surface this
+    /// alongside Warnings so the user notices.
+    /// </summary>
+    public string? BackupError { get; init; }
 }

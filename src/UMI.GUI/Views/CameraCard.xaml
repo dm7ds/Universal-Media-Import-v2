@@ -490,6 +490,60 @@
                         Margin="0,6,0,2"
                         Visibility="{Binding IsImportCancelled, Converter={StaticResource BoolToVisibility}}" />
 
+                    <!-- Collapsible issues area: skipped scan files + config-backup error.
+                         Visible only when HasImportIssues=true. -->
+                    <Expander
+                        Margin="0,4,0,0"
+                        IsExpanded="{Binding ImportIssuesExpanded, Mode=TwoWay}"
+                        Visibility="{Binding HasImportIssues, Converter={StaticResource BoolToVisibility}}"
+                        Foreground="{StaticResource BrushTextSecondary}">
+                        <Expander.Header>
+                            <StackPanel Orientation="Horizontal">
+                                <TextBlock
+                                    Text="⚠"
+                                    FontSize="{StaticResource FontSizeSmall}"
+                                    Foreground="{StaticResource BrushBadgeGps}"
+                                    Margin="0,0,6,0"
+                                    VerticalAlignment="Center" />
+                                <TextBlock
+                                    FontSize="{StaticResource FontSizeSmall}"
+                                    Foreground="{StaticResource BrushTextSecondary}"
+                                    VerticalAlignment="Center">
+                                    <Run Text="{Binding ImportSkippedFiles.Count, Mode=OneWay}" />
+                                    <Run Text="{helpers:Localize Import_FilesSkipped}" />
+                                </TextBlock>
+                            </StackPanel>
+                        </Expander.Header>
+                        <StackPanel Margin="20,4,0,4">
+                            <TextBlock
+                                Text="{Binding ImportBackupError}"
+                                FontSize="{StaticResource FontSizeCaption}"
+                                Foreground="{StaticResource BrushErrorText}"
+                                TextWrapping="Wrap"
+                                Margin="0,0,0,4"
+                                Visibility="{Binding ImportBackupError, Converter={StaticResource StringToVisibility}}" />
+                            <ItemsControl ItemsSource="{Binding ImportSkippedFiles}" MaxHeight="180">
+                                <ItemsControl.Template>
+                                    <ControlTemplate TargetType="ItemsControl">
+                                        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                                            <ItemsPresenter />
+                                        </ScrollViewer>
+                                    </ControlTemplate>
+                                </ItemsControl.Template>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate>
+                                        <TextBlock
+                                            Text="{Binding}"
+                                            FontSize="{StaticResource FontSizeCaption}"
+                                            Foreground="{StaticResource BrushTextMuted}"
+                                            TextWrapping="Wrap"
+                                            Margin="0,0,0,2" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </StackPanel>
+                    </Expander>
+
                     <WrapPanel Orientation="Horizontal" Margin="0,8,0,0">
                         <WrapPanel.Style>
                             <Style TargetType="WrapPanel">

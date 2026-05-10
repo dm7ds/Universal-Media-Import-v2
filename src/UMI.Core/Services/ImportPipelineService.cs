@@ -145,83 +145,100 @@ public class ImportPipelineService
         var importFiles = new ConcurrentBag<ImportedFile>();
         var subDirMap = new ConcurrentDictionary<string, string>();
 
+        var perFileErrors = 0;
+        var skippedScanFiles = new System.Collections.Concurrent.ConcurrentBag<string>();
+
         await Parallel.ForEachAsync(discovered,
             new ParallelOptions { MaxDegreeOfParallelism = 4, CancellationToken = ct },
             (df, token) =>
             {
-
-                var metadata = _metadataReader.ReadPhotoMetadata(df.File.FullName);
-
-                var shootingMode = _burstMatchingEngine.MatchBurstProfile(metadata, config.BurstDetectionConfig);
-
-                var captureDate = metadata.CreateDate ?? df.File.LastWriteTime;
-
-                if (context.HasDateFilter)
+                try
                 {
-                    if (context.DateFrom.HasValue && captureDate < context.DateFrom.Value)
+                    var metadata = _metadataReader.ReadPhotoMetadata(df.File.FullName);
+
+                    var shootingMode = _burstMatchingEngine.MatchBurstProfile(metadata, config.BurstDetectionConfig);
+
+                    var captureDate = metadata.CreateDate ?? df.File.LastWriteTime;
+
+                    if (context.HasDateFilter)
                     {
-                        Interlocked.Increment(ref skippedByDateFilter);
-                        return ValueTask.CompletedTask;
+                        if (context.DateFrom.HasValue && captureDate < context.DateFrom.Value)
+                        {
+                            Interlocked.Increment(ref skippedByDateFilter);
+                            return ValueTask.CompletedTask;
+                        }
+                        if (context.DateTo.HasValue && captureDate > context.DateTo.Value)
+                        {
+                            Interlocked.Increment(ref skippedByDateFilter);
+                            return ValueTask.CompletedTask;
+                        }
                     }
-                    if (context.DateTo.HasValue && captureDate > context.DateTo.Value)
+
+                    var isVideo = IsVideoFile(df.File, config);
+                    var mediaType = isVideo ? "video" : "photo";
+
+                    var effectiveName = ResolveFileName(df.EffectiveFileName, isVideo, context, captureDate);
+
+                    string subDir;
+                    if (isVideo)
                     {
-                        Interlocked.Increment(ref skippedByDateFilter);
-                        return ValueTask.CompletedTask;
+                        subDir = IsInTimelapseFolder(df.File) ? FolderNameConstants.TimeLapse : FolderNameConstants.Video;
                     }
+                    else
+                    {
+                        subDir = FolderNameConstants.Photo;
+                    }
+
+                    subDirMap[effectiveName] = subDir;
+
+                    var importFile = new ImportedFile
+                    {
+                        SourcePath = df.File.FullName,
+                        DestPath = "",
+                        Filename = effectiveName,
+                        CameraId = cameraId,
+                        MediaType = mediaType,
+                        CaptureDate = captureDate.ToString(DateFormatConstants.FolderFormat),
+                        CaptureTime = captureDate.ToString("o"),
+                        FileSize = df.File.Length,
+                        IsVideo = isVideo ? 1 : 0,
+                        CreatedAt = DateTime.UtcNow.ToString("o"),
+                        UpdatedAt = DateTime.UtcNow.ToString("o"),
+                        CameraModel = metadata.CameraModel,
+                        ShootingMode = shootingMode,
+                        ExposureTime = metadata.ExposureTime,
+                        ContinuousDrive = metadata.ContinuousDrive,
+                        ExposureMode = metadata.ExposureMode,
+                        DurationMs = metadata.Duration?.Milliseconds,
+                    };
+
+                    importFiles.Add(importFile);
+
+                    var count = Interlocked.Increment(ref scanned);
+                    progress?.Report(new ScanProgress
+                    {
+                        Current = count,
+                        Total = discovered.Count,
+                        CurrentFile = effectiveName,
+                        Operation = "Scanning"
+                    });
                 }
-
-                var isVideo = IsVideoFile(df.File, config);
-                var mediaType = isVideo ? "video" : "photo";
-
-                var effectiveName = ResolveFileName(df.EffectiveFileName, isVideo, context, captureDate);
-
-                string subDir;
-                if (isVideo)
+                catch (Exception ex)
                 {
-
-                    subDir = IsInTimelapseFolder(df.File) ? FolderNameConstants.TimeLapse : FolderNameConstants.Video;
+                    // Defense-in-depth: anything in the per-file body throwing (a
+                    // non-Exif IO problem on the file, a regex disaster in
+                    // ResolveFileName, etc.) used to terminate the entire batch.
+                    // Log and skip — the rest of the 12k files keep flowing.
+                    Interlocked.Increment(ref perFileErrors);
+                    skippedScanFiles.Add($"{df.RelativePath} ({ex.GetType().Name}: {ex.Message})");
+                    _logger?.LogWarning(ex, "Skipping file due to scan error: {Path}", df.File.FullName);
                 }
-                else
-                {
-                    subDir = FolderNameConstants.Photo;
-                }
-
-                subDirMap[effectiveName] = subDir;
-
-                var importFile = new ImportedFile
-                {
-                    SourcePath = df.File.FullName,
-                    DestPath = "",
-                    Filename = effectiveName,
-                    CameraId = cameraId,
-                    MediaType = mediaType,
-                    CaptureDate = captureDate.ToString(DateFormatConstants.FolderFormat),
-                    CaptureTime = captureDate.ToString("o"),
-                    FileSize = df.File.Length,
-                    IsVideo = isVideo ? 1 : 0,
-                    CreatedAt = DateTime.UtcNow.ToString("o"),
-                    UpdatedAt = DateTime.UtcNow.ToString("o"),
-                    CameraModel = metadata.CameraModel,
-                    ShootingMode = shootingMode,
-                    ExposureTime = metadata.ExposureTime,
-                    ContinuousDrive = metadata.ContinuousDrive,
-                    ExposureMode = metadata.ExposureMode,
-                    DurationMs = metadata.Duration?.Milliseconds,
-                };
-
-                importFiles.Add(importFile);
-
-                var count = Interlocked.Increment(ref scanned);
-                progress?.Report(new ScanProgress
-                {
-                    Current = count,
-                    Total = discovered.Count,
-                    CurrentFile = effectiveName,
-                    Operation = "Scanning"
-                });
-
                 return ValueTask.CompletedTask;
             });
+
+        if (perFileErrors > 0)
+            _logger?.LogInformation("[{Camera}] Scan: {Errors} Datei(en) wegen Lese-Fehler übersprungen",
+                cameraId, perFileErrors);
 
         var fileList = importFiles.ToList();
         var dayGroups = fileList.GroupBy(f => f.CaptureDate).ToList();
@@ -340,7 +357,8 @@ public class ImportPipelineService
             Sequences = sequences,
             Stats = stats,
             LayoutConflicts = allConflicts,
-            SkippedByDateFilter = skippedByDateFilter
+            SkippedByDateFilter = skippedByDateFilter,
+            SkippedScanFiles = skippedScanFiles.ToList()
         };
 
         if (!context.IsAdHocFolder)

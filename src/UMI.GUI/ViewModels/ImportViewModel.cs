@@ -1246,6 +1246,7 @@ public class ImportViewModel : ViewModelBase, IDisposable
                 cameraVm.SpeedText  = string.Empty;
                 cameraVm.EtaText    = string.Empty;
                 cameraVm.CurrentFile = string.Empty;
+                ApplyImportIssues(cameraVm, result);
             });
         }
         else
@@ -1261,8 +1262,24 @@ public class ImportViewModel : ViewModelBase, IDisposable
                 cameraVm.SpeedText  = string.Empty;
                 cameraVm.EtaText    = string.Empty;
                 cameraVm.CurrentFile = string.Empty;
+                ApplyImportIssues(cameraVm, result);
             });
         }
+    }
+
+    /// <summary>
+    /// Pushes per-file scan errors (collected by ImportPipelineService.ScanSourceAsync's
+    /// per-file try/catch) and the most recent config-backup error onto the camera card's
+    /// collapsible issues area. Must run on the UI dispatcher (mutates ObservableCollection).
+    /// </summary>
+    private void ApplyImportIssues(CameraViewModel cameraVm, ImportOrchestrationResult result)
+    {
+        cameraVm.ImportSkippedFiles.Clear();
+        foreach (var entry in result.SkippedScanFiles)
+            cameraVm.ImportSkippedFiles.Add(entry);
+
+        cameraVm.ImportBackupError = _configWriter.LastBackupError;
+        cameraVm.RaiseHasImportIssuesChanged();
     }
 
     private void ExecuteCancelAll()

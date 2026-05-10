@@ -299,6 +299,16 @@ public class DevicesTabViewModel : ViewModelBase
                     break;
 
                 case DeviceEntryType.FixedPath:
+                    // Key for fixed-path entries IS the camera id (see CreateFixedPathEntry).
+                    // Resetting source_type back to SdCard + clearing source_path is what
+                    // makes the path actually disappear from the camera card on the Import
+                    // tab — without this the next RefreshStorageSummary just reads the
+                    // unchanged camera config and the path comes back.
+                    _configWriter.UpdateCamera(_pendingDeleteKey, cfg =>
+                    {
+                        cfg.SourceType = UMI.Core.SourceType.SdCard;
+                        cfg.SourcePath = null;
+                    });
                     var fpToRemove = FixedPaths.FirstOrDefault(e => e.Key == _pendingDeleteKey);
                     if (fpToRemove is not null)
                     {

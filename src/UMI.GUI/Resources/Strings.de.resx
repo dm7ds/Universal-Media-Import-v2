@@ -245,6 +245,9 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Import_FileSummary" xml:space="preserve">
     <value>{0} Dateien · {1} · {2}</value>
   </data>
+  <data name="Import_FilesSkipped" xml:space="preserve">
+    <value> Datei(en) beim Scan übersprungen</value>
+  </data>
   <data name="Import_MtpResultFiles" xml:space="preserve">
     <value>{0} Dateien, {1} MB</value>
   </data>

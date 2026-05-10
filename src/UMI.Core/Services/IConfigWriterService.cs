@@ -46,6 +46,16 @@ public interface IConfigWriterService
     /// </summary>
     Task SaveAsync(CancellationToken ct = default);
 
+    /// <summary>
+    /// Last error message produced by the .bak side-channel during the most
+    /// recent SaveAsync, or null when the backup succeeded. The backup is
+    /// best-effort — a failure here does not block the actual save, but the
+    /// UI can surface the error in the import summary so the user knows.
+    /// Typical case: install dir under "Program Files" + non-elevated UMI =
+    /// UnauthorizedAccessException on the .bak copy.
+    /// </summary>
+    string? LastBackupError { get; }
+
     void AddCamera(string cameraId, CameraConfig config);
     void UpdateCamera(string cameraId, Action<CameraConfig> modifier);
     void RemoveCamera(string cameraId);

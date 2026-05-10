@@ -275,6 +275,51 @@ public class CameraViewModel : ViewModelBase
         set => SetProperty(ref _resultText, value);
     }
 
+    /// <summary>
+    /// Files the per-file scan body skipped due to read errors (corrupted EXIF,
+    /// IO error, locked file). Populated from ImportOrchestrationResult.SkippedScanFiles
+    /// at the end of an import; rendered as a collapsible list in the camera card
+    /// so a 12k-file run that had three bad files surfaces them without spamming
+    /// the result line.
+    /// </summary>
+    public ObservableCollection<string> ImportSkippedFiles { get; } = new();
+
+    private string? _importBackupError;
+    /// <summary>
+    /// Set when the most recent SaveAsync's .bak side-channel failed (e.g. config.json
+    /// lives under "Program Files" and UMI is not running elevated). The save itself
+    /// still went through; this is just the visible flag.
+    /// </summary>
+    public string? ImportBackupError
+    {
+        get => _importBackupError;
+        set
+        {
+            if (SetProperty(ref _importBackupError, value))
+                OnPropertyChanged(nameof(HasImportIssues));
+        }
+    }
+
+    /// <summary>True when there is anything worth showing in the issues area below the result line.</summary>
+    public bool HasImportIssues =>
+        ImportSkippedFiles.Count > 0 || !string.IsNullOrEmpty(_importBackupError);
+
+    /// <summary>
+    /// External hook for ImportViewModel.ApplyImportIssues — the bound XAML expander
+    /// reads HasImportIssues, but ObservableCollection.Add does not fire a property
+    /// change on the parent VM. Call this after mutating ImportSkippedFiles to make
+    /// the UI re-evaluate.
+    /// </summary>
+    public void RaiseHasImportIssuesChanged() => OnPropertyChanged(nameof(HasImportIssues));
+
+    private bool _importIssuesExpanded;
+    /// <summary>Two-way bound to the issues Expander on the camera card.</summary>
+    public bool ImportIssuesExpanded
+    {
+        get => _importIssuesExpanded;
+        set => SetProperty(ref _importIssuesExpanded, value);
+    }
+
     private string? _currentSourceLabel;
     public string? CurrentSourceLabel
     {
@@ -372,6 +417,10 @@ public class CameraViewModel : ViewModelBase
         IsRendering          = false;
         RenderProgressPercent = 0;
         RenderProgressText   = string.Empty;
+        ImportSkippedFiles.Clear();
+        ImportBackupError    = null;
+        ImportIssuesExpanded = false;
+        OnPropertyChanged(nameof(HasImportIssues));
         _pauseEvent.Set();
         IsPaused             = false;
     }

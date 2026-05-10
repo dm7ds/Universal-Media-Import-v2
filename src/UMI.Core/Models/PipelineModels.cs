@@ -34,6 +34,15 @@ public class ScanResult
     public int SkippedByDateFilter { get; set; }
 
     /// <summary>
+    /// Files that the per-file scan body threw on (corrupted EXIF, locked file, IO
+    /// error etc.) and were silently skipped to keep the rest of the batch alive.
+    /// Surfaced through ImportOrchestrationResult.Warnings so the UI summary can show
+    /// them as a collapsible list — these are exactly the cases where 12k healthy
+    /// files used to be killed by the first bad one.
+    /// </summary>
+    public List<string> SkippedScanFiles { get; set; } = new();
+
+    /// <summary>
     /// Für History-Update nach Copy (nur bei FixedPath, nicht DryRun).
     /// Format: RelativePath (Forward-Slashes) + FileSize.
     /// </summary>

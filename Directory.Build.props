@@ -14,9 +14,50 @@
     version against /releases/latest from there.
   -->
   <PropertyGroup>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <AssemblyVersion>$(Version).0</AssemblyVersion>
     <FileVersion>$(Version).0</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>
+
+    <!-- UTC build timestamp captured at MSBuild evaluation time. -->
+    <UmiBuildDate>$([System.DateTime]::UtcNow.ToString("yyyy-MM-ddTHH:mm:ssZ"))</UmiBuildDate>
+
+    <!-- Stop the .NET SDK from appending its own +<full-sha> suffix to the
+         InformationalVersion — we control that via UmiCaptureGitSha below. -->
+    <IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
   </PropertyGroup>
+
+  <!--
+    Captures the short git commit at build time and stamps it (plus the
+    build date) into the produced assembly as AssemblyMetadata. The
+    BuildInfo helper in UMI.Core reads them at runtime so the startup log
+    line can identify exactly which build is running ("v2.1.1+a6e5354 built
+    2026-05-10T14:21:09Z").
+
+    Failures (no git, detached HEAD on a runner without history, etc.) fall
+    back to "unknown" — the build itself never breaks because of this.
+  -->
+  <Target Name="UmiCaptureGitSha" BeforeTargets="GetAssemblyVersion;GenerateAssemblyInfo">
+    <Exec Command="git rev-parse --short HEAD"
+          ConsoleToMSBuild="true"
+          ContinueOnError="true"
+          StandardOutputImportance="low">
+      <Output TaskParameter="ConsoleOutput" PropertyName="UmiGitShortSha" />
+      <Output TaskParameter="ExitCode" PropertyName="UmiGitExitCode" />
+    </Exec>
+    <PropertyGroup>
+      <UmiGitShortSha Condition="'$(UmiGitExitCode)' != '0' OR '$(UmiGitShortSha)' == ''">unknown</UmiGitShortSha>
+      <InformationalVersion>$(Version)+$(UmiGitShortSha)</InformationalVersion>
+    </PropertyGroup>
+    <ItemGroup>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>GitCommit</_Parameter1>
+        <_Parameter2>$(UmiGitShortSha)</_Parameter2>
+      </AssemblyAttribute>
+      <AssemblyAttribute Include="System.Reflection.AssemblyMetadataAttribute">
+        <_Parameter1>BuildDate</_Parameter1>
+        <_Parameter2>$(UmiBuildDate)</_Parameter2>
+      </AssemblyAttribute>
+    </ItemGroup>
+  </Target>
 </Project>

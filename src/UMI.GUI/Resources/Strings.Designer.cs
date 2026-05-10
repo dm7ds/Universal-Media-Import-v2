@@ -2766,6 +2766,15 @@ namespace UMI.GUI.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to file(s) skipped during scan.
+        /// </summary>
+        public static string Import_FilesSkipped {
+            get {
+                return ResourceManager.GetString("Import_FilesSkipped", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Error ({0} failed).
         /// </summary>
         public static string Import_MtpErrorFailed {

@@ -483,7 +483,11 @@ public class ConfigWriterService : IConfigWriterService
     }
 
     /// <summary>
-    /// Erstellt Backup (config.json → config.json.bak).
+    /// Erstellt Backup (config.json → config.json.bak). Best-effort: ein
+    /// fehlgeschlagenes Backup darf das eigentliche SaveAsync nicht killen,
+    /// sonst verliert der User seine ganze Wizard-Eingabe nur weil das
+    /// Install-Verzeichnis unter "Program Files" für die Backup-Datei kein
+    /// Schreibrecht hergibt (z.B. wenn UMI nicht als Admin läuft).
     /// </summary>
     private async Task CreateBackupAsync(CancellationToken ct)
     {
@@ -492,10 +496,28 @@ public class ConfigWriterService : IConfigWriterService
 
         var backupPath = _configPath + ".bak";
 
-        if (File.Exists(_configPath))
+        if (!File.Exists(_configPath))
+            return;
+
+        try
         {
             await Task.Run(() => File.Copy(_configPath, backupPath, overwrite: true), ct);
             _logger?.LogDebug("Config-Backup erstellt: {Path}", backupPath);
+            LastBackupError = null;
+        }
+        catch (Exception ex) when (ex is UnauthorizedAccessException
+                                    || ex is IOException
+                                    || ex is System.Security.SecurityException)
+        {
+            LastBackupError = $"{ex.GetType().Name}: {ex.Message} ({backupPath})";
+            _logger?.LogWarning(ex, "Config-Backup fehlgeschlagen — überspringe (Speicher geht trotzdem durch): {Path}", backupPath);
         }
     }
+
+    /// <summary>
+    /// Last error message produced by <see cref="CreateBackupAsync"/>, or null when
+    /// the most recent backup succeeded. Surface this to the user (e.g. the import
+    /// summary) so a failing backup is visible without crashing the save.
+    /// </summary>
+    public string? LastBackupError { get; private set; }
 }

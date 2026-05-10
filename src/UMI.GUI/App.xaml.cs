@@ -92,8 +92,14 @@ public partial class App : Application
             ev.SetObserved();
         };
 
+        Log.Information("=========================================================");
+        Log.Information("{Banner}", BuildInfo.Banner);
+        Log.Information("Runtime: {Runtime} on {OS}",
+            System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
+            System.Runtime.InteropServices.RuntimeInformation.OSDescription);
         Log.Information("UMI GUI starting (debug={IsDebug}, level={Level})",
             _isDebugMode, preloadedConfig?.Config.Logging.Level ?? LogLevels.Off);
+        Log.Information("=========================================================");
 
         _serviceProvider = BuildServiceProvider(preloadedConfig);
 

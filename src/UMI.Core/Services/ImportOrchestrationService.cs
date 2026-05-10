@@ -97,6 +97,13 @@ public class ImportOrchestrationService(
                     scanResult.TotalFiles);
             }
 
+            if (scanResult.SkippedScanFiles.Count > 0)
+            {
+                logger?.LogInformation(
+                    "[{Camera}] Scan: {Count} file(s) skipped due to read errors — listed in result",
+                    context.CameraId, scanResult.SkippedScanFiles.Count);
+            }
+
             if (scanResult.TotalFiles == 0)
             {
                 return new ImportOrchestrationResult
@@ -198,6 +205,7 @@ public class ImportOrchestrationService(
                 VideoCount = scanResult.Videos,
                 Duration = sw.Elapsed,
                 Warnings = warnings,
+                SkippedScanFiles = scanResult.SkippedScanFiles,
             };
         }
         catch (OperationCanceledException)

@@ -67,11 +67,18 @@ class Program
                 outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}")
             .CreateLogger();
 
+        Log.Information("=========================================================");
+        Log.Information("{Banner}", UMI.Core.Utilities.BuildInfo.Banner);
+        Log.Information("Runtime: {Runtime} on {OS}",
+            System.Runtime.InteropServices.RuntimeInformation.FrameworkDescription,
+            System.Runtime.InteropServices.RuntimeInformation.OSDescription);
+        Log.Information("=========================================================");
+
         try
         {
             Console.OutputEncoding = System.Text.Encoding.UTF8;
 
-            var rootCommand = new RootCommand("UMI - Universal Media Import v2.1");
+            var rootCommand = new RootCommand($"UMI - Universal Media Import v{UMI.Core.Utilities.BuildInfo.Version}");
 
             rootCommand.AddGlobalOption(VerboseOption);
             rootCommand.AddGlobalOption(QuietOption);
