@@ -27,13 +27,25 @@ jobs:
           dotnet-version: '8.0.x'
 
       # ExifTool is a runtime dependency of UMI but lives outside this repo
-      # (Perl-based tool, ~30 MB). Pulled fresh on every release run; pinned
-      # version keeps builds reproducible. Bump occasionally — the URL pattern
-      # is exiftool-<version>_64.zip on https://exiftool.org/.
+      # (Perl-based tool, ~30 MB). Pulled fresh on every release run.
+      #
+      # exiftool.org only keeps the *current* production build downloadable —
+      # older exiftool-<version>_64.zip URLs start returning 404 the moment a
+      # new version ships (broke the release twice: 13.05, then 13.58). So we
+      # resolve the live version from ver.txt instead of pinning. A hard-coded
+      # fallback keeps the build alive if ver.txt is ever unreachable.
       - name: Download ExifTool
         shell: pwsh
         run: |
-          $version = '13.58'
+          $fallback = '13.59'
+          try {
+            $version = (Invoke-WebRequest 'https://exiftool.org/ver.txt' -UseBasicParsing).Content.Trim()
+            if ($version -notmatch '^\d+\.\d+$') { throw "Unexpected ver.txt content: '$version'" }
+            Write-Host "ExifTool current production version from ver.txt: $version"
+          } catch {
+            $version = $fallback
+            Write-Host "ver.txt lookup failed ($_), falling back to pinned $fallback"
+          }
           $zipUrl  = "https://exiftool.org/exiftool-${version}_64.zip"
           $zipPath = Join-Path $env:RUNNER_TEMP 'exiftool.zip'
           $extract = Join-Path $env:RUNNER_TEMP 'exiftool-extract'
