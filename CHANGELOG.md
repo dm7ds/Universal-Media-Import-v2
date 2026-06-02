@@ -4,6 +4,38 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.1.6] — 2026-06-02
+
+### Fixed
+
+- **Log-Pfad: Logs lagen im nicht-schreibbaren Installationsverzeichnis (TASK-216).**
+  GUI- und CLI-Logger schrieben bisher nach `<install-dir>/logs/` — bei
+  Installation in `C:\Program Files\` kein Schreibzugriff für normale Nutzer,
+  Serilog schluckte den Fehler still → keine Logs obwohl Level auf Debug stand.
+  
+  Neuer SSOT-Pfad via `ConfigPathResolver.LogDirectory`:
+  - Primär: `%LOCALAPPDATA%\UMI\logs\` (user-schreibbar, konsistent mit
+    Config-Ablage seit v2.1.2)
+  - Fallback: `<exe-dir>\logs\` nur wenn LocalAppData nicht schreibbar
+  - Wenn beide nicht schreibbar: Console.Error-Warnung + Debug-Output statt
+    stillschweigendem Versagen
+  
+  Alte Logs in `C:\Program Files\UMI\logs\` bleiben unberührt (kein
+  Auto-Delete, kein Auto-Move).
+
+### Added
+
+- **Support-Bundle-Button in Einstellungen → Tools (TASK-216).**
+  Neuer Button "Support-Paket erstellen" (immer sichtbar, nicht nur bei Debug).
+  Öffnet Ordner-Picker, erzeugt `umi-support-<Timestamp>.zip` mit:
+  - Bis zu 10 neuesten `*.log`-Dateien aus `%LOCALAPPDATA%\UMI\logs\`
+  - `config.json` (ohne Backup)
+  - `bundle-info.txt` mit Version, OS, Log-Level, Workbench-Pfad, Kamera-Anzahl
+  
+  Fehlende Dateien stoppen das Bundle nicht — sie werden als Hinweis in
+  `bundle-info.txt` vermerkt. Nach Erstellen: Explorer öffnet automatisch
+  den Zielordner.
+
 ## [2.1.5] — 2026-06-02
 
 ### Fixed

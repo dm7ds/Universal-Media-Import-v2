@@ -6762,5 +6762,47 @@ namespace UMI.GUI.Resources {
             }
         }
 
+        /// <summary>
+        ///   Looks up a localized string similar to "Create Support Bundle".
+        /// </summary>
+        public static string Tools_SupportBundle {
+            get {
+                return ResourceManager.GetString("Tools_SupportBundle", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "Creating bundle…".
+        /// </summary>
+        public static string Tools_SupportBundleCreating {
+            get {
+                return ResourceManager.GetString("Tools_SupportBundleCreating", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "Support bundle created: {0}".
+        /// </summary>
+        public static string Tools_SupportBundleDone {
+            get {
+                return ResourceManager.GetString("Tools_SupportBundleDone", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "Error creating bundle: {0}".
+        /// </summary>
+        public static string Tools_SupportBundleError {
+            get {
+                return ResourceManager.GetString("Tools_SupportBundleError", resourceCulture);
+            }
+        }
+
+        public static string Tools_SupportBundleDesc {
+            get {
+                return ResourceManager.GetString("Tools_SupportBundleDesc", resourceCulture);
+            }
+        }
+
     }
 }

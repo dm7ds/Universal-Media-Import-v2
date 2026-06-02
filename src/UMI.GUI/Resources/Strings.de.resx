@@ -358,6 +358,21 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Tools_LanguageSaved" xml:space="preserve">
     <value>Sprache gespeichert — Neustart erforderlich</value>
   </data>
+  <data name="Tools_SupportBundle" xml:space="preserve">
+    <value>Support-Paket erstellen</value>
+  </data>
+  <data name="Tools_SupportBundleCreating" xml:space="preserve">
+    <value>Wird erstellt…</value>
+  </data>
+  <data name="Tools_SupportBundleDone" xml:space="preserve">
+    <value>Support-Paket erstellt: {0}</value>
+  </data>
+  <data name="Tools_SupportBundleError" xml:space="preserve">
+    <value>Fehler beim Erstellen: {0}</value>
+  </data>
+  <data name="Tools_SupportBundleDesc" xml:space="preserve">
+    <value>Logs und Konfiguration als ZIP zur Analyse packen</value>
+  </data>
 
   <!-- Devices -->
   <data name="Devices_Removed" xml:space="preserve">

@@ -374,6 +374,45 @@
                 </Grid>
             </Border>
 
+            <Border Style="{StaticResource ToolRowCard}" Margin="0,0,0,10">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="160" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <StackPanel Grid.Column="0" VerticalAlignment="Center" Margin="0,0,12,0">
+                        <TextBlock
+                            Text="{helpers:Localize Tools_SupportBundle}"
+                            FontSize="{StaticResource FontSizeBase}"
+                            FontWeight="SemiBold"
+                            Foreground="{StaticResource BrushTextPrimary}"
+                            Margin="0,0,0,2" />
+                        <TextBlock
+                            Text="{helpers:Localize Tools_SupportBundleDesc}"
+                            FontSize="{StaticResource FontSizeCaption}"
+                            Foreground="{StaticResource BrushTextMuted}" />
+                    </StackPanel>
+
+                    <StackPanel Grid.Column="1" VerticalAlignment="Center">
+                        <TextBlock
+                            Text="{Binding Source={x:Static vm:ToolsViewModel.LogDirectoryDisplay}, Mode=OneTime}"
+                            FontSize="{StaticResource FontSizeSmall}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            TextWrapping="Wrap" />
+                    </StackPanel>
+
+                    <Button
+                        Grid.Column="2"
+                        Command="{Binding CreateSupportBundleCommand}"
+                        Style="{StaticResource ToolBrowseButton}"
+                        Content="{helpers:Localize Tools_SupportBundle}"
+                        Margin="8,0,0,0"
+                        IsEnabled="{Binding IsSaving, Converter={StaticResource InverseBool}}" />
+                </Grid>
+            </Border>
+
             <Border
                 Margin="0,8,0,0"
                 Padding="12,6"

@@ -53,7 +53,7 @@ class Program
     static async Task<int> Main(string[] args)
     {
 
-        var logPath = Path.Combine(AppContext.BaseDirectory, "logs", "umi-.log");
+        var logPath = Path.Combine(ConfigPathResolver.LogDirectory, "umi-.log");
 
         Log.Logger = new LoggerConfiguration()
             .MinimumLevel.Debug()

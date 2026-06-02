@@ -325,7 +325,7 @@ public partial class App : Application
 
             cfg = cfg.MinimumLevel.Is(minLevel)
                 .WriteTo.File(
-                    Path.Combine(AppContext.BaseDirectory, "logs", "umi-gui-.log"),
+                    Path.Combine(ConfigPathResolver.LogDirectory, "umi-gui-.log"),
                     rollingInterval: RollingInterval.Day,
                     outputTemplate: "[{Timestamp:HH:mm:ss.fff} {Level:u3}] {Message:lj}{NewLine}{Exception}");
         }

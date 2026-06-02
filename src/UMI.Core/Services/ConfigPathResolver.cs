@@ -117,6 +117,59 @@ public class ConfigPathResolver
         Path.Combine(AppContext.BaseDirectory, "tools", "exiftool", "exiftool.exe");
 
     /// <summary>
+    /// Log-Verzeichnis: primär <c>%LOCALAPPDATA%\UMI\logs\</c>, Fallback <c>&lt;exe-dir&gt;\logs\</c>.
+    /// SSOT für GUI (App.xaml.cs) und CLI (Program.cs). Kein stiller Fehler: schlägt beides fehl,
+    /// wird auf der Konsole gewarnt.
+    ///
+    /// Prüfung on-demand bei jedem Aufruf, da Serilog BuildLogger früh
+    /// (vor DI) aufruft und der Pfad danach konstant bleibt.
+    /// </summary>
+    public static string LogDirectory
+    {
+        get
+        {
+            var localAppData = Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData);
+            var primary = Path.Combine(localAppData, "UMI", "logs");
+            if (IsWritable(primary))
+                return primary;
+
+            // Fallback: Exe-Verzeichnis (z. B. beim Entwickler-Start direkt aus dem bin/)
+            var exePath = Environment.ProcessPath;
+            var exeDir = !string.IsNullOrEmpty(exePath)
+                ? Path.GetDirectoryName(exePath)!
+                : AppContext.BaseDirectory.TrimEnd(Path.DirectorySeparatorChar);
+            var fallback = Path.Combine(exeDir, "logs");
+
+            if (IsWritable(fallback))
+                return fallback;
+
+            // Beide Pfade nicht schreibbar — letzter Ausweg
+            Console.Error.WriteLine($"[UMI WARN] Log-Verzeichnis nicht schreibbar — weder '{primary}' noch '{fallback}'. Logs werden nicht geschrieben.");
+            System.Diagnostics.Debug.WriteLine($"[UMI WARN] Log-Verzeichnis nicht schreibbar: primary='{primary}', fallback='{fallback}'");
+            return primary; // Serilog wird keinen File-Sink öffnen können, bleibt aber stabil
+        }
+    }
+
+    /// <summary>
+    /// Prüft ob ein Verzeichnis existiert (oder erstellt werden kann) und beschreibbar ist.
+    /// </summary>
+    private static bool IsWritable(string dir)
+    {
+        try
+        {
+            Directory.CreateDirectory(dir);
+            var probe = Path.Combine(dir, $".umi-write-probe-{Guid.NewGuid():N}.tmp");
+            File.WriteAllText(probe, "probe");
+            File.Delete(probe);
+            return true;
+        }
+        catch
+        {
+            return false;
+        }
+    }
+
+    /// <summary>
     /// The install-dir's <c>config\</c> subtree. Read-only at runtime — used as
     /// the source for <see cref="BootstrapUserConfigIfNeeded"/> on first launch
     /// and as the migration source for users coming from a pre-2.1.2 install

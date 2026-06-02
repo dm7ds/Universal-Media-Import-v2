@@ -54,7 +54,7 @@ public class ToolsStepViewModel : WizardStepViewModelBase
         ILogger<ToolsViewModel>? logger = null)
     {
         _session = session;
-        Tools = new ToolsViewModel(configWriter, logger);
+        Tools = new ToolsViewModel(configWriter, supportBundle: null, logger);
 
         OpenUrlCommand = new RelayCommand<string>(url =>
         {

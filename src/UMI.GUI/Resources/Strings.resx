@@ -2568,4 +2568,23 @@ Path has been configured. Do you want to re-download anyway?</value>
     <value>Check for updates on startup</value>
   </data>
 
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <!-- Tools — Support Bundle -->
+  <!-- ═══════════════════════════════════════════════════════════════════ -->
+  <data name="Tools_SupportBundle" xml:space="preserve">
+    <value>Create Support Bundle</value>
+  </data>
+  <data name="Tools_SupportBundleCreating" xml:space="preserve">
+    <value>Creating bundle…</value>
+  </data>
+  <data name="Tools_SupportBundleDone" xml:space="preserve">
+    <value>Support bundle created: {0}</value>
+  </data>
+  <data name="Tools_SupportBundleError" xml:space="preserve">
+    <value>Error creating bundle: {0}</value>
+  </data>
+  <data name="Tools_SupportBundleDesc" xml:space="preserve">
+    <value>Pack logs and configuration into a ZIP for analysis</value>
+  </data>
+
 </root>

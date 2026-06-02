@@ -25,6 +25,7 @@ using Microsoft.Win32;
 using UMI.Core.Constants;
 using UMI.Core.Services;
 using UMI.GUI.Resources;
+using UMI.GUI.Helpers;
 
 namespace UMI.GUI.ViewModels;
 
@@ -35,6 +36,7 @@ namespace UMI.GUI.ViewModels;
 public class ToolsViewModel : ViewModelBase
 {
     private readonly IConfigWriterService _configWriter;
+    private readonly ISupportBundleService? _supportBundle;
     private readonly ILogger<ToolsViewModel>? _logger;
 
     internal const string GyroflowDownloadUrl = "https://github.com/gyroflow/gyroflow/releases/latest/download/Gyroflow-windows64.zip";
@@ -226,9 +228,13 @@ public class ToolsViewModel : ViewModelBase
     public ICommand ResetExifToolDefaultCommand { get; }
     public ICommand DownloadGyroflowCommand     { get; }
     public ICommand DownloadFFprobeCommand      { get; }
+    public ICommand CreateSupportBundleCommand  { get; }
 
     /// <summary>The bundled default path for ExifTool. SSOT: ConfigPathResolver.DefaultExifToolPath.</summary>
     public string ExifToolDefaultPath => ConfigPathResolver.DefaultExifToolPath;
+
+    /// <summary>Log-Verzeichnis für das Support-Bundle-UI-Label. SSOT: ConfigPathResolver.LogDirectory.</summary>
+    public static string LogDirectoryDisplay => ConfigPathResolver.LogDirectory;
 
     /// <summary>True when the bundled ExifTool exists and current path differs from it.</summary>
     public bool CanResetExifToolDefault() =>
@@ -238,9 +244,13 @@ public class ToolsViewModel : ViewModelBase
             Path.GetFullPath(ExifToolDefaultPath),
             StringComparison.OrdinalIgnoreCase);
 
-    public ToolsViewModel(IConfigWriterService configWriter, ILogger<ToolsViewModel>? logger = null)
+    public ToolsViewModel(
+        IConfigWriterService configWriter,
+        ISupportBundleService? supportBundle = null,
+        ILogger<ToolsViewModel>? logger = null)
     {
         _configWriter = configWriter;
+        _supportBundle = supportBundle;
         _logger = logger;
 
         BrowseExifToolCommand       = new RelayCommand(() => ExecuteBrowse(ToolKeys.ExifTool, path => ExifToolPath = path));
@@ -255,6 +265,7 @@ public class ToolsViewModel : ViewModelBase
         DownloadFFprobeCommand = new RelayCommand(
             () => DownloadAndInstallAsync(ToolKeys.FFprobe, FFprobeDownloadUrl, "ffprobe.exe"),
             () => !IsDownloading);
+        CreateSupportBundleCommand = new RelayCommand(ExecuteCreateSupportBundle, () => !IsSaving);
     }
 
     /// <summary>
@@ -541,6 +552,48 @@ public class ToolsViewModel : ViewModelBase
             {
                 try { File.Delete(tempZip); } catch {  }
             }
+        }
+    }
+
+    private async void ExecuteCreateSupportBundle()
+    {
+        var folder = DialogHelper.BrowseFolder(Strings.Tools_SupportBundle);
+        if (folder is null) return;
+
+        IsSaving = true;
+        SaveMessage = Strings.Tools_SupportBundleCreating;
+        RelayCommand.RaiseCanExecuteChanged();
+        try
+        {
+            var service = _supportBundle;
+            if (service is null)
+            {
+                // Fallback: keine DI-Instanz — direktes Erstellen mit Resolver
+                var resolver = new UMI.Core.Services.ConfigPathResolver();
+                service = new UMI.Core.Services.SupportBundleService(resolver, logger: _logger as ILogger<UMI.Core.Services.SupportBundleService>);
+            }
+
+            using var cts = new CancellationTokenSource(TimeSpan.FromMinutes(2));
+            var zipPath = await service.CreateBundleAsync(folder, cts.Token);
+
+            SaveMessage = string.Format(Strings.Tools_SupportBundleDone, zipPath);
+            _logger?.LogInformation("Support bundle created: {Path}", zipPath);
+
+            // Öffne den Explorer am Zielordner
+            try { System.Diagnostics.Process.Start("explorer.exe", $"/select,\"{zipPath}\""); }
+            catch (Exception ex) { _logger?.LogWarning(ex, "Could not open Explorer for {Path}", zipPath); }
+
+            ScheduleClearStatus();
+        }
+        catch (Exception ex)
+        {
+            SaveMessage = string.Format(Strings.Tools_SupportBundleError, ex.Message);
+            _logger?.LogError(ex, "Failed to create support bundle");
+        }
+        finally
+        {
+            IsSaving = false;
+            RelayCommand.RaiseCanExecuteChanged();
         }
     }
 

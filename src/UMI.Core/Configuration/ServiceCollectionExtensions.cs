@@ -139,6 +139,12 @@ public static class ServiceCollectionExtensions
             services.AddSingleton<IDriveWatcherService, DriveWatcherService>();
         }
 
+        services.AddSingleton<ISupportBundleService>(sp =>
+            new SupportBundleService(
+                sp.GetRequiredService<ConfigPathResolver>(),
+                sp.GetService<UmiConfig>(),
+                sp.GetService<ILogger<SupportBundleService>>()));
+
         services.AddSingleton<IUpdateService>(sp =>
         {
             var httpClient = new HttpClient();
