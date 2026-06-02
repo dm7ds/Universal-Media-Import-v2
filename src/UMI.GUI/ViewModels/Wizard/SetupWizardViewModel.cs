@@ -54,6 +54,7 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
     private readonly ICardDetectionService _cardDetection;
     private readonly IDriveWatcherService _driveWatcher;
     private readonly CameraTypeLoader _typeLoader;
+    private readonly BurstProfileLoader? _burstProfileLoader;
     private readonly Dispatcher _dispatcher;
     private readonly ILogger<ToolsViewModel>? _toolsLogger;
 
@@ -123,6 +124,7 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
         IDriveWatcherService driveWatcher,
         ConfigPathResolver pathResolver,
         CameraTypeLoader typeLoader,
+        BurstProfileLoader? burstProfileLoader = null,
         ILogger<ToolsViewModel>? toolsLogger = null)
     {
         _configWriter = configWriter;
@@ -131,6 +133,7 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
         _cardDetection = cardDetection;
         _driveWatcher = driveWatcher;
         _typeLoader = typeLoader;
+        _burstProfileLoader = burstProfileLoader;
         _dispatcher = Dispatcher.CurrentDispatcher;
         _toolsLogger = toolsLogger;
 
@@ -371,14 +374,25 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
             // then matched zero files, which is why "found nothing" reports keep
             // happening with CR3/DNG-shooting bodies.
             var typeDef = _typeLoader.GetType(entry.CameraType);
+            var features = CameraFeatures.BuildFromPreset(typeDef?.Features);
             var cameraConfig = new CameraConfig
             {
                 Name = entry.DisplayName,
                 CameraType = entry.CameraType,
                 Enabled = true,
                 FolderName = entry.FolderName,
-                Features = CameraFeatures.BuildFromPreset(typeDef?.Features),
+                Features = features,
                 FileTypes = CameraFileTypes.BuildFromPreset(typeDef?.DefaultFileTypes),
+                BurstDetectionConfig = features.BurstDetection
+                    ? new BurstDetectionConfig
+                    {
+                        Enabled        = true,
+                        // Prefer type-preset defaults; fall back to all disk profiles if preset has none.
+                        ActiveProfiles = typeDef?.DefaultBurstProfiles is { Count: > 0 }
+                            ? new List<string>(typeDef.DefaultBurstProfiles)
+                            : _burstProfileLoader?.ListAvailableProfiles() ?? new List<string>(),
+                    }
+                    : null,
             };
 
             _configWriter.AddCamera(entry.CameraId, cameraConfig);

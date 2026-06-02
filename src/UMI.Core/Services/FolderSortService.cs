@@ -198,9 +198,11 @@ public sealed class FolderSortService : IFolderSortService
                     var meta = _metadataReader.ReadPhotoMetadata(filePath);
                     captureDate = meta.CreateDate;
 
-                    if (request.DetectBursts && config.Cameras.TryGetValue(cameraId, out var camCfg))
+                    if (request.DetectBursts)
                     {
-                        var burstCfg = LoadBurstConfig(camCfg);
+                        var burstCfg = config.Cameras.TryGetValue(cameraId, out var camCfg)
+                            ? LoadBurstConfig(camCfg)
+                            : BuildFallbackBurstConfig();
                         shootingMode = _burstMatching.MatchBurstProfile(meta, burstCfg);
                     }
                 }
@@ -250,10 +252,10 @@ public sealed class FolderSortService : IFolderSortService
             {
                 ct.ThrowIfCancellationRequested();
 
-                if (!config.Cameras.TryGetValue(grp.Key.CameraId, out var camCfg))
-                    continue;
+                var burstCfg = config.Cameras.TryGetValue(grp.Key.CameraId, out var camCfg)
+                    ? LoadBurstConfig(camCfg)
+                    : BuildFallbackBurstConfig();
 
-                var burstCfg = LoadBurstConfig(camCfg);
                 if (burstCfg is null || !burstCfg.Enabled || burstCfg.LoadedProfiles is null || burstCfg.LoadedProfiles.Count == 0)
                     continue;
 
@@ -397,11 +399,49 @@ public sealed class FolderSortService : IFolderSortService
         var burst = config.BurstDetectionConfig;
 
         if (_burstProfileLoader is not null
-            && burst.ActiveProfiles.Count > 0
-            && (burst.LoadedProfiles is null || burst.LoadedProfiles.Count == 0))
+            && burst.LoadedProfiles is { Count: 0 })
         {
-            burst.LoadedProfiles = _burstProfileLoader.LoadProfiles(burst.ActiveProfiles);
+            // Defensive: if ActiveProfiles is empty but profiles exist on disk, use all available.
+            // This handles cameras saved before the auto-populate fix (TASK-215).
+            var profilesToLoad = burst.ActiveProfiles.Count > 0
+                ? burst.ActiveProfiles
+                : _burstProfileLoader.ListAvailableProfiles(); // Fallback
+            if (profilesToLoad.Count > 0)
+            {
+                burst.LoadedProfiles = _burstProfileLoader.LoadProfiles(profilesToLoad);
+                _logger?.LogDebug(
+                    "FolderSort: Burst-Profile geladen ({Count}) — ActiveProfiles war {Source}",
+                    burst.LoadedProfiles.Count,
+                    burst.ActiveProfiles.Count > 0 ? "konfiguriert" : "leer → Fallback auf alle verfügbaren");
+            }
         }
+
+        return burst;
+    }
+
+    /// <summary>
+    /// Constructs a default <see cref="BurstDetectionConfig"/> using all available profiles.
+    /// Used for files whose path segment does not map to any registered camera (e.g. <c>_unsorted</c>).
+    /// Best-effort: returns null when no profiles are available so callers can skip gracefully.
+    /// </summary>
+    private BurstDetectionConfig? BuildFallbackBurstConfig()
+    {
+        if (_burstProfileLoader is null) return null;
+
+        var available = _burstProfileLoader.ListAvailableProfiles();
+        if (available.Count == 0) return null;
+
+        var burst = new BurstDetectionConfig
+        {
+            Enabled        = true,
+            ActiveProfiles = available,
+        };
+        burst.LoadedProfiles = _burstProfileLoader.LoadProfiles(available);
+
+        _logger?.LogDebug(
+            "FolderSort: Fallback-BurstConfig für _unsorted erstellt mit {Count} Profilen: {Names}",
+            burst.LoadedProfiles.Count,
+            string.Join(", ", burst.LoadedProfiles.Select(p => p.Name)));
 
         return burst;
     }

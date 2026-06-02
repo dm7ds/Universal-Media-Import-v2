@@ -624,12 +624,22 @@ public class ImportPipelineService
         var burstConfig = config.BurstDetectionConfig ?? new BurstDetectionConfig();
 
         if (_burstProfileLoader != null
-            && burstConfig.ActiveProfiles.Count > 0
             && (burstConfig.LoadedProfiles == null || burstConfig.LoadedProfiles.Count == 0))
         {
-            burstConfig.LoadedProfiles = _burstProfileLoader.LoadProfiles(burstConfig.ActiveProfiles);
-            _logger?.LogDebug("Burst-Profile geladen: {Profiles}",
-                string.Join(", ", burstConfig.LoadedProfiles.Select(p => p.Name)));
+            // Defensive: if ActiveProfiles is empty but profiles exist on disk, use all available.
+            // This handles cameras saved before the auto-populate fix (TASK-215).
+            var profilesToLoad = burstConfig.ActiveProfiles.Count > 0
+                ? burstConfig.ActiveProfiles
+                : _burstProfileLoader.ListAvailableProfiles(); // Fallback
+
+            if (profilesToLoad.Count > 0)
+            {
+                burstConfig.LoadedProfiles = _burstProfileLoader.LoadProfiles(profilesToLoad);
+                _logger?.LogDebug("ImportPipeline: Burst-Profile geladen ({Count}) — ActiveProfiles war {Source}: {Profiles}",
+                    burstConfig.LoadedProfiles.Count,
+                    burstConfig.ActiveProfiles.Count > 0 ? "konfiguriert" : "leer → Fallback auf alle verfügbaren",
+                    string.Join(", ", burstConfig.LoadedProfiles.Select(p => p.Name)));
+            }
         }
 
         return burstConfig;

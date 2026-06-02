@@ -89,4 +89,15 @@ public class CameraTypeDefinition
     [JsonPropertyName("default_file_types")]
     public DefaultFileTypes? DefaultFileTypes { get; set; }
 
+    /// <summary>
+    /// Default burst-detection profile names for this camera type.
+    /// Applied when a new camera with BurstDetection enabled is created and
+    /// during the startup repair pass for cameras with empty ActiveProfiles.
+    /// Names reference files in config/presets/burst/*.umi (without extension).
+    /// Null / empty = fall back to BurstProfileLoader.ListAvailableProfiles().
+    /// SSOT: defined once in the .umi preset — never duplicated in code.
+    /// </summary>
+    [JsonPropertyName("default_burst_profiles")]
+    public List<string>? DefaultBurstProfiles { get; set; }
+
 }

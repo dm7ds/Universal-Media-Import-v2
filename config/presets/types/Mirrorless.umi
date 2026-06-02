@@ -22,6 +22,7 @@
     "generate_thumbnails": { "available": true,  "enabled_by_default": false, "simple_on_card": false }
   },
   "simple_features": ["burst_detection"],
+  "default_burst_profiles": ["Sport", "Astro", "HighISO", "Timelapse"],
   "default_file_types": {
     "video": [".mp4", ".mov"],
     "photo": [".jpg", ".jpeg", ".cr3", ".cr2", ".arw", ".nef"]

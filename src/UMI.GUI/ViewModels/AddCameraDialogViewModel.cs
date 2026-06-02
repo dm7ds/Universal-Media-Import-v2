@@ -40,6 +40,7 @@ public class AddCameraDialogViewModel : ViewModelBase, IDisposable
 {
     private readonly IConfigWriterService _configWriter;
     private readonly CameraTypeLoader _typeLoader;
+    private readonly BurstProfileLoader? _burstProfileLoader;
     private readonly IDriveWatcherService? _driveWatcher;
     private readonly ICardDetectionService? _cardDetection;
     private readonly ILogger? _logger;
@@ -154,10 +155,12 @@ public class AddCameraDialogViewModel : ViewModelBase, IDisposable
         CameraTypeLoader typeLoader,
         IDriveWatcherService? driveWatcher = null,
         ICardDetectionService? cardDetection = null,
+        BurstProfileLoader? burstProfileLoader = null,
         ILogger? logger = null)
     {
         _configWriter = configWriter;
         _typeLoader = typeLoader;
+        _burstProfileLoader = burstProfileLoader;
         _driveWatcher = driveWatcher;
         _cardDetection = cardDetection;
         _logger = logger;
@@ -350,14 +353,25 @@ public class AddCameraDialogViewModel : ViewModelBase, IDisposable
             var profile = SelectedProfile!;
 
             var typeDef = _typeLoader.GetType(profile.TypeName);
+            var features = CameraFeatures.BuildFromPreset(typeDef?.Features);
 
             var newCamera = new CameraConfig
             {
                 Name = name,
                 CameraType = profile.TypeName,
                 Enabled = true,
-                Features = CameraFeatures.BuildFromPreset(typeDef?.Features),
+                Features = features,
                 FileTypes = CameraFileTypes.BuildFromPreset(typeDef?.DefaultFileTypes),
+                BurstDetectionConfig = features.BurstDetection
+                    ? new BurstDetectionConfig
+                    {
+                        Enabled        = true,
+                        // Prefer type-preset defaults; fall back to all disk profiles if preset has none.
+                        ActiveProfiles = typeDef?.DefaultBurstProfiles is { Count: > 0 }
+                            ? new List<string>(typeDef.DefaultBurstProfiles)
+                            : _burstProfileLoader?.ListAvailableProfiles() ?? new List<string>(),
+                    }
+                    : null,
             };
 
             _configWriter.AddCamera(id, newCamera);

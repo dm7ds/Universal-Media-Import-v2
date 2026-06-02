@@ -23,6 +23,7 @@ using System.Windows.Input;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 using UMI.Core.Configuration;
+using UMI.Core.Models;
 using UMI.Core.Services;
 using UMI.GUI.Helpers;
 using UMI.GUI.Resources;
@@ -46,6 +47,7 @@ public class MainViewModel : ViewModelBase
     private readonly ILogger<MainViewModel>? _logger;
     private readonly IConfigWriterService _configWriter;
     private readonly CameraTypeLoader? _typeLoader;
+    private readonly BurstProfileLoader? _burstProfileLoader;
     private readonly IDriveWatcherService? _driveWatcher;
     private readonly ICardDetectionService? _cardDetection;
     private readonly IServiceProvider _serviceProvider;
@@ -434,6 +436,7 @@ public class MainViewModel : ViewModelBase
         ProcessViewModel processViewModel,
         IServiceProvider serviceProvider,
         CameraTypeLoader? typeLoader = null,
+        BurstProfileLoader? burstProfileLoader = null,
         IDriveWatcherService? driveWatcher = null,
         ICardDetectionService? cardDetection = null,
         ConfigPathResolver? configPaths = null,
@@ -446,6 +449,7 @@ public class MainViewModel : ViewModelBase
         ImportViewModel = importViewModel;
         ProcessViewModel = processViewModel;
         _typeLoader = typeLoader;
+        _burstProfileLoader = burstProfileLoader;
         _driveWatcher = driveWatcher;
         _cardDetection = cardDetection;
         _configPaths = configPaths;
@@ -519,6 +523,11 @@ public class MainViewModel : ViewModelBase
             // "lots of CR3/DNG files in the folder, UMI finds nothing". Pull
             // the defaults from the camera-type preset and persist on the spot.
             await RepairEmptyCameraFileTypesAsync(config);
+
+            // Auto-repair (TASK-215): cameras with BurstDetection=true but empty
+            // ActiveProfiles will never produce Sport_HHmmss folders. Backfill from
+            // the type preset's default_burst_profiles (or all available profiles as fallback).
+            await RepairEmptyCameraBurstConfigAsync(config);
 
             // AppVersion is set once from assembly metadata in the field initializer
             // (ResolveAssemblyVersion). config.Version is the JSON schema version and
@@ -1061,6 +1070,68 @@ public class MainViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Walks the loaded config, finds cameras with BurstDetection enabled but
+    /// empty (or null) BurstDetectionConfig.ActiveProfiles, and backfills them
+    /// from the camera-type preset's <c>default_burst_profiles</c> list.
+    /// Falls back to all profiles available in config/presets/burst/ if the
+    /// preset has no <c>default_burst_profiles</c> or the preset is unknown.
+    /// Persists on change; no-op when nothing is broken (idempotent).
+    /// </summary>
+    private async Task RepairEmptyCameraBurstConfigAsync(UmiConfig config)
+    {
+        if (_burstProfileLoader is null) return;
+
+        // Get all available profile names from disk once — reused as fallback.
+        var allAvailableProfiles = _burstProfileLoader.ListAvailableProfiles();
+        if (allAvailableProfiles.Count == 0) return;
+
+        var dirty = false;
+        foreach (var (id, cam) in config.Cameras)
+        {
+            // Only repair cameras where burst detection is explicitly enabled.
+            if (!cam.Features.BurstDetection) continue;
+
+            var burstConfig = cam.BurstDetectionConfig;
+            var needsRepair = burstConfig is null || burstConfig.ActiveProfiles.Count == 0;
+            if (!needsRepair) continue;
+
+            // Prefer type-preset defaults; fall back to all available profiles.
+            var typeDef        = _typeLoader?.GetType(cam.CameraType);
+            var profilesToUse  = typeDef?.DefaultBurstProfiles is { Count: > 0 }
+                ? typeDef.DefaultBurstProfiles
+                : allAvailableProfiles; // Fallback
+
+            if (profilesToUse.Count == 0) continue;
+
+            if (burstConfig is null)
+            {
+                cam.BurstDetectionConfig = new BurstDetectionConfig
+                {
+                    Enabled        = true,
+                    ActiveProfiles = new List<string>(profilesToUse),
+                };
+            }
+            else
+            {
+                burstConfig.ActiveProfiles = new List<string>(profilesToUse);
+            }
+
+            _logger?.LogInformation(
+                "Auto-repaired empty BurstDetectionConfig.ActiveProfiles on camera '{CameraId}' " +
+                "(type '{Type}'): {Profiles}",
+                id, cam.CameraType,
+                string.Join(", ", profilesToUse));
+            dirty = true;
+        }
+
+        if (dirty)
+        {
+            try { await _configWriter.SaveAsync(); }
+            catch (Exception ex) { _logger?.LogWarning(ex, "Persisting auto-repaired BurstDetectionConfig failed"); }
+        }
+    }
+
     private void RefreshAllStorageSummaries()
     {
         var config = _configWriter.Config;
@@ -1102,7 +1173,10 @@ public class MainViewModel : ViewModelBase
                 return;
             }
 
-            var dialogVm = new AddCameraDialogViewModel(_configWriter, _typeLoader, _driveWatcher, _cardDetection, _logger);
+            var dialogVm = new AddCameraDialogViewModel(
+                _configWriter, _typeLoader, _driveWatcher, _cardDetection,
+                burstProfileLoader: _burstProfileLoader,
+                logger: _logger);
 
             dialogVm.CameraAdded += (_, _) => ReloadCamerasFromConfig();
 

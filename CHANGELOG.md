@@ -4,6 +4,39 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.1.5] — 2026-06-02
+
+### Fixed
+
+- **Burst-Detection erzeugte keine Sport_HHmmss-Ordner auf Disk (TASK-215).**
+  Wenn der Burst-Toggle in der Camera-Card aktiviert wurde, schrieb das
+  ViewModel nur `features.burst_detection=true`, aber
+  `burst_detection_config.active_profiles` blieb leer. Damit lud
+  `BurstProfileLoader` 0 Profile → `SequenceGroupingService` markierte keine
+  Gruppe als Sequenz → keine `<Mode>_HHmmss/`-Unterordner beim
+  Importieren oder "Organisieren".
+  
+  **Fixes in dieser Version:**
+  1. **Startup-Repair-Pass:** `RepairEmptyCameraBurstConfigAsync` läuft beim
+     App-Start nach dem FileTypes-Repair-Pass. Kameras mit
+     `BurstDetection=true` und leeren `ActiveProfiles` werden automatisch mit
+     den Profil-Defaults aus dem Kamera-Typ-Preset (oder allen verfügbaren
+     Profilen als Fallback) befüllt. Config wird gespeichert, idempotent.
+  2. **Defensive LoadBurstConfig (ImportPipelineService + FolderSortService):**
+     Wenn `ActiveProfiles` leer ist aber Profile auf Disk vorhanden sind,
+     werden alle verfügbaren Profile als Fallback geladen statt still 0 Profile
+     zu übergeben.
+  3. **_unsorted-Path-Fix in FolderSortService:** Dateien in Ordnern die
+     keiner registrierten Kamera zugeordnet sind (`_unsorted`), bekommen nun
+     eine On-the-fly-BurstDetectionConfig mit allen verfügbaren Profilen.
+     Vorher: kompletter Skip der Burst-Erkennung für diese Dateien.
+  4. **Kamera-Anlegen-Pfade (Wizard + Add-Camera-Dialog):** Neue Kameras mit
+     BurstDetection=true bekommen beim Anlegen sofort
+     `BurstDetectionConfig.ActiveProfiles` aus dem Typ-Preset
+     (`default_burst_profiles`), kein leeres Array mehr.
+  5. **Type-Presets:** `Mirrorless.umi` und `DSLR.umi` haben nun
+     `default_burst_profiles: ["Sport", "Astro", "HighISO", "Timelapse"]`.
+
 ## [2.1.4] — 2026-05-10
 
 ### Removed
