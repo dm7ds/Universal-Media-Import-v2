@@ -4,6 +4,25 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.1.1] — 2026-07-30
+
+Patch-Release. Enthält funktional dasselbe Programm wie 2.2.1 — dieses Release
+existiert, weil der Installer-Build von 2.2.1 nicht durchlief.
+
+### Fixed
+
+- **Installer-Build der Version 2.2.1 schlug fehl (I-009).** Der automatische
+  Release-Build konnte ExifTool nicht mehr herunterladen: die bisherigen
+  Download-Adressen von exiftool.org existieren nicht mehr, das Projekt liefert
+  seine Windows-Pakete inzwischen über SourceForge aus. Für 2.2.1 wurde deshalb
+  kein Installer veröffentlicht. Der Build bezieht ExifTool jetzt über einen
+  „latest"-Link ohne feste Versionsnummer — damit kann dieselbe Ursache nicht
+  wiederkehren (sie hatte den Release zuvor bereits zweimal getroffen).
+
+- **Update-Hinweis für Patch-Versionen.** Bei vierstelligen Versionsnummern
+  (wie dieser) verglich die Update-Prüfung nur die ersten drei Stellen und hätte
+  dauerhaft ein Update auf die bereits installierte Version angeboten.
+
 ## [2.2.1] — 2026-07-28
 
 ### Fixed

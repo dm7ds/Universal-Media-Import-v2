@@ -178,7 +178,8 @@ public sealed class GitHubReleaseChecker : IUpdateService
     }
 
     /// <summary>
-    /// Liest die Assembly-Version als "Major.Minor.Build"-String.
+    /// Liest die Assembly-Version als "Major.Minor.Build"-String — inklusive
+    /// Revision, wenn es eine gibt (vierstellige Patch-Releases wie 2.2.1.1).
     /// Einzige SSOT für Versions-Extraktion — wird auch von ServiceCollectionExtensions für den User-Agent genutzt.
     /// </summary>
     internal static string GetCurrentVersion()
@@ -187,8 +188,14 @@ public sealed class GitHubReleaseChecker : IUpdateService
         if (version is null)
             return "0.0.0";
 
-        // Major.Minor.Build (ohne Revision)
-        return $"{version.Major}.{version.Minor}.{version.Build}";
+        // Die Revision MUSS mit, sobald sie gesetzt ist: sonst meldet ein
+        // Build der Version 2.2.1.1 sich als "2.2.1", der Release-Tag heisst
+        // aber "v2.2.1.1" — und 2.2.1.1 > 2.2.1 waere dauerhaft wahr. Der
+        // Nutzer bekaeme endlos ein Update auf die Version angeboten, die er
+        // bereits installiert hat.
+        return version.Revision > 0
+            ? $"{version.Major}.{version.Minor}.{version.Build}.{version.Revision}"
+            : $"{version.Major}.{version.Minor}.{version.Build}";
     }
 }
 
