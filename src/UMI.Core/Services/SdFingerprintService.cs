@@ -98,17 +98,10 @@ public class SdFingerprintService : ISdFingerprintService
     /// <summary>
     /// Matcht einen SD-Fingerprint gegen die konfigurierten Kameras.
     /// Returns: CameraId oder null wenn keine Übereinstimmung.
+    /// Delegiert an <see cref="CameraSerialMatcher.FindCameraId"/> (SSOT für Serial-Match-Logik).
     /// </summary>
     public string? MatchCamera(SdFingerprint fingerprint, Dictionary<string, CameraConfig> cameras)
-    {
-        if (string.IsNullOrEmpty(fingerprint.SerialNumber))
-            return null;
-
-        return cameras
-            .Where(c => c.Value.SerialNumber == fingerprint.SerialNumber)
-            .Select(c => c.Key)
-            .FirstOrDefault();
-    }
+        => CameraSerialMatcher.FindCameraId(fingerprint.SerialNumber, cameras);
 
     /// <summary>
     /// Parst GoPro version.txt (JSON mit Keys wie "camera serial number").

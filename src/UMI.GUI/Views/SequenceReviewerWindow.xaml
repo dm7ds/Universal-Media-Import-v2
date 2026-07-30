@@ -1487,6 +1487,35 @@
                 </Grid>
             </Border>
 
+            <!-- Info banner: no series detected / empty folder fallback
+                 Sits in Root-Grid Row 1+2 so it is visible in BOTH image-view AND overview mode.
+                 Visibility driven exclusively by HasEmptyHint — independent of IsOverviewMode. -->
+            <Border
+                Grid.Row="1"
+                Grid.RowSpan="2"
+                VerticalAlignment="Top"
+                Background="{StaticResource BrushInfoBg}"
+                BorderBrush="{StaticResource BrushInfoBorder}"
+                BorderThickness="0,0,0,1"
+                Padding="16,8"
+                Visibility="{Binding HasEmptyHint, Converter={StaticResource BoolToVisibility}}">
+                <StackPanel Orientation="Horizontal">
+                    <Path
+                        Data="M12,2A10,10 0 0,1 22,12A10,10 0 0,1 12,22A10,10 0 0,1 2,12A10,10 0 0,1 12,2M13,7H11V9H13V7M13,11H11V17H13V11Z"
+                        Fill="{StaticResource BrushInfoText}"
+                        Width="16" Height="16"
+                        Stretch="Uniform"
+                        VerticalAlignment="Center"
+                        Margin="0,0,8,0" />
+                    <TextBlock
+                        Text="{Binding EmptyHint}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushInfoText}"
+                        VerticalAlignment="Center"
+                        TextWrapping="Wrap" />
+                </StackPanel>
+            </Border>
+
             <!-- Loading overlay (full window) -->
             <Grid
                 Grid.RowSpan="3"

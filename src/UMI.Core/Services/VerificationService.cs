@@ -142,7 +142,7 @@ public class VerificationService
 
         foreach (var file in new DirectoryInfo(workbenchPath).EnumerateFiles("*", SearchOption.AllDirectories))
         {
-            if (allExtensions.Contains(file.Extension))
+            if (allExtensions.Contains(file.Extension) && !FolderNameConstants.IsInternalPath(file.FullName))
             {
 
                 if (!string.IsNullOrEmpty(cameraId) && cameraId != "ALL")

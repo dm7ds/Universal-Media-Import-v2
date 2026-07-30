@@ -16,6 +16,7 @@
 //     You should have received a copy of the GNU General Public License
 //     along with UMI - Universal Media Import.  If not, see <http://www.gnu.org/licenses/>.
 
+using System.Globalization;
 using Microsoft.Extensions.Logging;
 using UMI.Core.Configuration;
 using UMI.Core.Models;
@@ -159,8 +160,10 @@ public class SequenceGroupingService
 
     internal DateTime ParseCaptureTime(ImportedFile file)
     {
+        // FIX-2 (TASK-218): use InvariantCulture + RoundtripKind to match the rest of the codebase.
+        // Plain TryParse without culture would use the current thread locale and lose timezone info.
         if (!string.IsNullOrEmpty(file.CaptureTime) &&
-            DateTime.TryParse(file.CaptureTime, out var parsed))
+            DateTime.TryParse(file.CaptureTime, CultureInfo.InvariantCulture, DateTimeStyles.RoundtripKind, out var parsed))
         {
             return parsed;
         }

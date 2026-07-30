@@ -18,6 +18,7 @@
 
 using System.IO;
 using System.Windows.Input;
+using UMI.Core.Utilities;
 using UMI.GUI.Resources;
 
 namespace UMI.GUI.ViewModels.Wizard.Steps;
@@ -107,6 +108,15 @@ public class WorkbenchStepViewModel : WizardStepViewModelBase
             if (!Path.IsPathRooted(path))
             {
                 PathError = Strings.Wizard_PathErrorNotAbsolute;
+                IsValid = false;
+                return;
+            }
+
+            // I-005: Ein Workbench innerhalb von .umi macht saemtliche Foto-Scans
+            // blind — der Ordner wirkt dauerhaft leer. Schon hier abfangen.
+            if (FolderNameConstants.IsInternalDirectory(path))
+            {
+                PathError = Strings.Wizard_PathErrorInternal;
                 IsValid = false;
                 return;
             }

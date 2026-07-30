@@ -233,6 +233,55 @@ public class ConfigWriterService : IConfigWriterService
         _logger?.LogDebug("Kamera aktualisiert: {CameraId}", cameraId);
     }
 
+    /// <summary>
+    /// learn-on-first-use: Füllt leere <see cref="CameraConfig.SerialNumber"/> und
+    /// <see cref="CameraConfig.CameraModel"/> aus dem <paramref name="fingerprint"/>.
+    /// Bestehende Werte werden NIEMALS überschrieben (AK2).
+    /// Gibt die gelernte SerialNumber zurück (oder null wenn nichts gesetzt wurde).
+    /// Diese Methode ist bewusst statisch und pure — keine Seiteneffekte außer dem
+    /// direkten Setzen der Properties, damit sie in Unit-Tests ohne Service-Infrastruktur
+    /// aufgerufen werden kann (TASK-222, AK5).
+    /// </summary>
+    public static string? LearnCameraIdentity(
+        CameraConfig cam,
+        SdFingerprint fingerprint,
+        ILogger? logger = null)
+    {
+        string? learnedSerial = null;
+
+        if (string.IsNullOrEmpty(cam.SerialNumber) && !string.IsNullOrEmpty(fingerprint.SerialNumber))
+        {
+            cam.SerialNumber = fingerprint.SerialNumber;
+            learnedSerial    = fingerprint.SerialNumber;
+            logger?.LogInformation(
+                "Body-Serial {Serial} für Kamera {CameraId} gelernt",
+                fingerprint.SerialNumber,
+                cam.Name ?? "(unbenannt)");
+        }
+        else if (!string.IsNullOrEmpty(cam.SerialNumber)
+              && !string.IsNullOrEmpty(fingerprint.SerialNumber)
+              && cam.SerialNumber != fingerprint.SerialNumber)
+        {
+            // Konflikt: gespeicherte Serial ≠ gelesene Serial — nur loggen, kein Überschreiben
+            logger?.LogWarning(
+                "Body-Serial-Konflikt für Kamera {CameraId}: Config={ConfigSerial}, Fingerprint={FingerprintSerial} — kein Überschreiben",
+                cam.Name ?? "(unbenannt)",
+                cam.SerialNumber,
+                fingerprint.SerialNumber);
+        }
+
+        if (string.IsNullOrEmpty(cam.CameraModel) && !string.IsNullOrEmpty(fingerprint.Model))
+        {
+            cam.CameraModel = fingerprint.Model;
+            logger?.LogInformation(
+                "camera_model '{Model}' für Kamera {CameraId} gelernt",
+                fingerprint.Model,
+                cam.Name ?? "(unbenannt)");
+        }
+
+        return learnedSerial;
+    }
+
     public void RemoveCamera(string cameraId)
     {
         EnsureConfigLoaded();

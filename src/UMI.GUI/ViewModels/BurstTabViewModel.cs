@@ -257,6 +257,13 @@ public class BurstTabViewModel : ViewModelBase
             {
                 await profile.AutoEvaluateAsync(data);
             }
+            catch (OperationCanceledException)
+            {
+                // FIX-7 (TASK-218): async void handler — cancellation must end the
+                // loop cleanly, not be swallowed by the catch-all below. `return`
+                // (not `throw`) because an unhandled throw from async void crashes WPF.
+                return;
+            }
             catch (Exception)
             {
 

@@ -119,6 +119,57 @@ public class SupportBundleServiceTests : IDisposable
         File.Exists(zipPath.Subject).Should().BeTrue();
     }
 
+    /// <summary>
+    /// Regression für I-008: Das Support-Bundle enthielt NIE den Log des laufenden
+    /// Tages — also ausgerechnet den mit dem gemeldeten Vorfall. Bundle-Info meldete
+    /// jedes Mal "The process cannot access the file ... being used by another process".
+    /// Kostete bei I-006 eine komplette Analyse-Runde.
+    ///
+    /// Ursache ist die Windows-Share-Semantik: Der Logger hält die Datei mit
+    /// FileAccess.Write offen. Ein zweiter Öffner muss dem bestehenden Writer sein
+    /// Write-Recht ausdrücklich zugestehen (FileShare.Write), sonst kollidiert er —
+    /// und genau das tut ZipArchive.CreateEntryFromFile nicht.
+    ///
+    /// ConfigPathResolver.LogDirectory ist statisch und aus Tests nicht umlenkbar,
+    /// deshalb wird hier die Kopier-Mechanik selbst geprüft statt der Service-Aufruf.
+    /// </summary>
+    [Fact]
+    public void OpenLogFile_IsSkippedByCreateEntryFromFile_ButCopiedByShareAwareStream()
+    {
+        var logPath = Path.Combine(_tempRoot, "umi-gui-20260728.log");
+        File.WriteAllText(logPath, "[21:47:27] === Burst-Gruppierung START ===\n");
+
+        // So hält der laufende Logger seine aktuelle Datei offen:
+        using var loggerHandle = new FileStream(
+            logPath, FileMode.Open, FileAccess.Write, FileShare.Read);
+
+        var zipPath = Path.Combine(_tempRoot, "bundle.zip");
+
+        using (var archive = ZipFile.Open(zipPath, ZipArchiveMode.Create))
+        {
+            // Der alte Weg — scheitert genau so wie beim User:
+            var oldWay = () => archive.CreateEntryFromFile(logPath, "logs/old.log");
+            oldWay.Should().Throw<IOException>(
+                "CreateEntryFromFile gesteht dem laufenden Logger sein Write-Recht nicht zu");
+
+            // Der neue Weg — FileShare.ReadWrite gesteht es zu:
+            var entry = archive.CreateEntry("logs/new.log", CompressionLevel.Optimal);
+            using var source = new FileStream(
+                logPath, FileMode.Open, FileAccess.Read,
+                FileShare.ReadWrite | FileShare.Delete);
+            using var target = entry.Open();
+            source.CopyTo(target);
+        }
+
+        // Und der Inhalt ist wirklich im Bundle gelandet:
+        using var check = ZipFile.OpenRead(zipPath);
+        var copied = check.GetEntry("logs/new.log");
+        copied.Should().NotBeNull();
+
+        using var reader = new StreamReader(copied!.Open());
+        reader.ReadToEnd().Should().Contain("Burst-Gruppierung START");
+    }
+
     [Fact]
     public async Task CreateBundleAsync_MissingConfigJson_BundleInfoMentionsMissing()
     {

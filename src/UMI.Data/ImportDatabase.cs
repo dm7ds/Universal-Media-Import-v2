@@ -255,23 +255,31 @@ public class ImportDatabase : IDisposable, IAsyncDisposable
         var idList = fileIds.ToList();
         if (idList.Count == 0) return;
 
-        var files = await GetConnection().QueryAsync<(long Id, string DestPath, string Filename)>(
-            "SELECT id, dest_path, filename FROM imports WHERE id IN @Ids",
-            new { Ids = idList });
+        // FIX-4 (TASK-218): SQLite IN-clause limit is 32 766 parameters. Chunk to avoid
+        // SqliteException on large timelapse sequences. One transaction wraps all batches.
+        const int ChunkSize = 900;
 
-        var updates = files.Select(file =>
+        var allUpdates = new List<object>();
+        foreach (var chunk in idList.Chunk(ChunkSize))
         {
-            var dir = Path.GetDirectoryName(file.DestPath) ?? "";
-            var newPath = Path.Combine(dir, folderName, file.Filename);
-            return new { SeqId = sequenceId, Path = newPath, UpdatedAt = DateTime.UtcNow.ToString("o"), Id = file.Id };
-        });
+            var files = await GetConnection().QueryAsync<(long Id, string DestPath, string Filename)>(
+                "SELECT id, dest_path, filename FROM imports WHERE id IN @Ids",
+                new { Ids = chunk });
+
+            foreach (var file in files)
+            {
+                var dir = Path.GetDirectoryName(file.DestPath) ?? "";
+                var newPath = Path.Combine(dir, folderName, file.Filename);
+                allUpdates.Add(new { SeqId = sequenceId, Path = newPath, UpdatedAt = DateTime.UtcNow.ToString("o"), Id = file.Id });
+            }
+        }
 
         var sql = "UPDATE imports SET sequence_id = @SeqId, dest_path = @Path, updated_at = @UpdatedAt WHERE id = @Id";
 
         using var transaction = GetConnection().BeginTransaction();
         try
         {
-            await GetConnection().ExecuteAsync(sql, updates, transaction);
+            await GetConnection().ExecuteAsync(sql, allUpdates, transaction);
             await transaction.CommitAsync();
             _logger?.LogDebug("Sequenz {SequenceId} ({Folder}): {Count} Fotos zugewiesen + dest_path aktualisiert",
                 sequenceId, folderName, idList.Count);

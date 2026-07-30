@@ -199,6 +199,8 @@ public class SequenceReviewerViewModel : ViewModelBase
         {
             if (SetProperty(ref _selectedProfile, value))
             {
+                // A deliberate user-driven profile change dismisses the empty-folder hint.
+                EmptyHint = null;
                 _ = ReevaluateAsync();
                 OnPropertyChanged(nameof(SelectedProfileColorIndex));
             }
@@ -265,6 +267,24 @@ public class SequenceReviewerViewModel : ViewModelBase
         get => _loadingText;
         private set => SetProperty(ref _loadingText, value);
     }
+
+    private string? _emptyHint;
+    /// <summary>
+    /// Informational banner text shown when no series were detected but photos are present,
+    /// or when the folder contains no images at all. Null in normal operation.
+    /// </summary>
+    public string? EmptyHint
+    {
+        get => _emptyHint;
+        private set
+        {
+            if (SetProperty(ref _emptyHint, value))
+                OnPropertyChanged(nameof(HasEmptyHint));
+        }
+    }
+
+    /// <summary>True when <see cref="EmptyHint"/> is non-null and non-empty; drives banner visibility.</summary>
+    public bool HasEmptyHint => !string.IsNullOrEmpty(_emptyHint);
 
     public string SequenceCounterText
     {
@@ -473,6 +493,10 @@ public class SequenceReviewerViewModel : ViewModelBase
                 autoIdx++;
             }
 
+            // Determine whether any real profiles (not sentinels) have sequences.
+            var hasRealProfiles = AvailableProfiles.Any(p =>
+                !ReferenceEquals(p, AllSequencesProfile) && !ReferenceEquals(p, UnassignedProfile));
+
             var existingSidecar = await _sequenceSidecarService.ReadAsync(folderPath, ct);
 
             if (existingSidecar != null)
@@ -490,7 +514,32 @@ public class SequenceReviewerViewModel : ViewModelBase
                 return;
             }
 
-            _selectedProfile = AllSequencesProfile;
+            if (!hasRealProfiles && _cachedData!.Photos.Count > 0)
+            {
+                // No series detected but photos are present — fall back to "Unassigned" so the
+                // user sees their images instead of an empty screen. Show an informational banner.
+                _selectedProfile = UnassignedProfile;
+                EmptyHint = string.Format(Strings.SequenceReviewer_NoSeriesHint, _cachedData.Photos.Count);
+            }
+            else if (!hasRealProfiles)
+            {
+                // Folder is genuinely empty — no photos found at all.
+                _selectedProfile = AllSequencesProfile;
+
+                // I-005: Liegt der geladene Ordner selbst im .umi-Bereich, filtert
+                // der Scan jede gefundene Datei wieder weg — der Ordner wirkt leer
+                // obwohl Bilder darin liegen. Ohne diesen Hinweis (und ohne den
+                // Pfad im Text) ist die Ursache fuer den User unsichtbar.
+                EmptyHint = FolderNameConstants.IsInternalDirectory(folderPath)
+                    ? string.Format(Strings.SequenceReviewer_InternalFolder, folderPath)
+                    : string.Format(Strings.SequenceReviewer_NoPhotos, folderPath);
+            }
+            else
+            {
+                // Normal operation: at least one series detected.
+                _selectedProfile = AllSequencesProfile;
+                EmptyHint = null;
+            }
             OnPropertyChanged(nameof(SelectedProfile));
 
             await EvaluateAndRebuildAsync(ct);

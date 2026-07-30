@@ -227,6 +227,62 @@ public class FolderSortServiceTests : IDisposable
             "fallback burst config should run Sport profile on _unsorted files and detect at least one sequence");
     }
 
+    // -----------------------------------------------------------------------
+    // TASK-217: FolderSortService must exclude .umi/ and .metadata/ internals
+    // -----------------------------------------------------------------------
+
+    /// <summary>
+    /// Regression test for TASK-217.
+    /// Thumbnails and preview files under {workbench}/.umi/thumbnails/ must NOT
+    /// be sorted into a date folder. Before the fix, *.thumb.jpg / *.preview.jpg
+    /// were picked up as photos (correct extension, no EXIF → LastWriteTime =
+    /// today) and ended up in {workbench}/{today}/_unsorted/Photo/.
+    ///
+    /// Test setup: one real JPG + one .thumb.jpg inside .umi/thumbnails/.
+    /// After SortAsync only the real JPG is moved; the thumbnail stays in place
+    /// and no today-dated folder is created for it.
+    /// </summary>
+    [Fact]
+    public async Task SortAsync_SkipsUmiInternalFiles_ThumbNotSorted()
+    {
+        var service = CreateService();
+        var config  = MinimalConfig();
+
+        // --- real photo in workbench root ---
+        var realPhoto = Path.Combine(_tempRoot, "IMG_0001.jpg");
+        await File.WriteAllBytesAsync(realPhoto, new byte[] { 0xFF, 0xD8, 0xFF });
+        File.SetLastWriteTime(realPhoto, new DateTime(2026, 5, 10, 12, 0, 0, DateTimeKind.Local));
+
+        // --- thumbnail inside .umi/thumbnails/ — must be excluded ---
+        var umiThumbDir = Path.Combine(_tempRoot, FolderNameConstants.UmiDir, FolderNameConstants.UmiThumbnails);
+        Directory.CreateDirectory(umiThumbDir);
+        var thumbFile = Path.Combine(umiThumbDir, "IMG_0001.thumb.jpg");
+        await File.WriteAllBytesAsync(thumbFile, new byte[] { 0xFF, 0xD8, 0xFF });
+        // LastWriteTime = today (simulates the bug: no EXIF → today's date folder)
+        File.SetLastWriteTime(thumbFile, DateTime.Now);
+
+        // --- Act ---
+        var result = await service.SortAsync(new FolderSortRequest(_tempRoot, FolderSortMode.Full, config));
+
+        // --- Assert ---
+        // Only the real photo is moved (1 move, 0 errors).
+        result.Moved.Should().Be(1, "only the real photo should be sorted");
+        result.Errors.Should().Be(0);
+
+        // The thumbnail must remain exactly where it was placed.
+        File.Exists(thumbFile).Should().BeTrue("thumbnail must not be touched by FolderSortService");
+
+        // The real photo lands in its expected date folder.
+        var expected = Path.Combine(
+            _tempRoot, "2026-05-10", "_unsorted", FolderNameConstants.Photo, "IMG_0001.jpg");
+        File.Exists(expected).Should().BeTrue("real photo must be sorted into the date tree");
+
+        // No today-dated folder should exist (that was the bug).
+        var todayFolder = Path.Combine(_tempRoot, DateTime.Now.ToString("yyyy-MM-dd"));
+        Directory.Exists(todayFolder).Should().BeFalse(
+            "no today-dated folder should be created; thumbnails must be excluded from sort");
+    }
+
     /// <summary>
     /// Regression test for TASK-215.
     /// When a camera has BurstDetection enabled (Features.BurstDetection=true)

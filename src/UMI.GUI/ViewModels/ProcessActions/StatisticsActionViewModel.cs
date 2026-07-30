@@ -169,6 +169,10 @@ public sealed class StatisticsActionViewModel : ProcessActionViewModel
                 {
                     history = await _historyService.ReadAsync(videoPath, ct);
                 }
+                catch (OperationCanceledException)
+                {
+                    throw; // FIX-3 (TASK-218): propagate cancellation, do not swallow
+                }
                 catch
                 {
 
@@ -184,6 +188,10 @@ public sealed class StatisticsActionViewModel : ProcessActionViewModel
                         EisStatus.StabilizationOff => "OFF",
                         _                          => "N/A"
                     };
+                }
+                catch (OperationCanceledException)
+                {
+                    throw; // FIX-3 (TASK-218): propagate cancellation, do not swallow
                 }
                 catch
                 {

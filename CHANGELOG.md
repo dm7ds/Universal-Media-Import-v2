@@ -4,6 +4,149 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.1] — 2026-07-28
+
+### Fixed
+
+- **Reviewer zeigte „Keine Bilder gefunden" trotz voller Ordner (I-005 — CRITICAL).**
+  Stand der Workbench-Pfad versehentlich *innerhalb* des internen `.umi`-Ordners
+  (z.B. `E:\umi\.umi\...`), filterte jeder Foto-Scan seine eigenen Dateien wieder
+  weg — der Ordner wirkte dauerhaft leer, obwohl tausende Bilder darin lagen.
+  UMI weist einen solchen Pfad jetzt an allen Stellen ab, an denen er gesetzt
+  werden kann (Einstellungen, Ersteinrichtung-Assistent, CLI-Assistent), und
+  meldet eine bereits betroffene Konfiguration beim Start im Log. Der
+  Reviewer nennt in seinem Hinweis außerdem den tatsächlich gescannten Ordner,
+  damit „falscher Ordner" überhaupt erkennbar ist.
+
+- **Support-Bundle enthielt nie den Log des laufenden Tages (I-008).**
+  Ausgerechnet der Log mit dem gemeldeten Vorfall fehlte in jedem Bundle, weil
+  die Datei vom laufenden Programm offen gehalten wird. Sie wird jetzt korrekt
+  mitkopiert.
+
+### Changed
+
+- **Sequenz-Erkennung meldet, wenn sie nichts findet (I-006).** Lief die
+  Burst-Erkennung ins Leere, geschah das bisher wortlos — im Log stand nur
+  „0 Sequenzen", ohne Grund. Jeder mögliche Ausstieg wird jetzt benannt
+  (keine Aufnahmedaten, Datum unlesbar, zu wenige Fotos, Funktion deaktiviert).
+  Hinweis: Ein gemeldeter Fall, in dem beim Import keine Serien erkannt wurden,
+  ist damit noch **nicht** behoben — die Ursache ist offen; diese Änderung macht
+  sie beim nächsten Auftreten sichtbar.
+
+## [2.2.0] — 2026-06-03
+
+### Added
+
+- **Kamera-Erkennung über die Body-Seriennummer (TASK-220–222).** UMI liest jetzt
+  die eindeutige Gehäuse-Seriennummer aus dem EXIF (Canon Makernote bzw.
+  Standard-EXIF `BodySerialNumber`) und kann Bilder darüber der richtigen Kamera
+  zuordnen — auch wenn zwei Kameras **dasselbe Modell** sind (z.B. zwei Canon
+  EOS R5m2). Verifiziert eineindeutig: jede Kamera hat eine stabile, eigene
+  Seriennummer; die Objektiv-Seriennummer wird bewusst NICHT verwendet (kann
+  `0000000000` sein).
+
+- **Zuordnungs-Kaskade beim "Organisieren".** Die CameraId-Bestimmung läuft jetzt
+  als Kaskade: **Seriennummer → Kamera-Modell → Ordnerpfad → `_unsorted`**.
+  Dadurch landen flach abgelegte Bilder (ohne Kamera-Unterordner) nicht mehr
+  pauschal unter `_unsorted`, sondern werden per EXIF-Modell der passenden
+  registrierten Kamera zugeordnet (nur bei eindeutigem Treffer — kein Raten bei
+  mehreren gleichen Modellen).
+
+- **learn-on-first-use.** Wird beim Import eine SD-Karte einer noch nicht per
+  Seriennummer bekannten Kamera zugeordnet, merkt sich UMI die Body-Seriennummer
+  und das exakte Modell automatisch in der Kamera-Konfiguration (nur leere Felder
+  werden gefüllt, bestehende nie überschrieben). Ab dann werden alle weiteren
+  Importe/Sortierungen dieser Kamera eindeutig zugeordnet. Nutzt den bestehenden
+  "Karte erkannt"-Dialog — keine neue Bedienung.
+
+- **Neues Config-Feld `camera_model`** pro Kamera für robustes Modell-Matching.
+  Schema-kompatibel: bestehende Konfigurationen ohne das Feld bleiben gültig.
+
+### Fixed
+
+- _(enthält kumulativ alle Fixes aus 2.1.5–2.1.9 — siehe unten.)_
+
+## [2.1.9] — 2026-06-03
+
+### Fixed
+
+- **Sequenz-Reviewer zeigte leeren Screen bei 0 erkannten Serien (TASK-219 — MAJOR UX / I-004).**
+  Wenn kein Burst-Profil Serien in einem Ordner erkannte (z.B. 9751 Einzelbilder einer R5m2),
+  zeigte der Default-Filter "Alle Sequenzen" einen leeren Screen — obwohl tausende Bilder
+  vorhanden waren. Die ungruppierten Bilder lagen hinter "Nicht zugeordnet", das der User
+  nicht kannte. Fix: Bei 0 erkannten Serien + vorhandenen Bildern wechselt der Default-Filter
+  automatisch auf "Nicht zugeordnet" und zeigt einen Informations-Banner:
+  "Keine Fotoserien erkannt — {N} Bilder werden ungruppiert angezeigt."
+  Bei leerem Ordner (0 Bilder) erscheint stattdessen: "Keine Bilder in diesem Ordner gefunden."
+  Normalbetrieb (≥1 Serie erkannt) bleibt unverändert. Kein Banner, kein Fallback.
+  Wechselt der User manuell den Filter, verschwindet der Banner sofort.
+
+## [2.1.8] — 2026-06-02
+
+### Fixed
+
+- **Burst-Erkennung schlug still fehl bei Alt-Configs (TASK-218 FIX-1 — CRITICAL).**
+  Beim Import-Scan lud der Scan-Pfad Burst-Profile nur wenn `active_profiles` nicht leer war.
+  Kameras die vor TASK-215 konfiguriert wurden (`Enabled=true, active_profiles=[]`) bekamen
+  für jedes Foto `ShootingMode="Single"` in die DB — keine Sequenz wurde erkannt, kein Fehler,
+  keine Warnung. Fix: Scan-Pfad delegiert jetzt immer an `LoadBurstConfig()` (DRY, derselbe
+  Fallback wie der Sequenz-Erkennungs-Pfad: wenn `active_profiles=[]`, werden alle verfügbaren
+  Profile von Disk geladen).
+
+- **`ParseCaptureTime` ohne InvariantCulture (TASK-218 FIX-2 — MAJOR).**
+  `SequenceGroupingService.ParseCaptureTime` nutzte `DateTime.TryParse` ohne
+  `CultureInfo.InvariantCulture` und `DateTimeStyles.RoundtripKind`. Heute durch
+  ISO-`"o"`-Format maskiert — kippt bei Format-Änderung (Falle #11 + #15).
+
+- **Cancellation wurde im Statistik-Lauf verschluckt (TASK-218 FIX-3 — MAJOR).**
+  `StatisticsActionViewModel` hatte zwei `catch { }` Blöcke um `await`-Aufrufe mit
+  `CancellationToken` ohne vorgelagertes `catch (OperationCanceledException) { throw; }`.
+  User-Abbruch während Statistik-Scan wurde ignoriert — der Lauf arbeitete alle
+  Dateien mit "N/A"-Defaults durch.
+
+- **SQLite IN-Clause Limit bei Langzeit-Timelapsen (TASK-218 FIX-4 — MINOR).**
+  `ImportDatabase.AssignSequenceToFiles` expandierte `WHERE id IN @Ids` zu einem
+  Parameter pro Element. Bei Sequenzen > 32 766 Fotos (Langzeit-Timelapse) folgten
+  `SqliteException`s. Fix: `.Chunk(900)` — alle Chunks in einer Transaktion.
+
+- **`IsInTimelapseFolder` NML-Verstoß + falscher Substring-Match (TASK-218 FIX-5 — MINOR).**
+  Hardcoded `"Timelapse"` (andere Schreibweise als `FolderNameConstants.TimeLapse = "TimeLapse"`)
+  und nackter `Contains` über den vollen Pfad — Source-Pfade wie `D:\TimelapseRig\clip.mp4`
+  wurden fälschlich in den TimeLapse-Ordner einsortiert. Fix: `FolderNameConstants.TimeLapse`
+  + Slash-umschlossener Segment-Match analog zur existierenden Konvention in
+  `FolderNameConstants.cs:287`.
+
+- **Leere GUI-catch-Blöcke erschweren Fehlerdiagnose (TASK-218 FIX-6 — WARN).**
+  Mehrere best-effort `catch { }` in `ImportViewModel` (DriveInfo, VolumeInfoReader,
+  FingerprintService) hatten kein Logging. `_logger?.LogDebug(ex, ...)` ergänzt.
+  Verhalten unverändert. ViewModels ohne Logger (`BurstTabViewModel`,
+  `StabilizeActionViewModel`, `StatisticsActionViewModel`) nicht angepasst — im Bericht
+  dokumentiert.
+
+## [2.1.7] — 2026-06-02
+
+### Fixed
+
+- **Thumbnail-Dateien wurden nach Sort in heutiges-Datum-Ordner einsortiert (TASK-217).**
+  `FolderSortService` scannte alle Dateien im Workbench inkl.
+  `{workbench}/.umi/thumbnails/*.thumb.jpg` und `*.preview.jpg`. Da diese Dateien
+  kein EXIF enthalten, fiel das Datum auf `File.GetLastWriteTime` (= heute) zurück
+  → Thumbnails landeten in `{workbench}/2026-06-02/_unsorted/Photo/`.
+
+  Fix: Neue SSOT-Methode `FolderNameConstants.IsInternalPath(string path)` erkennt
+  Pfade die ein `.umi`- oder `.metadata`-Segment enthalten und schließt sie aus.
+  `FolderSortService.SortCore`, `BurstVisualizerService.LoadFolderAsync` (der dort
+  bereits inline duplizierte Filter), `ExifFieldAnalyzerService.AnalyzeFolderAsync`
+  und `VerificationService.VerifyWorkbenchAsync` nutzen jetzt alle diese einzige
+  Methode (F-217-01: gleicher Bug-Komplex, gleiches Release).
+
+### Changed
+
+- **"Organisieren" (Nach dem Import): Fotoserien-Erkennung jetzt standardmäßig
+  aktiv.** Der "Fotoserien erkennen"-Toggle auf der Organisieren-Karte ist
+  default ON — wer nach dem Import organisiert, will die Serien-Gruppierung in
+  der Regel haben. Abschaltbar pro Lauf.
+
 ## [2.1.6] — 2026-06-02
 
 ### Fixed

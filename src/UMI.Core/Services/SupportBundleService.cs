@@ -97,8 +97,26 @@ public sealed class SupportBundleService : ISupportBundleService
                 ct.ThrowIfCancellationRequested();
                 try
                 {
-                    archive.CreateEntryFromFile(logFile.FullName, $"logs/{logFile.Name}",
-                        CompressionLevel.Optimal);
+                    // I-008: CreateEntryFromFile oeffnet die Datei OHNE Share-Flags und
+                    // scheitert deshalb ausgerechnet am Log des laufenden Tages — Serilog
+                    // haelt den offen. Das ist aber der Log mit dem gemeldeten Vorfall;
+                    // ohne ihn ist das Bundle fuer die Diagnose oft wertlos (belegt bei
+                    // I-006: kostete eine komplette Analyse-Runde).
+                    // Serilog schreibt mit FileShare.Read, ein lesender Zugriff ist also
+                    // moeglich — nur eben nicht ueber den Convenience-Helper.
+                    // Quelle ZUERST oeffnen, Entry erst danach anlegen (wie es auch
+                    // CreateEntryFromFile intern macht): schlaegt das Oeffnen fehl,
+                    // bleibt sonst ein leerer Entry im Archiv zurueck, waehrend
+                    // bundle-info.txt "konnte nicht hinzugefuegt werden" meldet —
+                    // ausgerechnet ein Diagnose-Artefakt darf sich nicht selbst
+                    // widersprechen (Audit F-I008-01).
+                    using var source = new FileStream(
+                        logFile.FullName, FileMode.Open, FileAccess.Read,
+                        FileShare.ReadWrite | FileShare.Delete);
+
+                    var entry = archive.CreateEntry($"logs/{logFile.Name}", CompressionLevel.Optimal);
+                    using var target = entry.Open();
+                    source.CopyTo(target);
                 }
                 catch (Exception ex)
                 {

@@ -213,6 +213,17 @@ public class ConfigLoader
         if (string.IsNullOrWhiteSpace(config.GlobalPaths.Workbench))
             throw new InvalidOperationException("global_paths.workbench fehlt in der Config");
 
+        // I-005: Ein Workbench INNERHALB von .umi legt alle ordnerbasierten Foto-
+        // Funktionen still (jeder Scan filtert seine eigenen Dateien per
+        // IsInternalPath wieder weg). Bewusst nur Warnung statt Exception —
+        // bereits betroffene Installationen sollen weiter starten koennen, der
+        // Defekt aber im Log (und damit im Support-Bundle) sichtbar sein.
+        if (Utilities.FolderNameConstants.IsInternalDirectory(config.GlobalPaths.Workbench))
+            _logger?.LogWarning(
+                "global_paths.workbench liegt im UMI-internen Verzeichnis (.umi): {Path} — " +
+                "Foto-Scans finden dort keine Dateien. Bitte den uebergeordneten Medien-Ordner eintragen.",
+                config.GlobalPaths.Workbench);
+
         if (string.IsNullOrWhiteSpace(config.GlobalPaths.Projects))
             throw new InvalidOperationException("global_paths.projects fehlt in der Config");
 

@@ -281,6 +281,9 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Import_NoLabel" xml:space="preserve">
     <value>(Kein Label)</value>
   </data>
+  <data name="Import_SerialLearned" xml:space="preserve">
+    <value>Seriennummer {0} gespeichert</value>
+  </data>
 
   <!-- Camera -->
   <data name="Camera_Pause" xml:space="preserve">
@@ -1339,6 +1342,9 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Wizard_PathErrorNotAbsolute" xml:space="preserve">
     <value>Bitte gib einen absoluten Pfad ein.</value>
   </data>
+  <data name="Wizard_PathErrorInternal" xml:space="preserve">
+    <value>Dieser Ordner liegt im UMI-internen Verzeichnis (.umi). Dort abgelegte Fotos werden von jedem Scan ignoriert — bitte den darüberliegenden Medien-Ordner wählen.</value>
+  </data>
   <data name="Wizard_PathErrorInvalidFormat" xml:space="preserve">
     <value>Das Pfadformat ist ungültig.</value>
   </data>
@@ -1682,6 +1688,9 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   </data>
   <data name="Workbench_SelectFolder" xml:space="preserve">
     <value>Workbench-Ordner auswählen</value>
+  </data>
+  <data name="Workbench_InternalPathRejected" xml:space="preserve">
+    <value>Nicht gespeichert: Dieser Ordner liegt im UMI-internen Verzeichnis (.umi). Dort abgelegte Fotos werden von jedem Scan ignoriert. Bitte den darüberliegenden Medien-Ordner auswählen.</value>
   </data>
 
   <!-- ExifScanner -->
@@ -2426,6 +2435,15 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   </data>
   <data name="SequenceReviewer_ExportErrors" xml:space="preserve">
     <value>{0} Dateien konnten nicht exportiert werden</value>
+  </data>
+  <data name="SequenceReviewer_NoSeriesHint" xml:space="preserve">
+    <value>Keine Fotoserien erkannt — {0} Bilder werden ungruppiert angezeigt.</value>
+  </data>
+  <data name="SequenceReviewer_NoPhotos" xml:space="preserve">
+    <value>Keine Bilder in diesem Ordner gefunden: {0}</value>
+  </data>
+  <data name="SequenceReviewer_InternalFolder" xml:space="preserve">
+    <value>Dieser Ordner liegt im UMI-internen Verzeichnis (.umi) — Dateien darin werden bewusst ignoriert, deshalb kann hier nichts angezeigt werden. Bitte den Workbench-Pfad in den Einstellungen korrigieren. Aktueller Ordner: {0}</value>
   </data>
 
   <!-- ThumbnailGenerate action -->

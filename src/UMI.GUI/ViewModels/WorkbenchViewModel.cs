@@ -21,6 +21,7 @@ using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using UMI.Core.Constants;
 using UMI.Core.Services;
+using UMI.Core.Utilities;
 using UMI.GUI.Resources;
 
 namespace UMI.GUI.ViewModels;
@@ -152,6 +153,26 @@ public class WorkbenchViewModel : ViewModelBase
 
     private async Task SaveWorkbenchPathAsync(string path)
     {
+        // I-005: Ein Workbench INNERHALB von .umi legt saemtliche ordnerbasierten
+        // Foto-Funktionen still — jeder Scan filtert seine eigenen Dateien per
+        // IsInternalPath() wieder weg (BurstVisualizerService), und abgeleitete
+        // Pfade verdoppeln das Segment (.umi\.umi\...db). Fuer den User nicht
+        // diagnostizierbar, deshalb hier hart ablehnen statt zulassen.
+        if (FolderNameConstants.IsInternalDirectory(path))
+        {
+            IsStatusError = true;
+            StatusMessage = Strings.Workbench_InternalPathRejected;
+            _logger?.LogWarning("Workbench path rejected (inside internal UMI directory): {Path}", path);
+
+            // Der Setter hat den abgelehnten Pfad bereits ins Backing-Field
+            // geschrieben. Ohne Rueckstellung zeigt die UI dauerhaft einen Wert,
+            // der so gar nicht in der Config steht (Audit F-02).
+            _workbenchPath = _configWriter.Config.GlobalPaths.Workbench ?? string.Empty;
+            OnPropertyChanged(nameof(WorkbenchPath));
+            ValidatePath();
+            return;
+        }
+
         IsSaving = true;
         StatusMessage = null;
         IsStatusError = false;

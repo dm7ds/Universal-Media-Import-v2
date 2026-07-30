@@ -49,6 +49,15 @@ public class ScanResult
     public List<(string RelativePath, long FileSize)> PendingHistoryEntries { get; set; } = new();
 }
 
+/// <summary>
+/// Phasen-Bezeichner für <see cref="ScanProgress.Operation"/> — analog zu
+/// FolderSortPhase (SSOT statt Magic-Literal, I-001).
+/// </summary>
+public static class ScanPhase
+{
+    public const string Scanning = "Scanning";
+}
+
 public class ScanProgress
 {
     public int Current { get; set; }

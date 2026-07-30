@@ -131,14 +131,10 @@ public class ImportPipelineService
         }
         _logger?.LogDebug("Gefunden: {Count} Dateien auf Source", discovered.Count);
 
-        if (config.BurstDetectionConfig is { Enabled: true } burstConfig
-            && burstConfig.ActiveProfiles.Count > 0
-            && _burstProfileLoader != null)
-        {
-            burstConfig.LoadedProfiles = _burstProfileLoader.LoadProfiles(burstConfig.ActiveProfiles);
-            _logger?.LogDebug("Burst-Profile geladen: {Profiles}",
-                string.Join(", ", burstConfig.LoadedProfiles.Select(p => p.Name)));
-        }
+        // DRY: delegate to LoadBurstConfig which has the Fallback-on-empty-ActiveProfiles
+        // logic (TASK-218 FIX-1). The old inline guard (ActiveProfiles.Count > 0) silently
+        // produced ShootingMode="Single" for alt-configs with Enabled=true, ActiveProfiles=[].
+        config.BurstDetectionConfig = LoadBurstConfig(config);
 
         var scanned = 0;
         var skippedByDateFilter = 0;
@@ -220,7 +216,7 @@ public class ImportPipelineService
                         Current = count,
                         Total = discovered.Count,
                         CurrentFile = effectiveName,
-                        Operation = "Scanning"
+                        Operation = ScanPhase.Scanning
                     });
                 }
                 catch (Exception ex)
@@ -338,7 +334,16 @@ public class ImportPipelineService
         var sequences = new List<DetectedSequence>();
         if (config.Features.BurstDetection)
         {
-            sequences = await DetectSequencesAsync(db, cameraId, config);
+            sequences = await DetectSequencesAsync(
+                db, cameraId, config, photoCount: fileList.Count(f => f.IsVideo == 0));
+        }
+        else
+        {
+            // I-006: Ohne diesen Hinweis ist "0 Sequenzen" nicht von einem echten
+            // Erkennungs-Ausfall zu unterscheiden.
+            _logger?.LogDebug(
+                "[{CameraId}] Burst-Erkennung ist fuer diese Kamera deaktiviert — 0 Sequenzen.",
+                cameraId);
         }
 
         if (_eisSorting.ShouldSortByEis(context))
@@ -407,17 +412,56 @@ public class ImportPipelineService
     /// aber arbeitet auf ImportedFile statt FileInfo + ExifTool.
     /// </summary>
     private async Task<List<DetectedSequence>> DetectSequencesAsync(
-        ImportDatabase db, string cameraId, CameraConfig config)
+        ImportDatabase db, string cameraId, CameraConfig config, int photoCount)
     {
         var allSequences = new List<DetectedSequence>();
         var dates = await db.GetDistinctDates(cameraId);
 
         var burstConfig = LoadBurstConfig(config);
 
+        // I-006: Diese Kette fiel beim User still aus — 108 Fotos standen in der
+        // Import-DB, heraus kamen 0 Sequenzen, und zwar OHNE eine einzige
+        // Log-Zeile (die Gruppierung wurde nie erreicht). Jeder Ausstieg wird
+        // ab hier benannt, sonst ist ein Ausfall des Kernfeatures unsichtbar.
+        if (dates.Count == 0)
+        {
+            // Nur ein Defekt, wenn dieser Import ueberhaupt Fotos enthielt — ein
+            // reiner Video-Import hat legitim keine Aufnahmedaten (Audit F-03).
+            if (photoCount > 0)
+                _logger?.LogWarning(
+                    "[{Camera}] Sequenz-Erkennung: {Count} Foto(s) importiert, aber keine Aufnahmedaten " +
+                    "in der Import-DB (camera_id-Mismatch oder capture_date unlesbar) — 0 Sequenzen.",
+                    cameraId, photoCount);
+            else
+                _logger?.LogDebug(
+                    "[{Camera}] Sequenz-Erkennung: keine Fotos in diesem Import — 0 Sequenzen.", cameraId);
+
+            return allSequences;
+        }
+
         foreach (var date in dates)
         {
+            // GetDistinctDates liefert das Ergebnis von SQLite date(capture_date).
+            // Ist capture_date leer oder kein gueltiges Datum, ist das NULL — und
+            // der nachfolgende Vergleich "date(capture_date) = NULL" trifft in SQL
+            // NIEMALS zu. Ohne diesen Guard laeuft der Tag in eine leere Trefferliste
+            // und wird stillschweigend uebersprungen (I-006).
+            if (string.IsNullOrWhiteSpace(date))
+            {
+                _logger?.LogWarning(
+                    "[{Camera}] Sequenz-Erkennung: Fotos ohne verwertbares Aufnahmedatum in der " +
+                    "Import-DB — diese Gruppe wird uebersprungen.", cameraId);
+                continue;
+            }
+
             var photos = await db.GetPhotosByDateAndCamera(cameraId, date);
-            if (photos.Count < burstConfig.FallbackMinCount) continue;
+            if (photos.Count < burstConfig.FallbackMinCount)
+            {
+                _logger?.LogDebug(
+                    "[{Camera}] {Date}: {Count} Foto(s) < MinCount {Min} — keine Sequenz-Pruefung.",
+                    cameraId, date, photos.Count, burstConfig.FallbackMinCount);
+                continue;
+            }
 
             var groups = _sequenceGrouping.GroupPhotosByTimeGaps(photos, burstConfig);
 
@@ -614,9 +658,15 @@ public class ImportPipelineService
         }
     }
 
-    private bool IsInTimelapseFolder(FileInfo file)
+    private static bool IsInTimelapseFolder(FileInfo file)
     {
-        return file.FullName.Contains("Timelapse", StringComparison.OrdinalIgnoreCase);
+        // FIX-5 (TASK-218): Use FolderNameConstants.TimeLapse (SSOT = "TimeLapse") instead of
+        // a hardcoded "Timelapse" literal (different casing). Also use slash-framed segment match
+        // (same convention as FolderNameConstants.IsVideoFile / VideoExclusion path checks at
+        // FolderNameConstants.cs:287) so a source path like D:\TimelapseRig\clip.mp4 does NOT
+        // get misidentified — only a path containing a /TimeLapse/ directory segment qualifies.
+        var normalized = file.FullName.Replace('\\', '/');
+        return normalized.Contains($"/{FolderNameConstants.TimeLapse}/", StringComparison.OrdinalIgnoreCase);
     }
 
     private BurstDetectionConfig LoadBurstConfig(CameraConfig config)
@@ -624,7 +674,7 @@ public class ImportPipelineService
         var burstConfig = config.BurstDetectionConfig ?? new BurstDetectionConfig();
 
         if (_burstProfileLoader != null
-            && (burstConfig.LoadedProfiles == null || burstConfig.LoadedProfiles.Count == 0))
+            && burstConfig.LoadedProfiles is null or { Count: 0 })
         {
             // Defensive: if ActiveProfiles is empty but profiles exist on disk, use all available.
             // This handles cameras saved before the auto-populate fix (TASK-215).

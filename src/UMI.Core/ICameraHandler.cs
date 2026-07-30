@@ -273,6 +273,15 @@ public class CameraConfig
     public string? SerialNumber { get; set; }
 
     /// <summary>
+    /// Exaktes EXIF-Kameramodell (z.B. "Canon EOS R10").
+    /// Wird für Modell-Match in der Sort-Kaskade genutzt (Welle 3).
+    /// Wenn null, wird <see cref="Name"/> als Fallback für den Modell-Vergleich herangezogen.
+    /// Schema-kompatibel: bestehende Configs ohne dieses Feld bleiben gültig (Feld bleibt null).
+    /// </summary>
+    [JsonPropertyName("camera_model")]
+    public string? CameraModel { get; set; }
+
+    /// <summary>
     /// Ordnername in Workbench (z.B. "GoPro11"). Falls nicht angegeben, wird CameraId verwendet.
     /// Erlaubt flexible Ordnerstruktur: CameraId != Ordnername.
     /// </summary>

@@ -21,6 +21,7 @@ using System.Globalization;
 using System.Text.RegularExpressions;
 using MetadataExtractor;
 using MetadataExtractor.Formats.Exif;
+using MetadataExtractor.Formats.Exif.Makernotes;
 using MetadataExtractor.Formats.QuickTime;
 using Microsoft.Extensions.Logging;
 using UMI.Core.Models;
@@ -49,7 +50,12 @@ public class MetadataReader
     /// version let the underlying exception escape, which terminated the entire
     /// Parallel.ForEachAsync scan loop on the first bad file in a batch.
     /// </summary>
-    public PhotoMetadata ReadPhotoMetadata(string filePath)
+    /// <summary>
+    /// virtual erlaubt Test-Subklassen die gezielt PhotoMetadata mit gesetztem CameraSerial
+    /// zurückgeben, ohne echte EXIF-Dateien zu brauchen (Integration-Tests Welle 2).
+    /// Alle produktiven Consumer (FolderSortService, GpsService, …) nutzen die Basis-Impl.
+    /// </summary>
+    public virtual PhotoMetadata ReadPhotoMetadata(string filePath)
     {
         try
         {
@@ -102,24 +108,23 @@ public class MetadataReader
                 createDate = dto;
             }
 
-            var canonDir = directories.FirstOrDefault(d => d.Name == "Canon Makernote");
+            // Typsicherer Lookup — CanonMakernoteDirectory für alle Canon-Makernote-Felder
+            // (ContinuousDrive, ExposureMode, Body-Serial). Eine Variable, ein Lookup.
+            var canonDir = directories.OfType<CanonMakernoteDirectory>().FirstOrDefault();
 
             int? continuousDrive = null;
             if (canonDir != null)
             {
-
                 var driveTag = canonDir.Tags
                     .FirstOrDefault(t => t.Name == "Continuous Drive Mode");
                 if (driveTag != null)
                 {
-
                     if (canonDir.TryGetInt32(driveTag.Type, out var driveValue))
                     {
                         continuousDrive = driveValue;
                     }
                     else
                     {
-
                         continuousDrive = ParseContinuousDrive(driveTag.Description);
                     }
                 }
@@ -139,6 +144,25 @@ public class MetadataReader
                     }
                     exposureModeDesc = modeTag.Description;
                 }
+            }
+
+            // Body-Serial: Canon Makernote (TagCanonSerialNumber = 0x000C) zuerst,
+            // dann Standard-EXIF BodySerialNumber (0xA431) als modellübergreifender Fallback.
+            // NIEMALS Lens-Serial (TagLensSerialNumber 0xA435) — kann '0000000000' sein.
+            // Fallback-Reihenfolge: Canon SerialNumber → EXIF BodySerialNumber → null.
+            string? cameraSerial = null;
+            if (canonDir != null)
+            {
+                cameraSerial = canonDir.GetString(CanonMakernoteDirectory.TagCanonSerialNumber)?.Trim();
+                if (string.IsNullOrEmpty(cameraSerial))
+                    cameraSerial = null;
+            }
+            // EXIF BodySerialNumber als Fallback (greift auch für Nicht-Canon-Kameras).
+            if (cameraSerial == null && exifSub != null)
+            {
+                cameraSerial = exifSub.GetString(ExifDirectoryBase.TagBodySerialNumber)?.Trim();
+                if (string.IsNullOrEmpty(cameraSerial))
+                    cameraSerial = null;
             }
 
             var exifIfd0 = directories.OfType<ExifIfd0Directory>().FirstOrDefault();
@@ -201,6 +225,7 @@ public class MetadataReader
                 FileSize = fileInfo.Length,
                 CameraModel = cameraModel,
                 LensModel = lensModel,
+                CameraSerial = cameraSerial,
                 IsVideo = isVideo,
                 Duration = duration,
                 GpsLatitude = gpsLat,

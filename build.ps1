@@ -269,7 +269,10 @@ if ($Installer) {
         Write-Host "   Installer erstellt nach $attempt Versuchen." -ForegroundColor Yellow
     }
 
-    $setupExe = Get-ChildItem "installer\Output\UMI_Setup_*.exe" | Select-Object -First 1
+    # I-003: gezielt die eben gebaute Version referenzieren ($cliVersion aus
+    # Directory.Build.props, SSOT) — nicht das Ordner-Listing, das alphabetisch
+    # sortiert und so eine ältere UMI_Setup_2.1.1.exe zuerst greifen würde.
+    $setupExe = Get-ChildItem "installer\Output\UMI_Setup_$cliVersion.exe" -ErrorAction SilentlyContinue
     if ($setupExe) {
         $setupSizeMB = [math]::Round($setupExe.Length / 1MB, 1)
         Write-Host "Installer erstellt: $($setupExe.FullName) [$setupSizeMB MB]" -ForegroundColor Green

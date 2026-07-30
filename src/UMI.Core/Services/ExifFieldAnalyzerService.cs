@@ -55,6 +55,7 @@ public class ExifFieldAnalyzerService : IExifFieldAnalyzerService
     {
 
         var photos = System.IO.Directory.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
+            .Where(f => !FolderNameConstants.IsInternalPath(f))
             .Where(FileExtensions.IsPhoto)
             .ToList();
 

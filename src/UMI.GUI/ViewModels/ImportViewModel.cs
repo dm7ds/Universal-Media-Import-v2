@@ -761,7 +761,7 @@ public class ImportViewModel : ViewModelBase, IDisposable
                 var driveInfo = new DriveInfo(driveLetter.TrimEnd(':'));
                 totalSizeBytes = driveInfo.TotalSize;
             }
-            catch {  }
+            catch (Exception ex) { _logger?.LogDebug(ex, "DriveInfo.TotalSize fehlgeschlagen für {Drive}", driveLetter); } // FIX-6 (TASK-218)
 
             var cardVsn = outcome.MatchedVsn ?? "";
             if (string.IsNullOrEmpty(cardVsn))
@@ -772,19 +772,20 @@ public class ImportViewModel : ViewModelBase, IDisposable
                     cardVsn = cardInfo.VolumeSerial;
                     if (totalSizeBytes == 0) totalSizeBytes = cardInfo.DiskSizeBytes;
                 }
-                catch {  }
+                catch (Exception ex) { _logger?.LogDebug(ex, "VolumeInfoReader.ReadSdCardInfo fehlgeschlagen für {Path}", rootPath); } // FIX-6 (TASK-218)
             }
 
             string? exifModel = null;
             string? exifMatchedCameraId = null;
+            SdFingerprint? fingerprint = null;
             try
             {
-                var fingerprint = await _fingerprintService.IdentifyCardAsync(rootPath);
+                fingerprint = await _fingerprintService.IdentifyCardAsync(rootPath);
                 exifModel = fingerprint?.Model;
                 if (fingerprint is not null)
                     exifMatchedCameraId = _fingerprintService.MatchCamera(fingerprint, _configWriter.Config.Cameras);
             }
-            catch {  }
+            catch (Exception ex) { _logger?.LogDebug(ex, "FingerprintService.IdentifyCardAsync fehlgeschlagen für {Path}", rootPath); } // FIX-6 (TASK-218)
 
             SdCardRegistration? registration = null;
             if (!string.IsNullOrEmpty(cardVsn))
@@ -829,6 +830,26 @@ public class ImportViewModel : ViewModelBase, IDisposable
 
             var chosenCameraId = dialogVm.ChosenCameraId;
 
+            // TASK-222: learn-on-first-use — Body-Serial + CameraModel in Config schreiben
+            // wenn der fingerprint bekannt ist und die Kamera noch leere Felder hat.
+            // ConfigWriterService.LearnCameraIdentity kapselt die reine Logik (testbar).
+            string? learnedSerial = null;
+            if (!string.IsNullOrEmpty(chosenCameraId) && fingerprint is not null)
+            {
+                try
+                {
+                    _configWriter.UpdateCamera(chosenCameraId, cam =>
+                    {
+                        learnedSerial = ConfigWriterService.LearnCameraIdentity(cam, fingerprint, _logger);
+                    });
+                }
+                catch (KeyNotFoundException)
+                {
+                    // Kamera existiert nicht mehr in Config — kein learn, kein Crash
+                    _logger?.LogWarning("LearnCameraIdentity: Kamera {CameraId} nicht in Config gefunden", chosenCameraId);
+                }
+            }
+
             if (!string.IsNullOrEmpty(cardVsn))
             {
                 if (registration is not null)
@@ -860,6 +881,13 @@ public class ImportViewModel : ViewModelBase, IDisposable
                     _configWriter.RegisterSdCard(cardVsn, newReg);
                 }
 
+                // SaveAsync persistiert RegisterSdCard + ggf. gelernte Serial atomar.
+                await _configWriter.SaveAsync();
+            }
+            else if (!string.IsNullOrEmpty(learnedSerial))
+            {
+                // cardVsn leer (VolumeInfoReader-Fehler o.Ä.) aber Serial wurde gelernt —
+                // separates Save damit der learn nicht beim App-Exit verloren geht. (F-T222-01)
                 await _configWriter.SaveAsync();
             }
 
@@ -871,6 +899,9 @@ public class ImportViewModel : ViewModelBase, IDisposable
                     cameraVm.ConnectedDriveLetter = driveLetter;
                     cameraVm.SetDriveConnected(driveLetter, cardVsn, true);
                     cameraVm.RefreshStorageSummary(_configWriter.Config);
+                    // TASK-222: dezentes Feedback wenn Serial gelernt wurde
+                    if (!string.IsNullOrEmpty(learnedSerial))
+                        cameraVm.PhaseLabel = string.Format(Strings.Import_SerialLearned, learnedSerial);
                 }
 
                 if (!string.IsNullOrEmpty(cardVsn))

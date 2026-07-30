@@ -218,6 +218,50 @@ public static class FolderNameConstants
     }
 
     /// <summary>
+    /// Returns <see langword="true"/> when <paramref name="path"/> contains a
+    /// segment that belongs to UMI's internal directory tree (<c>.umi</c> or
+    /// <c>.metadata</c>).
+    ///
+    /// Robust against mixed path separators (Forward-Slash from ExifTool,
+    /// Backslash from Windows API — see CLAUDE.md Falle #1): the path is
+    /// normalised to forward-slashes before matching, so both variants are
+    /// detected correctly.
+    ///
+    /// SSOT: all callers that need to exclude internal files from a workbench
+    /// scan MUST use this method instead of inlining their own string checks.
+    /// </summary>
+    /// <param name="path">Absolute or relative file/directory path to test.</param>
+    /// <returns>
+    /// <see langword="true"/> if the path passes through a <c>.umi</c> or
+    /// <c>.metadata</c> directory segment; <see langword="false"/> otherwise.
+    /// </returns>
+    public static bool IsInternalPath(string path)
+    {
+        // Normalise to forward-slashes so we cover both ExifTool (forward) and
+        // Windows API (backslash) paths with a single check.
+        var normalised = path.Replace('\\', '/');
+        return normalised.Contains($"/{UmiDir}/",      StringComparison.OrdinalIgnoreCase)
+            || normalised.Contains($"/{MetadataDir}/", StringComparison.OrdinalIgnoreCase);
+    }
+
+    /// <summary>
+    /// Prueft ob ein <b>Verzeichnis</b>-Pfad im internen UMI-Bereich liegt.
+    ///
+    /// Unterschied zu <see cref="IsInternalPath"/>: dort wird ein Datei-Pfad
+    /// erwartet, bei dem das <c>.umi</c>-Segment beidseitig von Separatoren
+    /// umschlossen ist. Ein Verzeichnis-Pfad endet auf dem Segment selbst
+    /// (<c>E:\umi\.umi</c>) — ohne ergaenzten Trailing-Separator schluepft
+    /// genau der Root-Fall durch (I-005).
+    ///
+    /// SSOT: delegiert an <see cref="IsInternalPath"/>, keine eigene Logik.
+    /// </summary>
+    public static bool IsInternalDirectory(string? path)
+    {
+        if (string.IsNullOrWhiteSpace(path)) return false;
+        return IsInternalPath(path.TrimEnd('/', '\\') + '/');
+    }
+
+    /// <summary>
     /// Exclusion flags for <see cref="IsVideoCandidate"/>.
     /// Combine with | to exclude multiple folders.
     /// </summary>

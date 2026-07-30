@@ -2820,6 +2820,15 @@ namespace UMI.GUI.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to Serial {0} saved.
+        /// </summary>
+        public static string Import_SerialLearned {
+            get {
+                return ResourceManager.GetString("Import_SerialLearned", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to Full control.
         /// </summary>
         public static string Main_AppModeAdvancedDesc {
@@ -6582,6 +6591,32 @@ namespace UMI.GUI.Resources {
         /// <summary>Looks up a localized string: "{0} files could not be exported".</summary>
         public static string SequenceReviewer_ExportErrors {
             get { return ResourceManager.GetString("SequenceReviewer_ExportErrors", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "No photo series detected — {0} images are shown ungrouped."</summary>
+        public static string SequenceReviewer_NoSeriesHint {
+            get { return ResourceManager.GetString("SequenceReviewer_NoSeriesHint", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "No images found in this folder."</summary>
+        public static string SequenceReviewer_NoPhotos {
+            get { return ResourceManager.GetString("SequenceReviewer_NoPhotos", resourceCulture); }
+        }
+        // Hinweis: Text lautet jetzt "No images found in this folder: {0}" (Pfad-Platzhalter).
+
+        /// <summary>Looks up a localized string: "This folder lies inside UMI's internal directory (.umi) …".</summary>
+        public static string SequenceReviewer_InternalFolder {
+            get { return ResourceManager.GetString("SequenceReviewer_InternalFolder", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Not saved: this folder lies inside UMI's internal directory (.umi) …".</summary>
+        public static string Workbench_InternalPathRejected {
+            get { return ResourceManager.GetString("Workbench_InternalPathRejected", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "This folder lies inside UMI's internal directory (.umi) …".</summary>
+        public static string Wizard_PathErrorInternal {
+            get { return ResourceManager.GetString("Wizard_PathErrorInternal", resourceCulture); }
         }
 
         /// <summary>Looks up a localized string: "Generate Thumbnails".</summary>

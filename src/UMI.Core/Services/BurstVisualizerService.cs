@@ -86,8 +86,7 @@ public class BurstVisualizerService : IBurstVisualizerService
         int maxParallelism = 4)
     {
         var photos = System.IO.Directory.EnumerateFiles(folderPath, "*.*", SearchOption.AllDirectories)
-            .Where(f => !f.Contains($"{Path.DirectorySeparatorChar}.metadata{Path.DirectorySeparatorChar}")
-                      && !f.Contains($"{Path.DirectorySeparatorChar}.umi{Path.DirectorySeparatorChar}"))
+            .Where(f => !FolderNameConstants.IsInternalPath(f))
             .Where(FileExtensions.IsPhoto)
             .ToList();
 

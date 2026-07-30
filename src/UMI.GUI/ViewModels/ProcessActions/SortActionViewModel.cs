@@ -47,7 +47,9 @@ public sealed class SortActionViewModel : ProcessActionViewModel
         "M2,10 H22 " +
         "M7,15 H11 M13,15 H17";
 
-    private readonly ActionToggle _burstToggle = new(Strings.Sort_ToggleBurst);
+    // Default ON: after-import "Organisieren" should detect photo series out of
+    // the box — that's the whole point of running it post-import (Dirk 2026-06-02).
+    private readonly ActionToggle _burstToggle = new(Strings.Sort_ToggleBurst, defaultValue: true);
 
     public override IReadOnlyList<ActionToggle> Toggles => [_burstToggle];
 

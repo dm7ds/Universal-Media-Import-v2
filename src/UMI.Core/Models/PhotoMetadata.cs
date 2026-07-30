@@ -34,6 +34,14 @@ public record PhotoMetadata
     public long FileSize { get; init; }
     public string? CameraModel { get; init; }
     public string? LensModel { get; init; }
+
+    /// <summary>
+    /// Body-Seriennummer der Kamera (aus Canon Makernote oder Standard-EXIF BodySerialNumber).
+    /// Null wenn die Datei keine lesbare Serial enthält (nicht alle Kameras schreiben eine).
+    /// NIEMALS Lens-Serial verwenden — kann '0000000000' sein.
+    /// </summary>
+    public string? CameraSerial { get; init; }
+
     public bool IsVideo { get; init; }
 
     public TimeSpan? Duration { get; init; }

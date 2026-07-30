@@ -39,7 +39,7 @@ public class BurstMatchingEngine
         if (config == null || !config.Enabled || metadata.IsVideo)
             return "Single";
 
-        if (config.LoadedProfiles == null || config.LoadedProfiles.Count == 0)
+        if (config.LoadedProfiles is null or { Count: 0 })
             return "Single";
 
         foreach (var profile in config.LoadedProfiles.OrderBy(p => p.Priority))

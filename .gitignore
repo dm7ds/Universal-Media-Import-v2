@@ -150,3 +150,6 @@ skills/
 
 # Claude Working Files (Team-Task-Karten, Audits, Logs — nicht in .claude/ wegen Permission-Bug)
 .tasks/
+
+# Session resume handle (local only, not for repo)
+resume.txt

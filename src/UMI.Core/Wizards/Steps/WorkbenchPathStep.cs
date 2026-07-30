@@ -60,6 +60,14 @@ public class WorkbenchPathStep(IConfigWriterService configWriter) : IWizardStep
 
         var path = Path.GetFullPath(raw);
 
+        // I-005: Ein Workbench innerhalb von .umi macht saemtliche Foto-Scans blind.
+        if (UMI.Core.Utilities.FolderNameConstants.IsInternalDirectory(path))
+            return Task.FromResult(new WizardStepResult(
+                false,
+                $"Pfad '{path}' liegt im UMI-internen Verzeichnis (.umi). " +
+                "Dort abgelegte Fotos werden von jedem Scan ignoriert — " +
+                "bitte den uebergeordneten Medien-Ordner waehlen."));
+
         if (Directory.Exists(path))
             return Task.FromResult(new WizardStepResult(true));
 

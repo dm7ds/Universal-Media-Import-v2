@@ -157,7 +157,8 @@ public sealed class FolderSortService : IFolderSortService
         }
 
         var allFiles = Directory.EnumerateFiles(workbench, "*.*", SearchOption.AllDirectories)
-            .Where(f => knownExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
+            .Where(f => !FolderNameConstants.IsInternalPath(f)
+                     && knownExtensions.Contains(Path.GetExtension(f).ToLowerInvariant()))
             .Select(Path.GetFullPath)
             .ToList();
 
@@ -189,14 +190,30 @@ public sealed class FolderSortService : IFolderSortService
 
             DateTime? captureDate = null;
             string? shootingMode  = null;
-            string cameraId       = ExtractCameraIdFromPath(filePath, workbench, config);
+            string? cameraSerial  = null;
+
+            // CameraId-Kaskade:
+            // (1) Serial-Match via EXIF Body-Serial  → eindeutig, auch bei flachem Pfad.
+            // (2) Modell-Match via EXIF CameraModel  → nur bei Eindeutigkeit (Welle 3).
+            // (3) Pfad-Match via ExtractCameraIdFromPath → bisheriger Mechanismus.
+            // (4) _unsorted-Fallback.
+            string cameraId;
 
             if (isPhoto)
             {
                 try
                 {
                     var meta = _metadataReader.ReadPhotoMetadata(filePath);
-                    captureDate = meta.CreateDate;
+                    captureDate  = meta.CreateDate;
+                    cameraSerial = meta.CameraSerial;
+
+                    // Kaskade Stufe 1: Serial-Match (eindeutig, höchste Priorität)
+                    // Kaskade Stufe 2: Modell-Match (nur bei eindeutigem Treffer)
+                    // Kaskade Stufe 3: Pfad-Match
+                    cameraId = CameraSerialMatcher.FindCameraId(cameraSerial, config.Cameras)
+                            ?? CameraSerialMatcher.FindCameraIdByModel(meta.CameraModel, config.Cameras)
+                            // Kaskade Stufe 3: Pfad-Match
+                            ?? ExtractCameraIdFromPath(filePath, workbench, config);
 
                     if (request.DetectBursts)
                     {
@@ -209,7 +226,14 @@ public sealed class FolderSortService : IFolderSortService
                 catch (Exception ex)
                 {
                     warnings.Add($"{fileName}: metadata read failed ({ex.GetType().Name})");
+                    // Fallback: nur Pfad-Match wenn ReadPhotoMetadata fehlschlägt.
+                    cameraId = ExtractCameraIdFromPath(filePath, workbench, config);
                 }
+            }
+            else
+            {
+                // Videos: kein EXIF-Pfad für Serial → direkt Pfad-Match.
+                cameraId = ExtractCameraIdFromPath(filePath, workbench, config);
             }
 
             captureDate ??= File.GetLastWriteTime(filePath);
@@ -227,7 +251,8 @@ public sealed class FolderSortService : IFolderSortService
                 CaptureDate:    localDate,
                 CameraId:       cameraId,
                 IsPhoto:        isPhoto,
-                ShootingMode:   shootingMode));
+                ShootingMode:   shootingMode,
+                CameraSerial:   cameraSerial));
 
             progress?.Report(new FolderSortProgress(i + 1, allFiles.Count, fileName, FolderSortPhase.Scanning));
         }
@@ -256,7 +281,7 @@ public sealed class FolderSortService : IFolderSortService
                     ? LoadBurstConfig(camCfg)
                     : BuildFallbackBurstConfig();
 
-                if (burstCfg is null || !burstCfg.Enabled || burstCfg.LoadedProfiles is null || burstCfg.LoadedProfiles.Count == 0)
+                if (burstCfg is null || !burstCfg.Enabled || burstCfg.LoadedProfiles is null or { Count: 0 })
                     continue;
 
                 var ordered = grp
@@ -399,7 +424,7 @@ public sealed class FolderSortService : IFolderSortService
         var burst = config.BurstDetectionConfig;
 
         if (_burstProfileLoader is not null
-            && burst.LoadedProfiles is { Count: 0 })
+            && burst.LoadedProfiles is null or { Count: 0 })
         {
             // Defensive: if ActiveProfiles is empty but profiles exist on disk, use all available.
             // This handles cameras saved before the auto-populate fix (TASK-215).
@@ -501,6 +526,9 @@ public sealed class FolderSortService : IFolderSortService
     /// Per-file plan we build during the scan phase. Captures everything we
     /// need for the move phase + optional burst detection so the second pass
     /// doesn't have to re-read EXIF data.
+    /// CameraSerial: die aus EXIF gelesene Body-Serial (null wenn nicht verfügbar).
+    /// Wird bei der CameraId-Bestimmung als erster Schritt der Kaskade genutzt
+    /// und hier gespeichert, damit Burst-Detection die korrekte CameraId sieht.
     /// </summary>
     private sealed record SortPlan(
         string FilePath,
@@ -509,5 +537,6 @@ public sealed class FolderSortService : IFolderSortService
         DateTime CaptureDate,
         string CameraId,
         bool IsPhoto,
-        string? ShootingMode);
+        string? ShootingMode,
+        string? CameraSerial = null);
 }
