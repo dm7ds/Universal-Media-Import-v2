@@ -55,6 +55,10 @@ public sealed class SequenceReviewerActionViewModel : ProcessActionViewModel
     private readonly GlobalPaths             _globalPaths;
     private readonly IConfigWriterService    _configWriter;
 
+    // I-010/F-01: Ohne dieses Durchreichen bleibt der Logger im Reviewer null
+    // und das Fehler-Logging beim Aussortieren waere wirkungslos.
+    private readonly Microsoft.Extensions.Logging.ILogger<SequenceReviewerViewModel>? _reviewerLogger;
+
     public SequenceReviewerActionViewModel(
         IBurstVisualizerService visualizerService,
         IReviewSidecarService   sidecarService,
@@ -62,8 +66,10 @@ public sealed class SequenceReviewerActionViewModel : ProcessActionViewModel
         IThumbnailCacheService  thumbnailCache,
         BurstProfileLoader      profileLoader,
         GlobalPaths             globalPaths,
-        IConfigWriterService    configWriter)
+        IConfigWriterService    configWriter,
+        Microsoft.Extensions.Logging.ILogger<SequenceReviewerViewModel>? reviewerLogger = null)
     {
+        _reviewerLogger         = reviewerLogger;
         _visualizerService      = visualizerService;
         _sidecarService         = sidecarService;
         _sequenceSidecarService = sequenceSidecarService;
@@ -81,7 +87,7 @@ public sealed class SequenceReviewerActionViewModel : ProcessActionViewModel
     {
         SetOnUiThread(() =>
         {
-            var vm     = new SequenceReviewerViewModel(_visualizerService, _sidecarService, _sequenceSidecarService, _thumbnailCache, _profileLoader, _configWriter);
+            var vm     = new SequenceReviewerViewModel(_visualizerService, _sidecarService, _sequenceSidecarService, _thumbnailCache, _profileLoader, _configWriter, _reviewerLogger);
             var window = new SequenceReviewerWindow(vm, _globalPaths.Workbench);
             window.ShowDialog();
 

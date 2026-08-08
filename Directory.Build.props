@@ -21,7 +21,7 @@
       NICHT auf $(Version).0 aufblasen: bei vierstelligem <Version> ergaebe das
       fuenf Stellen und MSBuild bricht ab.
     -->
-    <Version>2.2.1.1</Version>
+    <Version>2.2.2</Version>
     <AssemblyVersion>$(Version)</AssemblyVersion>
     <FileVersion>$(Version)</FileVersion>
     <InformationalVersion>$(Version)</InformationalVersion>

@@ -4,6 +4,33 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.2] — 2026-08-06
+
+### Fixed
+
+- **🔴 Wichtig: „Löschen" im Sequenz-Reviewer konnte ganze Serien löschen.**
+  Der Löschen-Knopf entfernte alles, was der aktive Filter gerade zeigte — ohne
+  Müll-Filter also **sämtliche Fotos der Serie**, endgültig und ohne Rückfrage.
+  Ausgelöst wurde das leicht: Wer einmal auf „Müll" filterte, schaltete damit
+  den Löschen-Knopf scharf, und beim Zurückwechseln auf „Alle" blieb er es.
+  Betroffene erkennen es an Serien, die in der Übersicht noch gezählt werden,
+  aber leer sind.
+
+### Added
+
+- **Abfrage vor dem Aussortieren — mit drei Möglichkeiten.** Der Reviewer fragt
+  jetzt immer nach und nennt die genaue Anzahl:
+  - **In den Müll-Ordner verschieben** (Vorauswahl): landet in `_Trash` im
+    selben Ordner, **unter Beibehaltung der Ordnerstruktur** — man sieht also,
+    woher jedes Foto stammt, und kann es einfach zurückschieben. Gleichnamige
+    Dateien werden nicht überschrieben.
+  - **In den Windows-Papierkorb**: über den Explorer wiederherstellbar.
+  - **Endgültig löschen**: mit deutlichem Warnhinweis.
+
+  Aussortiert werden ausschließlich Fotos mit Müll-Markierung. Der Müll-Ordner
+  wird bei künftigen Durchläufen übersprungen, aussortierte Fotos tauchen also
+  nicht wieder auf. Fehler werden gemeldet und protokolliert statt verschluckt.
+
 ## [2.2.1.1] — 2026-07-30
 
 Patch-Release. Enthält funktional dasselbe Programm wie 2.2.1 — dieses Release

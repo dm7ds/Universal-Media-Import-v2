@@ -6839,5 +6839,65 @@ namespace UMI.GUI.Resources {
             }
         }
 
+
+        /// <summary>Looks up a localized string: "Sort out photos".</summary>
+        public static string DeleteOptions_Title {
+            get { return ResourceManager.GetString("DeleteOptions_Title", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "{0} photo(s) are marked as trash. What should happen to them".</summary>
+        public static string DeleteOptions_Header {
+            get { return ResourceManager.GetString("DeleteOptions_Header", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Move to trash folder (recommended)".</summary>
+        public static string DeleteOptions_Move {
+            get { return ResourceManager.GetString("DeleteOptions_Move", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "The folder structure is preserved, so you can see where each".</summary>
+        public static string DeleteOptions_MoveDescription {
+            get { return ResourceManager.GetString("DeleteOptions_MoveDescription", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Move to Windows Recycle Bin".</summary>
+        public static string DeleteOptions_RecycleBin {
+            get { return ResourceManager.GetString("DeleteOptions_RecycleBin", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Can be restored via Windows Explorer as long as the Recycle ".</summary>
+        public static string DeleteOptions_RecycleBinDescription {
+            get { return ResourceManager.GetString("DeleteOptions_RecycleBinDescription", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Delete permanently".</summary>
+        public static string DeleteOptions_Permanent {
+            get { return ResourceManager.GetString("DeleteOptions_Permanent", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "The files are removed from the drive immediately.".</summary>
+        public static string DeleteOptions_PermanentDescription {
+            get { return ResourceManager.GetString("DeleteOptions_PermanentDescription", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "This cannot be undone. The photos will not be recoverable.".</summary>
+        public static string DeleteOptions_PermanentWarning {
+            get { return ResourceManager.GetString("DeleteOptions_PermanentWarning", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Sort out".</summary>
+        public static string DeleteOptions_Confirm {
+            get { return ResourceManager.GetString("DeleteOptions_Confirm", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "No photos are marked as trash. Mark photos with the trash ta".</summary>
+        public static string DeleteOptions_NothingMarked {
+            get { return ResourceManager.GetString("DeleteOptions_NothingMarked", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "{0} of {1} photo(s) could not be processed:".</summary>
+        public static string DeleteOptions_PartialFailure {
+            get { return ResourceManager.GetString("DeleteOptions_PartialFailure", resourceCulture); }
+        }
     }
 }

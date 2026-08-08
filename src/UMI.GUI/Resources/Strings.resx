@@ -2605,4 +2605,40 @@ Path has been configured. Do you want to re-download anyway?</value>
     <value>Pack logs and configuration into a ZIP for analysis</value>
   </data>
 
+  <data name="DeleteOptions_Title" xml:space="preserve">
+    <value>Sort out photos</value>
+  </data>
+  <data name="DeleteOptions_Header" xml:space="preserve">
+    <value>{0} photo(s) are marked as trash. What should happen to them?</value>
+  </data>
+  <data name="DeleteOptions_Move" xml:space="preserve">
+    <value>Move to trash folder (recommended)</value>
+  </data>
+  <data name="DeleteOptions_MoveDescription" xml:space="preserve">
+    <value>The folder structure is preserved, so you can see where each file came from and move it back at any time. Target: {0}</value>
+  </data>
+  <data name="DeleteOptions_RecycleBin" xml:space="preserve">
+    <value>Move to Windows Recycle Bin</value>
+  </data>
+  <data name="DeleteOptions_RecycleBinDescription" xml:space="preserve">
+    <value>Can be restored via Windows Explorer as long as the Recycle Bin is not emptied.</value>
+  </data>
+  <data name="DeleteOptions_Permanent" xml:space="preserve">
+    <value>Delete permanently</value>
+  </data>
+  <data name="DeleteOptions_PermanentDescription" xml:space="preserve">
+    <value>The files are removed from the drive immediately.</value>
+  </data>
+  <data name="DeleteOptions_PermanentWarning" xml:space="preserve">
+    <value>This cannot be undone. The photos will not be recoverable.</value>
+  </data>
+  <data name="DeleteOptions_Confirm" xml:space="preserve">
+    <value>Sort out</value>
+  </data>
+  <data name="DeleteOptions_NothingMarked" xml:space="preserve">
+    <value>No photos are marked as trash. Mark photos with the trash tag first, then sort them out here.</value>
+  </data>
+  <data name="DeleteOptions_PartialFailure" xml:space="preserve">
+    <value>{0} of {1} photo(s) could not be processed:</value>
+  </data>
 </root>

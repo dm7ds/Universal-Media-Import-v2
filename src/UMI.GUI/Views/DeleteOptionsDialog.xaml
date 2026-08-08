@@ -1,0 +1,187 @@
+<!-- SPDX-FileCopyrightText: 2026 Dirk Schelhasse -->
+<!-- SPDX-License-Identifier: GPL-3.0-or-later -->
+<Window
+    x:Class="UMI.GUI.Views.DeleteOptionsDialog"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:helpers="clr-namespace:UMI.GUI.Helpers"
+    xmlns:conv="clr-namespace:UMI.GUI.Converters"
+    xmlns:beh="clr-namespace:UMI.GUI.Behaviors"
+    Title="{helpers:Localize DeleteOptions_Title}"
+    Width="500"
+    SizeToContent="Height"
+    ResizeMode="NoResize"
+    WindowStartupLocation="CenterOwner"
+    WindowStyle="None"
+    AllowsTransparency="True"
+    Background="Transparent"
+    ShowInTaskbar="False">
+
+    <Window.Resources>
+        <conv:BoolToVisibilityConverter x:Key="BoolToVis" />
+
+        <Style x:Key="DeleteOptionRadio" TargetType="RadioButton">
+            <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeBody}" />
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="VerticalContentAlignment" Value="Center" />
+        </Style>
+
+        <Style x:Key="DeleteOptionHint" TargetType="TextBlock">
+            <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="TextWrapping" Value="Wrap" />
+            <Setter Property="Margin" Value="24,2,0,0" />
+        </Style>
+
+        <Style x:Key="DeleteGhostButton" TargetType="Button">
+            <Setter Property="Cursor" Value="Hand" />
+            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+            <Setter Property="FontWeight" Value="SemiBold" />
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="Button">
+                        <Border
+                            x:Name="Bd"
+                            CornerRadius="{StaticResource RadiusButton}"
+                            Padding="{TemplateBinding Padding}"
+                            BorderBrush="{StaticResource BrushBorderSubtle}"
+                            BorderThickness="1"
+                            Background="Transparent">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushBorder}" />
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </Window.Resources>
+
+    <Border CornerRadius="{StaticResource RadiusDialog}" BorderThickness="1" Margin="16">
+        <Border.Background>
+            <SolidColorBrush Color="{StaticResource ColorBgSurface}" />
+        </Border.Background>
+        <Border.BorderBrush>
+            <SolidColorBrush Color="{StaticResource ColorBorder}" />
+        </Border.BorderBrush>
+        <Border.Effect>
+            <DropShadowEffect
+                BlurRadius="{StaticResource ShadowDialogBlurRadius}"
+                ShadowDepth="{StaticResource ShadowDialogShadowDepth}"
+                Direction="{StaticResource ShadowDialogDirection}"
+                Color="{StaticResource ColorShadow}"
+                Opacity="{StaticResource ShadowDialogOpacity}" />
+        </Border.Effect>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- ── Header: nennt IMMER die exakte Anzahl ── -->
+            <Border
+                Grid.Row="0"
+                Padding="20,16,20,12"
+                BorderThickness="0,0,0,1"
+                BorderBrush="{StaticResource BrushBorderSubtle}"
+                beh:WindowDragBehavior.IsEnabled="True">
+                <StackPanel>
+                    <TextBlock
+                        Text="{helpers:Localize DeleteOptions_Title}"
+                        FontSize="{StaticResource FontSizeLarge}"
+                        FontWeight="SemiBold"
+                        Foreground="{StaticResource BrushTextPrimary}" />
+                    <TextBlock
+                        Text="{Binding HeaderText}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        Foreground="{StaticResource BrushTextMuted}"
+                        TextWrapping="Wrap"
+                        Margin="0,4,0,0" />
+                </StackPanel>
+            </Border>
+
+            <!-- ── Die drei Wirkungen ── -->
+            <StackPanel Grid.Row="1" Margin="20,16,20,8">
+
+                <RadioButton
+                    GroupName="DeleteMode"
+                    IsChecked="{Binding IsMoveToTrashFolder, Mode=TwoWay}"
+                    Content="{helpers:Localize DeleteOptions_Move}"
+                    Style="{StaticResource DeleteOptionRadio}" />
+                <TextBlock Text="{Binding MoveDescription}" Style="{StaticResource DeleteOptionHint}" />
+
+                <RadioButton
+                    GroupName="DeleteMode"
+                    IsChecked="{Binding IsRecycleBin, Mode=TwoWay}"
+                    Content="{helpers:Localize DeleteOptions_RecycleBin}"
+                    Style="{StaticResource DeleteOptionRadio}"
+                    Margin="0,14,0,0" />
+                <TextBlock
+                    Text="{helpers:Localize DeleteOptions_RecycleBinDescription}"
+                    Style="{StaticResource DeleteOptionHint}" />
+
+                <RadioButton
+                    GroupName="DeleteMode"
+                    IsChecked="{Binding IsPermanent, Mode=TwoWay}"
+                    Content="{helpers:Localize DeleteOptions_Permanent}"
+                    Style="{StaticResource DeleteOptionRadio}"
+                    Margin="0,14,0,0" />
+                <TextBlock
+                    Text="{helpers:Localize DeleteOptions_PermanentDescription}"
+                    Style="{StaticResource DeleteOptionHint}" />
+
+                <!-- Warnung erscheint nur bei der unwiderruflichen Variante -->
+                <Border
+                    Margin="0,12,0,0"
+                    Padding="10,8"
+                    CornerRadius="{StaticResource RadiusButton}"
+                    Background="{StaticResource BrushErrorBg}"
+                    Visibility="{Binding IsPermanentWarningVisible, Converter={StaticResource BoolToVis}}">
+                    <TextBlock
+                        Text="{helpers:Localize DeleteOptions_PermanentWarning}"
+                        Foreground="{StaticResource BrushErrorText}"
+                        FontSize="{StaticResource FontSizeSmall}"
+                        FontWeight="SemiBold"
+                        TextWrapping="Wrap" />
+                </Border>
+            </StackPanel>
+
+            <!-- ── Aktionen ── -->
+            <Border
+                Grid.Row="2"
+                Padding="20,12,20,16"
+                BorderThickness="0,1,0,0"
+                BorderBrush="{StaticResource BrushBorderSubtle}">
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                    <Button
+                        Command="{Binding CancelCommand}"
+                        Content="{helpers:Localize SequenceReviewer_ExportCancel}"
+                        Padding="16,7"
+                        Margin="0,0,8,0"
+                        IsCancel="True"
+                        Style="{StaticResource DeleteGhostButton}" />
+                    <Button
+                        Command="{Binding ConfirmCommand}"
+                        Content="{helpers:Localize DeleteOptions_Confirm}"
+                        Padding="16,7"
+                        IsDefault="True"
+                        Cursor="Hand">
+                        <Button.Style>
+                            <Style TargetType="Button" BasedOn="{StaticResource EditCamLinkButton}">
+                                <Setter Property="Padding" Value="16,7" />
+                                <Setter Property="Foreground" Value="{StaticResource BrushErrorText}" />
+                            </Style>
+                        </Button.Style>
+                    </Button>
+                </StackPanel>
+            </Border>
+        </Grid>
+    </Border>
+</Window>

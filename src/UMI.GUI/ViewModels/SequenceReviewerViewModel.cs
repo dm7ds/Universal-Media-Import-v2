@@ -23,6 +23,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using Microsoft.Extensions.Logging;
 using UMI.Core.Configuration;
 using UMI.Core.Models;
 using UMI.Core.Services;
@@ -51,6 +52,7 @@ public class SequenceReviewerViewModel : ViewModelBase
     private readonly IThumbnailCacheService  _thumbnailCache;
     private readonly BurstProfileLoader      _profileLoader;
     private readonly IConfigWriterService?   _configWriter;
+    private readonly Microsoft.Extensions.Logging.ILogger<SequenceReviewerViewModel>? _logger;
 
     private static readonly HashSet<string> _rawExtensions = new(StringComparer.OrdinalIgnoreCase)
     {
@@ -224,8 +226,13 @@ public class SequenceReviewerViewModel : ViewModelBase
             if (SetProperty(ref _filterTag, value))
             {
                 OnPropertyChanged(nameof(IsFilterActive));
-                if (value == ReviewTag.Trash)
-                    IsDeleteEnabled = true;
+
+                // I-010: Der Schalter wurde beim Wechsel auf "Müll" scharf gestellt,
+                // aber beim Verlassen NIE zurückgesetzt. Wer danach auf "Alle"
+                // zurückging, hatte einen scharfen Löschen-Button bei
+                // unbeschränktem Filter — der Weg in den Datenverlust.
+                IsDeleteEnabled = value == ReviewTag.Trash;
+
                 RebuildFilmstrip();
             }
         }
@@ -398,7 +405,8 @@ public class SequenceReviewerViewModel : ViewModelBase
         ISequenceSidecarService sequenceSidecarService,
         IThumbnailCacheService  thumbnailCache,
         BurstProfileLoader      profileLoader,
-        IConfigWriterService?   configWriter = null)
+        IConfigWriterService?   configWriter = null,
+        Microsoft.Extensions.Logging.ILogger<SequenceReviewerViewModel>? logger = null)
     {
         _visualizerService      = visualizerService;
         _sidecarService         = sidecarService;
@@ -406,6 +414,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         _thumbnailCache         = thumbnailCache;
         _profileLoader          = profileLoader;
         _configWriter           = configWriter;
+        _logger                 = logger;
 
         NavigateLeftCommand  = new RelayCommand(NavigateLeft);
         NavigateRightCommand = new RelayCommand(NavigateRight);
@@ -1618,27 +1627,155 @@ public class SequenceReviewerViewModel : ViewModelBase
             CurrentPhoto = null;
     }
 
+    /// <summary>
+    /// Sortiert die als Müll markierten Fotos aus (I-010).
+    ///
+    /// Frühere Fassung war ein Datenverlust-Bug: sie löschte alles was
+    /// <see cref="GetFilteredPhotos"/> lieferte — ohne Müll-Filter also die
+    /// KOMPLETTE Sequenz — per <c>File.Delete</c>, ohne Papierkorb und ohne
+    /// Rückfrage. Jetzt gilt ausnahmslos: nur <see cref="ReviewTag.Trash"/>,
+    /// immer mit Abfrage, Vorauswahl ist die schonendste Variante.
+    /// </summary>
     private void ExecuteDelete()
     {
         if (!IsDeleteEnabled) return;
 
-        var photos = GetFilteredPhotos().ToList();
+        // NUR Müll-markierte Fotos, und zwar über ALLE Sequenzen hinweg — nie
+        // "alles was der aktive Filter gerade zeigt".
+        var photos = Sequences
+            .SelectMany(s => s.Photos)
+            .Where(p => p.Tag == ReviewTag.Trash)
+            .Distinct()
+            .ToList();
+
+        if (photos.Count == 0)
+        {
+            MessageBox.Show(
+                Strings.DeleteOptions_NothingMarked,
+                Strings.DeleteOptions_Title,
+                MessageBoxButton.OK,
+                MessageBoxImage.Information);
+            return;
+        }
+
+        var trashRoot = Path.Combine(FolderPath, FolderNameConstants.TrashDir);
+        var dialogVm  = new DeleteOptionsDialogViewModel(photos.Count, trashRoot);
+        var dialog    = new DeleteOptionsDialog(dialogVm)
+        {
+            Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
+        };
+
+        if (dialog.ShowDialog() != true) return;
+
+        var mode     = dialogVm.SelectedMode;
+        var removed  = new List<ReviewPhotoViewModel>();
+        var failures = new List<string>();
+
         foreach (var p in photos)
         {
             try
             {
-                File.Delete(p.FullPath);
-                CurrentSequence?.Photos.Remove(p);
-                _ = _sidecarService.UpdatePhotoAsync(FolderPath, p.FileName,
-                    tag: ReviewTag.None, rating: 0);
+                ApplyDeleteMode(p.FullPath, mode, trashRoot);
+                removed.Add(p);
+                // Sidecar-Aufräumen übernimmt RefreshAfterMove() weiter unten —
+                // hier zusätzlich zu feuern hieße denselben Eintrag zweimal
+                // schreiben (Read-Modify-Write auf dieselbe Datei, Audit F-03).
             }
-            catch { /* skip */ }
+            catch (Exception ex)
+            {
+                // Früher: catch { } — Fehler verschwanden spurlos, im Log stand
+                // zum ganzen Vorgang nichts.
+                failures.Add($"{p.FileName}: {ex.Message}");
+                _logger?.LogWarning(ex, "Aussortieren fehlgeschlagen: {Path}", p.FullPath);
+            }
         }
 
-        RebuildFilmstrip();
-        if (FilmstripPhotos.Count > 0)
-            SetCurrentPhoto(FilmstripPhotos[0]);
-        else
-            CurrentPhoto = null;
+        // Aufräumen wie nach einem Move-Export (DRY, Audit F-05): entfernt die
+        // Fotos aus ALLEN Sequenzen — nicht nur der aktuellen —, räumt leer
+        // gewordene Sequenzen ab, pflegt die Sidecar-Einträge und aktualisiert
+        // Zähler und Filmstrip. Ohne das bliebe eine leergeräumte Sequenz in der
+        // Übersicht stehen — genau das optische Bild, mit dem der Bug gemeldet
+        // wurde ("Sequenz 435/857" mit leerem Inhalt).
+        RefreshAfterMove();
+
+        _logger?.LogInformation(
+            "Sequenz-Reviewer: {Done} von {Total} Foto(s) aussortiert (Modus {Mode}), {Failed} Fehler",
+            removed.Count, photos.Count, mode, failures.Count);
+
+        if (failures.Count > 0)
+        {
+            MessageBox.Show(
+                string.Format(Strings.DeleteOptions_PartialFailure, failures.Count, photos.Count)
+                    + Environment.NewLine + Environment.NewLine
+                    + string.Join(Environment.NewLine, failures.Take(10)),
+                Strings.DeleteOptions_Title,
+                MessageBoxButton.OK,
+                MessageBoxImage.Warning);
+        }
+
+        // Der Sicherheitsschalter darf nicht scharf bleiben.
+        IsDeleteEnabled = false;
+    }
+
+    /// <summary>
+    /// Führt die gewählte Wirkung auf eine Datei aus.
+    /// Beim Verschieben bleibt die Ordnerstruktur unterhalb des Müll-Ordners
+    /// erhalten (Pfad relativ zum gereviewten Ordner), damit nachvollziehbar
+    /// bleibt woher eine Datei stammt und ein Zurückschieben simples Kopieren ist.
+    /// </summary>
+    private void ApplyDeleteMode(string fullPath, DeleteMode mode, string trashRoot)
+    {
+        switch (mode)
+        {
+            case DeleteMode.MoveToTrashFolder:
+                var relative = Path.GetRelativePath(FolderPath, fullPath);
+
+                // Liegt die Datei außerhalb des gereviewten Ordners, würde
+                // GetRelativePath ".." liefern und aus dem Müll-Ordner
+                // herausführen — dann nur den Dateinamen verwenden.
+                if (relative.StartsWith("..", StringComparison.Ordinal) || Path.IsPathRooted(relative))
+                    relative = Path.GetFileName(fullPath);
+
+                var target = Path.Combine(trashRoot, relative);
+                Directory.CreateDirectory(Path.GetDirectoryName(target)!);
+
+                // Namenskollision im Müll-Ordner nicht stillschweigend überschreiben.
+                target = MakeUniquePath(target);
+                File.Move(fullPath, target);
+                break;
+
+            case DeleteMode.RecycleBin:
+                // AllDialogs statt OnlyErrorDialogs (Audit F-02): Windows fragt nach,
+                // wenn eine Datei zu gross fuer den Papierkorb ist. OnlyErrorDialogs
+                // unterdrueckt genau diese Rueckfrage — die Datei waere dann still und
+                // endgueltig geloescht, obwohl der Dialog "wiederherstellbar" verspricht.
+                // Bei RAW-Bursts und Videos ist das der Normalfall, nicht der Rand.
+                Microsoft.VisualBasic.FileIO.FileSystem.DeleteFile(
+                    fullPath,
+                    Microsoft.VisualBasic.FileIO.UIOption.AllDialogs,
+                    Microsoft.VisualBasic.FileIO.RecycleOption.SendToRecycleBin,
+                    Microsoft.VisualBasic.FileIO.UICancelOption.ThrowException);
+                break;
+
+            case DeleteMode.Permanent:
+                File.Delete(fullPath);
+                break;
+        }
+    }
+
+    /// <summary>Hängt bei Bedarf _1, _2, … an, damit nichts überschrieben wird.</summary>
+    private static string MakeUniquePath(string path)
+    {
+        if (!File.Exists(path)) return path;
+
+        var dir  = Path.GetDirectoryName(path)!;
+        var name = Path.GetFileNameWithoutExtension(path);
+        var ext  = Path.GetExtension(path);
+
+        for (var i = 1; ; i++)
+        {
+            var candidate = Path.Combine(dir, $"{name}_{i}{ext}");
+            if (!File.Exists(candidate)) return candidate;
+        }
     }
 }

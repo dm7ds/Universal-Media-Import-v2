@@ -62,6 +62,19 @@ public static class FolderNameConstants
     /// <summary>Internes UMI-Verzeichnis im Workbench-Root.</summary>
     public const string UmiDir = ".umi";
 
+    /// <summary>
+    /// Zielordner fuer im Sequenz-Reviewer aussortierte Fotos (I-010).
+    /// Liegt direkt im gereviewten Ordner, damit der User ihn findet, und
+    /// spiegelt darunter die urspruengliche Ordnerstruktur — so bleibt
+    /// nachvollziehbar, woher eine Datei stammt, und ein Zurueckschieben ist
+    /// simples Kopieren.
+    ///
+    /// Wird von <see cref="IsInternalPath"/> mit erfasst: sonst saugt der
+    /// naechste Scan die aussortierten Fotos wieder ein und sie tauchen im
+    /// Reviewer erneut auf.
+    /// </summary>
+    public const string TrashDir = "_Trash";
+
     /// <summary>UMI Lock-Datei.</summary>
     public const string UmiLock = ".umi.lock";
 
@@ -241,7 +254,10 @@ public static class FolderNameConstants
         // Windows API (backslash) paths with a single check.
         var normalised = path.Replace('\\', '/');
         return normalised.Contains($"/{UmiDir}/",      StringComparison.OrdinalIgnoreCase)
-            || normalised.Contains($"/{MetadataDir}/", StringComparison.OrdinalIgnoreCase);
+            || normalised.Contains($"/{MetadataDir}/", StringComparison.OrdinalIgnoreCase)
+            // Aussortiertes bleibt aussortiert — ohne diesen Ausschluss wuerde der
+            // naechste Scan die in _Trash verschobenen Fotos wieder einsammeln (I-010).
+            || normalised.Contains($"/{TrashDir}/",    StringComparison.OrdinalIgnoreCase);
     }
 
     /// <summary>

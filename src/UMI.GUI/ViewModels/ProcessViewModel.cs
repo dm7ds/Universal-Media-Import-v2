@@ -106,7 +106,12 @@ public class ProcessViewModel : ViewModelBase
         GlobalPaths globalPaths,
         IFolderSortService folderSortService,
         IConfigWriterService? configWriter = null,
-        ConfigPathResolver? configPaths = null)
+        ConfigPathResolver? configPaths = null,
+        // Muss bis hierher durchgereicht werden: das ist die einzige Stelle,
+        // an der der Sequenz-Reviewer real erzeugt wird. Fehlt der Logger hier,
+        // bleibt er im Reviewer null und das Fehler-Logging beim Aussortieren
+        // ist wirkungslos (I-010, Audit F-01).
+        Microsoft.Extensions.Logging.ILogger<SequenceReviewerViewModel>? reviewerLogger = null)
     {
         WorkbenchViewModel = workbench;
 
@@ -120,7 +125,7 @@ public class ProcessViewModel : ViewModelBase
 
         PhotoActions = new ObservableCollection<ProcessActionViewModel>
         {
-            new SequenceReviewerActionViewModel(burstVisualizer, reviewSidecar, sequenceSidecar, thumbnailCache, burstProfileLoader, globalPaths, configWriter!),
+            new SequenceReviewerActionViewModel(burstVisualizer, reviewSidecar, sequenceSidecar, thumbnailCache, burstProfileLoader, globalPaths, configWriter!, reviewerLogger),
         };
 
         ToolActions = new ObservableCollection<ProcessActionViewModel>
