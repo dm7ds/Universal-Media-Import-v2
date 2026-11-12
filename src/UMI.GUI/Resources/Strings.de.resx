@@ -2445,6 +2445,54 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="SequenceReviewer_InternalFolder" xml:space="preserve">
     <value>Dieser Ordner liegt im UMI-internen Verzeichnis (.umi) — Dateien darin werden bewusst ignoriert, deshalb kann hier nichts angezeigt werden. Bitte den Workbench-Pfad in den Einstellungen korrigieren. Aktueller Ordner: {0}</value>
   </data>
+  <data name="SequenceReviewer_FilterLabel" xml:space="preserve">
+    <value>Anzeigen:</value>
+  </data>
+  <data name="SequenceReviewer_FilterFavoritesCount" xml:space="preserve">
+    <value>Favoriten {0}</value>
+  </data>
+  <data name="SequenceReviewer_FilterTrashCount" xml:space="preserve">
+    <value>Müll {0}</value>
+  </data>
+  <data name="SequenceReviewer_MarkFavorite" xml:space="preserve">
+    <value>Favorit</value>
+  </data>
+  <data name="SequenceReviewer_MarkTrash" xml:space="preserve">
+    <value>Müll</value>
+  </data>
+  <data name="SequenceReviewer_DeleteSequenceTooltip" xml:space="preserve">
+    <value>Diese Serie aussortieren</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsButton" xml:space="preserve">
+    <value>? Tasten</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsTooltip" xml:space="preserve">
+    <value>Tastenkürzel anzeigen</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsTitle" xml:space="preserve">
+    <value>Tastenkürzel</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutNavPhotos" xml:space="preserve">
+    <value>Fotos navigieren</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutNavSequences" xml:space="preserve">
+    <value>Sequenzen navigieren</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutFavorite" xml:space="preserve">
+    <value>Favorit markieren/entfernen</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutTrash" xml:space="preserve">
+    <value>Müll markieren/entfernen</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutRating" xml:space="preserve">
+    <value>Bewertung setzen (nochmal = löschen)</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutOverview" xml:space="preserve">
+    <value>Übersicht ein-/ausblenden</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutClose" xml:space="preserve">
+    <value>Reviewer schließen</value>
+  </data>
 
   <!-- ThumbnailGenerate action -->
   <data name="ThumbnailGenerate_Title" xml:space="preserve">

@@ -29,6 +29,7 @@
             <conv:BytesToBitmapConverter x:Key="BytesToBitmap" />
             <conv:EqualsToVisibilityConverter x:Key="EqualsToVisibility" />
             <conv:EnumToBoolConverter x:Key="EnumToBool" />
+            <conv:RatingStarFillConverter x:Key="RatingStarFill" />
         </ResourceDictionary>
     </Application.Resources>
 

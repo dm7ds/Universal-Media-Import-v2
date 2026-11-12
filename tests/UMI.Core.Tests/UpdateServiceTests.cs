@@ -52,14 +52,15 @@ public class UpdateServiceTests
         var assemblyVersion = typeof(GitHubReleaseChecker).Assembly.GetName().Version;
         assemblyVersion.Should().NotBeNull();
 
-        var reported = System.Version.Parse(GitHubReleaseChecker.GetCurrentVersion());
+        // BEIDE Seiten auf 4 Komponenten normalisieren. Version.Parse("2.2.2")
+        // liefert Revision = -1 (nicht gesetzt), nicht 0 — normalisiert man nur
+        // eine Seite, ist 2.2.2 kleiner als 2.2.2.0 und der Test schlägt bei
+        // jeder dreistelligen Version fehl, ohne dass etwas kaputt wäre.
+        var reported = Normalise(System.Version.Parse(GitHubReleaseChecker.GetCurrentVersion()));
+        var actual   = Normalise(assemblyVersion!);
 
-        // Auf 4 Komponenten normalisieren, damit "2.2.1" als 2.2.1.0 verglichen wird.
-        var actual = new System.Version(
-            assemblyVersion!.Major,
-            assemblyVersion.Minor,
-            Math.Max(assemblyVersion.Build, 0),
-            Math.Max(assemblyVersion.Revision, 0));
+        static System.Version Normalise(System.Version v) => new(
+            v.Major, v.Minor, Math.Max(v.Build, 0), Math.Max(v.Revision, 0));
 
         (reported >= actual).Should().BeTrue(
             "die gemeldete Version ({0}) darf nicht älter sein als die Assembly-Version ({1}) — " +

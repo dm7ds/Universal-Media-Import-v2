@@ -79,14 +79,21 @@ public class ReviewPhotoViewModel : ViewModelBase
         }
     }
 
+    /// <summary>
+    /// Highest selectable star rating. SSOT for both the Rating clamp below
+    /// and the Reviewer's clickable 5-star control (I-013) — never repeat
+    /// "5" as a separate literal for the rating range.
+    /// </summary>
+    public const int MaxRating = 5;
+
     private int _rating;
-    /// <summary>Star rating 0–5 (0 = unrated).</summary>
+    /// <summary>Star rating 0–<see cref="MaxRating"/> (0 = unrated).</summary>
     public int Rating
     {
         get => _rating;
         set
         {
-            if (SetProperty(ref _rating, Math.Clamp(value, 0, 5)))
+            if (SetProperty(ref _rating, Math.Clamp(value, 0, MaxRating)))
             {
                 OnPropertyChanged(nameof(HasRating));
                 OnPropertyChanged(nameof(RatingStars));

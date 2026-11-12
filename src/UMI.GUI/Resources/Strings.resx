@@ -2505,6 +2505,54 @@ Path has been configured. Do you want to re-download anyway?</value>
   <data name="SequenceReviewer_InternalFolder" xml:space="preserve">
     <value>This folder lies inside UMI's internal directory (.umi) — files there are ignored on purpose, so nothing can be shown. Please correct the workbench path under Settings. Current folder: {0}</value>
   </data>
+  <data name="SequenceReviewer_FilterLabel" xml:space="preserve">
+    <value>Show:</value>
+  </data>
+  <data name="SequenceReviewer_FilterFavoritesCount" xml:space="preserve">
+    <value>Favorites {0}</value>
+  </data>
+  <data name="SequenceReviewer_FilterTrashCount" xml:space="preserve">
+    <value>Trash {0}</value>
+  </data>
+  <data name="SequenceReviewer_MarkFavorite" xml:space="preserve">
+    <value>Favorite</value>
+  </data>
+  <data name="SequenceReviewer_MarkTrash" xml:space="preserve">
+    <value>Trash</value>
+  </data>
+  <data name="SequenceReviewer_DeleteSequenceTooltip" xml:space="preserve">
+    <value>Sort out this series</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsButton" xml:space="preserve">
+    <value>? Keys</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsTooltip" xml:space="preserve">
+    <value>Show keyboard shortcuts</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutsTitle" xml:space="preserve">
+    <value>Keyboard Shortcuts</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutNavPhotos" xml:space="preserve">
+    <value>Navigate photos</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutNavSequences" xml:space="preserve">
+    <value>Navigate sequences</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutFavorite" xml:space="preserve">
+    <value>Toggle favorite</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutTrash" xml:space="preserve">
+    <value>Toggle trash</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutRating" xml:space="preserve">
+    <value>Set rating (press again to clear)</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutOverview" xml:space="preserve">
+    <value>Toggle overview</value>
+  </data>
+  <data name="SequenceReviewer_ShortcutClose" xml:space="preserve">
+    <value>Close reviewer</value>
+  </data>
 
   <!-- ThumbnailGenerate action -->
   <data name="ThumbnailGenerate_Title" xml:space="preserve">

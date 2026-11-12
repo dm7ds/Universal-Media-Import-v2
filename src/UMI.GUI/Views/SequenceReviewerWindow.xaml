@@ -147,6 +147,224 @@
                 </Style.Triggers>
             </Style>
 
+            <!-- ══════════════════════════════════════════════════════════
+                 I-013: Filter Segmented Control — one style + one DataTemplate
+                 renders all three segments (All/Favorites/Trash), no per-segment
+                 copy-paste (DRY, Zampano design decree).
+                 ══════════════════════════════════════════════════════════ -->
+            <Style x:Key="ReviewFilterSegmentButton" TargetType="Button">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="12,5" />
+                <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                x:Name="Seg"
+                                Background="Transparent"
+                                CornerRadius="{StaticResource RadiusPill}"
+                                Padding="{TemplateBinding Padding}">
+                                <StackPanel Orientation="Horizontal">
+                                    <TextBlock
+                                        Text="{Binding DisplayText}"
+                                        Foreground="{TemplateBinding Foreground}"
+                                        VerticalAlignment="Center" />
+                                    <Ellipse
+                                        Width="6" Height="6"
+                                        Margin="5,0,0,0"
+                                        VerticalAlignment="Center"
+                                        Visibility="{Binding ShowDot, Converter={StaticResource BoolToVisibility}}">
+                                        <Ellipse.Style>
+                                            <Style TargetType="Ellipse">
+                                                <Setter Property="Fill" Value="{StaticResource BrushErrorText}" />
+                                                <Style.Triggers>
+                                                    <DataTrigger Binding="{Binding IsFavoriteSegment}" Value="True">
+                                                        <Setter Property="Fill" Value="{StaticResource BrushBadgeGps}" />
+                                                    </DataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Ellipse.Style>
+                                    </Ellipse>
+                                </StackPanel>
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Seg" Property="Background" Value="{StaticResource BrushBgCardHover}" />
+                                </Trigger>
+                                <!-- Falltrap #13: DataTrigger.Value cannot bind — IsActive is a plain
+                                     bool VM property compared against a literal, not a bound value. -->
+                                <!-- Aktiv MUSS sich vom Hover unterscheiden: vorher trugen beide
+                                     BrushBgCardHover, dadurch sah ein nur gehovertes Segment exakt
+                                     aus wie das ausgewaehlte und man konnte den aktiven Filter nicht
+                                     mehr ablesen (UI-Audit F-I013-02). Akzent statt Grauton.
+                                     Steht nach dem Hover-Trigger, gewinnt daher bei Hover auf dem
+                                     aktiven Segment. -->
+                                <DataTrigger Binding="{Binding IsActive}" Value="True">
+                                    <Setter TargetName="Seg" Property="Background" Value="{StaticResource BrushActionMuted}" />
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                                </DataTrigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- ══════════════════════════════════════════════════════════
+                 I-013: Marker-action bar under the main image (Favorite/Trash).
+                 Base chrome shared, only the checked-state badge color differs
+                 per tag — reuses the existing badge brushes, no new color. -->
+            <Style x:Key="ReviewMarkerToggleButton" TargetType="ToggleButton">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Foreground" Value="{StaticResource BrushTextPrimary}" />
+                <Setter Property="Background">
+                    <Setter.Value>
+                        <SolidColorBrush Color="{StaticResource ColorBgCard}" Opacity="0.9" />
+                    </Setter.Value>
+                </Setter>
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorder}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="Padding" Value="12,7" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border
+                                x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                BorderBrush="{TemplateBinding BorderBrush}"
+                                BorderThickness="{TemplateBinding BorderThickness}"
+                                CornerRadius="{StaticResource RadiusPill}"
+                                Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource ColorBgCardHover}" />
+                                        </Setter.Value>
+                                    </Setter>
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Falltrap #14: Foreground is set directly as a Setter on the ToggleButton
+                 style (inheritable DP), never via ContentPresenter.Resources. -->
+            <Style x:Key="ReviewFavoriteToggleButton" TargetType="ToggleButton" BasedOn="{StaticResource ReviewMarkerToggleButton}">
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="{StaticResource ReviewerFavoriteBadgeBrush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource ReviewerFavoriteBadgeBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <Style x:Key="ReviewTrashToggleButton" TargetType="ToggleButton" BasedOn="{StaticResource ReviewMarkerToggleButton}">
+                <Style.Triggers>
+                    <Trigger Property="IsChecked" Value="True">
+                        <Setter Property="Background" Value="{StaticResource ReviewerTrashBadgeBrush}" />
+                        <Setter Property="BorderBrush" Value="{StaticResource ReviewerTrashBadgeBrush}" />
+                    </Trigger>
+                </Style.Triggers>
+            </Style>
+
+            <!-- Borderless hit-target for one clickable star in the 5-star rating row -->
+            <Style x:Key="ReviewStarButton" TargetType="Button">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Padding" Value="2,0" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border Background="Transparent" Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- Inline shortcut KeyCap badge, e.g. "␣" next to the Favorite button -->
+            <Style x:Key="ShortcutKeyCap" TargetType="Border">
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderBrush" Value="{StaticResource BrushBorderSubtle}" />
+                <Setter Property="BorderThickness" Value="1" />
+                <Setter Property="CornerRadius" Value="3" />
+                <Setter Property="Padding" Value="4,1" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+
+            <!-- Dezent "? Tasten" entry button for the shortcuts overlay -->
+            <Style x:Key="ShortcutsHelpToggle" TargetType="ToggleButton">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Background" Value="Transparent" />
+                <Setter Property="BorderThickness" Value="0" />
+                <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
+                <Setter Property="FontSize" Value="{StaticResource FontSizeCaption}" />
+                <Setter Property="Padding" Value="8,6" />
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="ToggleButton">
+                            <Border
+                                x:Name="Bd"
+                                Background="{TemplateBinding Background}"
+                                CornerRadius="{StaticResource RadiusButton}"
+                                Padding="{TemplateBinding Padding}">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                            <ControlTemplate.Triggers>
+                                <Trigger Property="IsMouseOver" Value="True">
+                                    <Setter TargetName="Bd" Property="Background">
+                                        <Setter.Value>
+                                            <SolidColorBrush Color="{StaticResource ColorBgCard}" Opacity="0.7" />
+                                        </Setter.Value>
+                                    </Setter>
+                                    <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
+                                </Trigger>
+                            </ControlTemplate.Triggers>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
+            <!-- One row in the shortcuts overlay: key-glyph + description, shared spacing -->
+            <Style x:Key="ShortcutOverlayRow" TargetType="Grid">
+                <Setter Property="Margin" Value="0,0,0,6" />
+            </Style>
+
+            <!-- Overview-card hover trash button (I-011): visible only on hover so it
+                 never competes with the card's own click (opens the sequence). -->
+            <Style x:Key="ReviewCardTrashButton" TargetType="Button">
+                <Setter Property="Focusable" Value="False" />
+                <Setter Property="Cursor" Value="Hand" />
+                <Setter Property="Width" Value="26" />
+                <Setter Property="Height" Value="26" />
+                <!-- Visibility set per-instance (hover-bound), not here — a local
+                     value always wins over this Setter anyway. -->
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="Button">
+                            <Border
+                                Background="{StaticResource ReviewerTrashBadgeBrush}"
+                                CornerRadius="13">
+                                <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </Border>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
+
             <!-- Window control button -->
             <Style x:Key="ReviewWinCtrl" TargetType="Button">
                 <Setter Property="Width" Value="30" />
@@ -283,15 +501,15 @@
         <KeyBinding Key="Right"  Command="{Binding NavigateRightCommand}" />
         <KeyBinding Key="Up"     Command="{Binding NavigateUpCommand}" />
         <KeyBinding Key="Down"   Command="{Binding NavigateDownCommand}" />
-        <KeyBinding Key="Space"  Command="{Binding ToggleFavoriteCommand}" />
-        <KeyBinding Key="X"      Command="{Binding ToggleTrashCommand}" />
+        <KeyBinding Key="{x:Static helpers:ReviewerShortcuts.FavoriteKey}" Command="{Binding ToggleFavoriteCommand}" />
+        <KeyBinding Key="{x:Static helpers:ReviewerShortcuts.TrashKey}"    Command="{Binding ToggleTrashCommand}" />
         <KeyBinding Key="D1"     Command="{Binding SetRatingCommand}" CommandParameter="1" />
         <KeyBinding Key="D2"     Command="{Binding SetRatingCommand}" CommandParameter="2" />
         <KeyBinding Key="D3"     Command="{Binding SetRatingCommand}" CommandParameter="3" />
         <KeyBinding Key="D4"     Command="{Binding SetRatingCommand}" CommandParameter="4" />
         <KeyBinding Key="D5"     Command="{Binding SetRatingCommand}" CommandParameter="5" />
         <KeyBinding Key="Escape" Command="{Binding EscapeCommand}" />
-        <KeyBinding Key="G"      Command="{Binding ToggleOverviewCommand}" />
+        <KeyBinding Key="{x:Static helpers:ReviewerShortcuts.OverviewKey}" Command="{Binding ToggleOverviewCommand}" />
     </Window.InputBindings>
 
     <!-- Root: full-screen dark bg -->
@@ -439,52 +657,38 @@
                         
                         Margin="0,0,12,0">
 
-                        <!-- Filter: All -->
-                        <Button
-                            Content="{helpers:Localize SequenceReviewer_FilterAll}"
-                            Style="{StaticResource ReviewActionButton}"
-                            Margin="0,0,6,0"
-                            Command="{Binding ClearFilterCommand}" />
-
-                        <!-- Filter: Favorites -->
-                        <Button
-                            Style="{StaticResource ReviewActionButton}"
-                            Margin="0,0,6,0"
-                            Command="{Binding ApplyFilterCommand}"
-                            Click="FilterFavorites_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <Path
-                                    Data="M12,21.35 L10.55,20.03 C5.4,15.36 2,12.27 2,8.5 C2,5.41 4.42,3 7.5,3 C9.24,3 10.91,3.81 12,5.08 C13.09,3.81 14.76,3 16.5,3 C19.58,3 22,5.41 22,8.5 C22,12.27 18.6,15.36 13.45,20.03 L12,21.35 Z"
-                                    Fill="{StaticResource BrushBadgeGps}"
-                                    Width="12" Height="12"
-                                    Stretch="Uniform"
-                                    Margin="0,0,5,0"
-                                    VerticalAlignment="Center" />
-                                <TextBlock
-                                    Text="{helpers:Localize SequenceReviewer_FilterFavorites}"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
-
-                        <!-- Filter: Trash -->
-                        <Button
-                            Style="{StaticResource ReviewActionButton}"
-                            Margin="0,0,6,0"
-                            Click="FilterTrash_Click">
-                            <StackPanel Orientation="Horizontal">
-                                <Path
-                                    Data="M3,6 H5 H21 M8,6 V4 A1,1 0 0,1 9,3 H15 A1,1 0 0,1 16,4 V6 M19,6 V20 A2,2 0 0,1 17,22 H7 A2,2 0 0,1 5,20 V6 H19 Z"
-                                    Stroke="{StaticResource BrushErrorText}"
-                                    StrokeThickness="1.5"
-                                    Width="11" Height="12"
-                                    Stretch="Uniform"
-                                    Margin="0,0,5,0"
-                                    VerticalAlignment="Center" />
-                                <TextBlock
-                                    Text="{helpers:Localize SequenceReviewer_FilterTrash}"
-                                    VerticalAlignment="Center" />
-                            </StackPanel>
-                        </Button>
+                        <!-- I-013: Filter Segmented Control — "Anzeigen:" label + one
+                             ItemsControl rendering all three segments (All/Favorites/Trash).
+                             Visually and semantically separated from the Aktionen (Export/
+                             Delete) that follow — this is a filter, not a destructive action. -->
+                        <TextBlock
+                            Text="{helpers:Localize SequenceReviewer_FilterLabel}"
+                            FontSize="{StaticResource FontSizeCaption}"
+                            Foreground="{StaticResource BrushTextMuted}"
+                            VerticalAlignment="Center"
+                            Margin="0,0,6,0" />
+                        <Border
+                            Background="{StaticResource BrushBgCard}"
+                            BorderBrush="{StaticResource BrushBorderSubtle}"
+                            BorderThickness="1"
+                            CornerRadius="{StaticResource RadiusPill}"
+                            Margin="0,0,10,0">
+                            <ItemsControl ItemsSource="{Binding FilterOptions}" Focusable="False">
+                                <ItemsControl.ItemsPanel>
+                                    <ItemsPanelTemplate>
+                                        <StackPanel Orientation="Horizontal" />
+                                    </ItemsPanelTemplate>
+                                </ItemsControl.ItemsPanel>
+                                <ItemsControl.ItemTemplate>
+                                    <DataTemplate DataType="{x:Type vm:ReviewFilterOptionViewModel}">
+                                        <Button
+                                            Style="{StaticResource ReviewFilterSegmentButton}"
+                                            Command="{Binding DataContext.SetFilterCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                            CommandParameter="{Binding}" />
+                                    </DataTemplate>
+                                </ItemsControl.ItemTemplate>
+                            </ItemsControl>
+                        </Border>
 
                         <!-- Separator -->
                         <Border
@@ -669,11 +873,71 @@
 
                     </StackPanel>
 
-                    <!-- Right: Help + Minimize + Maximize/Restore + Close -->
+                    <!-- Right: Shortcuts + Help + Minimize + Maximize/Restore + Close -->
                     <StackPanel
                         Grid.Column="2"
                         Orientation="Horizontal"
                         VerticalAlignment="Center">
+
+                        <!-- I-013: dezenter Einstieg ins Tastenkürzel-Overlay ("?"/OemQuestion, s. code-behind) -->
+                        <ToggleButton
+                            x:Name="ShortcutsToggle"
+                            Style="{StaticResource ShortcutsHelpToggle}"
+                            ToolTip="{helpers:Localize SequenceReviewer_ShortcutsTooltip}"
+                            Margin="0,0,4,0">
+                            <TextBlock Text="{helpers:Localize SequenceReviewer_ShortcutsButton}" />
+                        </ToggleButton>
+
+                        <Popup
+                            IsOpen="{Binding IsChecked, ElementName=ShortcutsToggle}"
+                            PlacementTarget="{Binding ElementName=ShortcutsToggle}"
+                            Placement="Bottom"
+                            StaysOpen="False"
+                            AllowsTransparency="True"
+                            PopupAnimation="Fade">
+                            <Border
+                                Background="{StaticResource BrushBgCard}"
+                                BorderBrush="{StaticResource BrushBorder}"
+                                BorderThickness="1"
+                                CornerRadius="{StaticResource RadiusCard}"
+                                Padding="16"
+                                MinWidth="260">
+                                <StackPanel>
+                                    <TextBlock
+                                        Text="{helpers:Localize SequenceReviewer_ShortcutsTitle}"
+                                        FontWeight="SemiBold"
+                                        FontSize="{StaticResource FontSizeBase}"
+                                        Foreground="{StaticResource BrushTextPrimary}"
+                                        Margin="0,0,0,10" />
+
+                                    <!-- One ItemsControl + DataTemplate for all seven rows (DRY) — the
+                                         VM's ShortcutOverlayEntries already sources the key glyphs from
+                                         ReviewerShortcuts, so this stays in sync with the InputBindings. -->
+                                    <ItemsControl ItemsSource="{Binding ShortcutOverlayEntries}" Focusable="False">
+                                        <ItemsControl.ItemTemplate>
+                                            <DataTemplate DataType="{x:Type helpers:ShortcutOverlayEntry}">
+                                                <Grid Style="{StaticResource ShortcutOverlayRow}">
+                                                    <Grid.ColumnDefinitions>
+                                                        <ColumnDefinition Width="60" />
+                                                        <ColumnDefinition Width="*" />
+                                                    </Grid.ColumnDefinitions>
+                                                    <TextBlock
+                                                        Grid.Column="0"
+                                                        Text="{Binding KeyText}"
+                                                        Foreground="{StaticResource BrushTextMuted}"
+                                                        FontFamily="{StaticResource FontMono}" />
+                                                    <TextBlock
+                                                        Grid.Column="1"
+                                                        Text="{Binding Description}"
+                                                        Foreground="{StaticResource BrushTextSecondary}"
+                                                        TextWrapping="Wrap" />
+                                                </Grid>
+                                            </DataTemplate>
+                                        </ItemsControl.ItemTemplate>
+                                    </ItemsControl>
+                                </StackPanel>
+                            </Border>
+                        </Popup>
 
                         <!-- Help -->
                         <Button
@@ -932,6 +1196,116 @@
                         Width="10" Height="16"
                         Stretch="Uniform" />
                 </Button>
+
+                <!-- ══════════════════════════════════════════════════════
+                     I-013: Markier-Aktionen-Leiste — am Bild, nicht in der
+                     Toolbar ("Aktion am Objekt, nicht 800px entfernt").
+                     ══════════════════════════════════════════════════════ -->
+                <StackPanel
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center"
+                    VerticalAlignment="Bottom"
+                    Margin="0,0,0,20">
+
+                    <!-- Favorit -->
+                    <ToggleButton
+                        Style="{StaticResource ReviewFavoriteToggleButton}"
+                        IsChecked="{Binding CurrentPhoto.IsFavorite}"
+                        Command="{Binding ToggleFavoriteCommand}"
+                        Margin="0,0,8,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path
+                                Data="M12,21.35 L10.55,20.03 C5.4,15.36 2,12.27 2,8.5 C2,5.41 4.42,3 7.5,3 C9.24,3 10.91,3.81 12,5.08 C13.09,3.81 14.76,3 16.5,3 C19.58,3 22,5.41 22,8.5 C22,12.27 18.6,15.36 13.45,20.03 L12,21.35 Z"
+                                Fill="{StaticResource BrushBadgeGps}"
+                                Width="14" Height="14"
+                                Stretch="Uniform"
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="{helpers:Localize SequenceReviewer_MarkFavorite}"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0" />
+                            <Border Style="{StaticResource ShortcutKeyCap}">
+                                <TextBlock
+                                    Text="{x:Static helpers:ReviewerShortcuts.FavoriteKeyText}"
+                                    FontSize="{StaticResource FontSizeCaption}"
+                                    Foreground="{StaticResource BrushTextMuted}" />
+                            </Border>
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <!-- Müll -->
+                    <ToggleButton
+                        Style="{StaticResource ReviewTrashToggleButton}"
+                        IsChecked="{Binding CurrentPhoto.IsTrash}"
+                        Command="{Binding ToggleTrashCommand}"
+                        Margin="0,0,14,0">
+                        <StackPanel Orientation="Horizontal">
+                            <Path
+                                Data="M3,6 H5 H21 M8,6 V4 A1,1 0 0,1 9,3 H15 A1,1 0 0,1 16,4 V6 M19,6 V20 A2,2 0 0,1 17,22 H7 A2,2 0 0,1 5,20 V6 H19 Z"
+                                Stroke="{StaticResource BrushErrorText}"
+                                StrokeThickness="1.5"
+                                Width="13" Height="14"
+                                Stretch="Uniform"
+                                Margin="0,0,6,0"
+                                VerticalAlignment="Center" />
+                            <TextBlock
+                                Text="{helpers:Localize SequenceReviewer_MarkTrash}"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0" />
+                            <Border Style="{StaticResource ShortcutKeyCap}">
+                                <TextBlock
+                                    Text="{x:Static helpers:ReviewerShortcuts.TrashKeyText}"
+                                    FontSize="{StaticResource FontSizeCaption}"
+                                    Foreground="{StaticResource BrushTextMuted}" />
+                            </Border>
+                        </StackPanel>
+                    </ToggleButton>
+
+                    <!-- 5 Sterne (klickbar, setzt/löscht die Bewertung wie die Zifferntasten) -->
+                    <ItemsControl ItemsSource="{Binding RatingRange}" VerticalAlignment="Center">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Button
+                                    Style="{StaticResource ReviewStarButton}"
+                                    Command="{Binding DataContext.SetRatingCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                    CommandParameter="{Binding StringFormat={}{0}}">
+                                    <Path
+                                        Width="16" Height="16"
+                                        Stretch="Uniform"
+                                        Data="{StaticResource GeoStarFilled}">
+                                        <Path.Style>
+                                            <Style TargetType="Path">
+                                                <Setter Property="Fill" Value="{StaticResource BrushBorderSubtle}" />
+                                                <Style.Triggers>
+                                                    <MultiDataTrigger>
+                                                        <MultiDataTrigger.Conditions>
+                                                            <Condition Value="True">
+                                                                <Condition.Binding>
+                                                                    <MultiBinding Converter="{StaticResource RatingStarFill}">
+                                                                        <Binding />
+                                                                        <Binding Path="DataContext.CurrentPhoto.Rating" RelativeSource="{RelativeSource AncestorType=Window}" />
+                                                                    </MultiBinding>
+                                                                </Condition.Binding>
+                                                            </Condition>
+                                                        </MultiDataTrigger.Conditions>
+                                                        <Setter Property="Fill" Value="{StaticResource BrushBadgeBurst}" />
+                                                    </MultiDataTrigger>
+                                                </Style.Triggers>
+                                            </Style>
+                                        </Path.Style>
+                                    </Path>
+                                </Button>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+
+                </StackPanel>
 
             </Grid>
 
@@ -1471,6 +1845,28 @@
                                                             </Style>
                                                         </Border.Style>
                                                     </Border>
+
+                                                    <!-- I-011: ganze Serie aussortieren. Echtes verschachteltes
+                                                         Button-in-Button statt InputBindings (Falltrap #12) — der
+                                                         Klick wird von WPF automatisch als Handled markiert und
+                                                         erreicht damit NIE den Karten-Klick (öffnet die Serie).
+                                                         Nur bei Hover sichtbar, aber eindeutig destruktiv erkennbar. -->
+                                                    <Button
+                                                        Style="{StaticResource ReviewCardTrashButton}"
+                                                        HorizontalAlignment="Right"
+                                                        VerticalAlignment="Top"
+                                                        Margin="0,6,6,0"
+                                                        ToolTip="{helpers:Localize SequenceReviewer_DeleteSequenceTooltip}"
+                                                        Command="{Binding DataContext.DeleteSequenceCommand, RelativeSource={RelativeSource AncestorType=Window}}"
+                                                        CommandParameter="{Binding}"
+                                                        Visibility="{Binding IsMouseOver, ElementName=CardBorder, Converter={StaticResource BoolToVisibility}}">
+                                                        <Path
+                                                            Data="M3,6 H5 H21 M8,6 V4 A1,1 0 0,1 9,3 H15 A1,1 0 0,1 16,4 V6 M19,6 V20 A2,2 0 0,1 17,22 H7 A2,2 0 0,1 5,20 V6 H19 Z"
+                                                            Stroke="{StaticResource BrushErrorText}"
+                                                            StrokeThickness="1.6"
+                                                            Width="12" Height="13"
+                                                            Stretch="Uniform" />
+                                                    </Button>
 
                                                 </Grid>
                                             </Border>

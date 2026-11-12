@@ -22,7 +22,6 @@ using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
-using UMI.Core.Models;
 using UMI.GUI.Resources;
 using UMI.GUI.ViewModels;
 
@@ -68,6 +67,17 @@ public partial class SequenceReviewerWindow : Window
             if (args.Key == Key.F1)
             {
                 HelpButton_Click(s, args);
+                args.Handled = true;
+                return;
+            }
+
+            // I-013: "?" (physical Oem-question key, so Shift+/ works regardless
+            // of keyboard layout) toggles the shortcuts overlay next to the Help
+            // button. Same PreviewKeyDown pattern as F1 above — not a KeyBinding,
+            // since KeyBinding needs an ICommand and this just flips a ToggleButton.
+            if (args.Key == Key.OemQuestion)
+            {
+                ShortcutsToggle.IsChecked = !(ShortcutsToggle.IsChecked ?? false);
                 args.Handled = true;
                 return;
             }
@@ -205,18 +215,6 @@ public partial class SequenceReviewerWindow : Window
             if (d is ComboBox) return true;
         }
         return false;
-    }
-
-    private void FilterFavorites_Click(object sender, RoutedEventArgs e)
-    {
-        _vm.FilterTag = ReviewTag.Favorite;
-        _vm.ApplyFilterCommand.Execute(null);
-    }
-
-    private void FilterTrash_Click(object sender, RoutedEventArgs e)
-    {
-        _vm.FilterTag = ReviewTag.Trash;
-        _vm.ApplyFilterCommand.Execute(null);
     }
 
     private void HelpButton_Click(object sender, RoutedEventArgs e)

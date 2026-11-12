@@ -178,6 +178,8 @@
     <CornerRadius x:Key="RadiusBadge">5</CornerRadius>
     <CornerRadius x:Key="RadiusButton">6</CornerRadius>
     <CornerRadius x:Key="RadiusGroup">8</CornerRadius>
+    <!-- Fully-rounded pill shape (radius = half of the standard 30px action-button height) -->
+    <CornerRadius x:Key="RadiusPill">15</CornerRadius>
     <CornerRadius x:Key="RadiusDialog">12</CornerRadius>
     <CornerRadius x:Key="RadiusDialogTop">12,12,0,0</CornerRadius>
     <CornerRadius x:Key="RadiusDialogBottom">0,0,12,12</CornerRadius>

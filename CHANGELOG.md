@@ -4,6 +4,41 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.3] — 2026-08-09
+
+### Added
+
+- **Ganze Serie aussortieren.** In der Serien-Übersicht lässt sich eine
+  komplette Serie auf einmal aussortieren — mit derselben Abfrage und denselben
+  drei Möglichkeiten wie bei Einzelbildern (Müll-Ordner / Papierkorb /
+  endgültig). Der leer gewordene Serien-Ordner wird mit entfernt. Der Knopf
+  erscheint nur, wenn die Maus über der Serie steht.
+
+### Changed
+
+- **Filter und Aktionen sind nicht mehr verwechselbar.** „Alle / Favoriten /
+  Müll" waren Filter, sahen aber aus wie Aktionsknöpfe — der Müll-Filter trug
+  sogar ein Mülltonnen-Symbol direkt neben dem echten Löschen-Knopf. Die Filter
+  sitzen jetzt als zusammenhängende Gruppe hinter der Beschriftung „Anzeigen:",
+  zeigen die Anzahl je Kategorie und tragen kein Aktions-Symbol mehr.
+
+- **Bewerten und Markieren direkt am Bild.** Favorit, Müll und die
+  Sterne-Bewertung liegen jetzt als Schaltflächen unter dem Foto statt nur auf
+  Tastenkürzeln.
+
+- **Tastenkürzel sind sichtbar.** Jede dieser Schaltflächen zeigt ihr Kürzel
+  direkt an (`♥ Favorit ␣`, `🗑 Müll X`). Über „? Tasten" bzw. die `?`-Taste
+  öffnet sich eine Übersicht aller Kürzel. Bisher waren sie nur im Handbuch zu
+  finden.
+
+### Fixed
+
+- **Nach dem Leerräumen einer Serie geht es bei der Nachbarserie weiter.**
+  Wurden alle Fotos einer Serie aussortiert, sprang der Reviewer zur
+  **allerersten** Serie — wer Serie 435 von 857 leergeräumt hatte, musste sich
+  komplett zurückarbeiten. Jetzt wird zur nächsten Serie gewechselt, bzw. zur
+  vorherigen, wenn es die letzte war.
+
 ## [2.2.2] — 2026-08-06
 
 ### Fixed

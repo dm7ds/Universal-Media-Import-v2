@@ -233,6 +233,7 @@ public class SequenceReviewerViewModel : ViewModelBase
                 // unbeschränktem Filter — der Weg in den Datenverlust.
                 IsDeleteEnabled = value == ReviewTag.Trash;
 
+                RefreshFilterOptions();
                 RebuildFilmstrip();
             }
         }
@@ -245,7 +246,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         set => SetProperty(ref _filterRatingMin, value);
     }
 
-    private int _filterRatingMax = 5;
+    private int _filterRatingMax = ReviewPhotoViewModel.MaxRating;
     public int FilterRatingMax
     {
         get => _filterRatingMax;
@@ -329,12 +330,41 @@ public class SequenceReviewerViewModel : ViewModelBase
     public ICommand ToggleTrashCommand    { get; }
     public ICommand SetRatingCommand      { get; }
 
+    /// <summary>1..MaxRating — SSOT for the clickable 5-star control under the main image (I-013).</summary>
+    public IReadOnlyList<int> RatingRange { get; } = Enumerable.Range(1, ReviewPhotoViewModel.MaxRating).ToList();
+
+    /// <summary>
+    /// Rows for the "?"/OemQuestion shortcuts overlay (I-013). Key glyphs for
+    /// Favorite/Trash/Overview/Rating come from <see cref="ReviewerShortcuts"/> —
+    /// never a second literal next to the InputBindings.
+    /// </summary>
+    public IReadOnlyList<ShortcutOverlayEntry> ShortcutOverlayEntries { get; } = new List<ShortcutOverlayEntry>
+    {
+        new("← →", Strings.SequenceReviewer_ShortcutNavPhotos),
+        new("↑ ↓", Strings.SequenceReviewer_ShortcutNavSequences),
+        new(ReviewerShortcuts.FavoriteKeyText,    Strings.SequenceReviewer_ShortcutFavorite),
+        new(ReviewerShortcuts.TrashKeyText,       Strings.SequenceReviewer_ShortcutTrash),
+        new(ReviewerShortcuts.RatingKeyRangeText, Strings.SequenceReviewer_ShortcutRating),
+        new(ReviewerShortcuts.OverviewKeyText,    Strings.SequenceReviewer_ShortcutOverview),
+        new("Esc", Strings.SequenceReviewer_ShortcutClose),
+    };
+
     public ICommand ExportCommand  { get; }
     public ICommand DeleteCommand  { get; }
     public ICommand CloseCommand   { get; }
 
     public ICommand ApplyFilterCommand { get; }
     public ICommand ClearFilterCommand { get; }
+
+    /// <summary>
+    /// The three "Anzeigen:"-segments (All/Favorites/Trash) rendered by the
+    /// Segmented Control in the toolbar (I-013). One fixed list, one
+    /// DataTemplate in XAML — no per-segment copy-paste.
+    /// </summary>
+    public ObservableCollection<ReviewFilterOptionViewModel> FilterOptions { get; } = new();
+
+    /// <summary>Single command backing every segment's Click (All clears, Favorites/Trash set + apply).</summary>
+    public ICommand SetFilterCommand { get; }
 
     private bool _isOverviewMode = true;
     public bool IsOverviewMode
@@ -396,6 +426,10 @@ public class SequenceReviewerViewModel : ViewModelBase
     public ICommand SetSequenceFilterCommand        { get; }
     public ICommand SelectSequenceFromOverviewCommand { get; }
 
+    /// <summary>Sortiert eine komplette Serie aus (I-011). Parameter: die Serie,
+    /// oder null fuer die aktuelle.</summary>
+    public ICommand DeleteSequenceCommand { get; }
+
     /// <summary>Raised when CloseCommand is executed to close the reviewer window.</summary>
     public event EventHandler? CloseRequested;
 
@@ -433,9 +467,16 @@ public class SequenceReviewerViewModel : ViewModelBase
         ApplyFilterCommand = new RelayCommand(ApplyFilter);
         ClearFilterCommand = new RelayCommand(ClearFilter);
 
+        FilterOptions.Add(new ReviewFilterOptionViewModel(null,               Strings.SequenceReviewer_FilterAll));
+        FilterOptions.Add(new ReviewFilterOptionViewModel(ReviewTag.Favorite, Strings.SequenceReviewer_FilterFavoritesCount));
+        FilterOptions.Add(new ReviewFilterOptionViewModel(ReviewTag.Trash,    Strings.SequenceReviewer_FilterTrashCount));
+        SetFilterCommand = new RelayCommand<ReviewFilterOptionViewModel>(SetFilterFromOption);
+        RefreshFilterOptions();
+
         ToggleOverviewCommand            = new RelayCommand(ToggleOverview);
         SetSequenceFilterCommand         = new RelayCommand<string>(SetSequenceFilter);
         SelectSequenceFromOverviewCommand = new RelayCommand<object>(SelectSequenceFromOverview);
+        DeleteSequenceCommand            = new RelayCommand<object>(ExecuteDeleteSequence);
 
         DateFilter.PropertyChanged += (_, e) =>
         {
@@ -806,6 +847,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         OnPropertyChanged(nameof(SequenceCounterText));
         OnPropertyChanged(nameof(FilteredSequences));
         OnPropertyChanged(nameof(SelectedProfileColorIndex));
+        RefreshFilterOptions();
 
         if (Sequences.Count > 0)
             SelectSequence(0);
@@ -889,6 +931,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasMultipleCameras));
         OnPropertyChanged(nameof(SequenceCounterText));
         OnPropertyChanged(nameof(FilteredSequences));
+        RefreshFilterOptions();
 
         if (Sequences.Count > 0)
             SelectSequence(0);
@@ -1079,7 +1122,7 @@ public class SequenceReviewerViewModel : ViewModelBase
     {
         _filterTag       = null;
         _filterRatingMin = 0;
-        _filterRatingMax = 5;
+        _filterRatingMax = ReviewPhotoViewModel.MaxRating;
         _isDeleteEnabled = false;
         _selectedCamera  = AllCamerasSentinel;
 
@@ -1089,6 +1132,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         OnPropertyChanged(nameof(IsDeleteEnabled));
         OnPropertyChanged(nameof(IsFilterActive));
         OnPropertyChanged(nameof(SelectedCamera));
+        RefreshFilterOptions();
 
         foreach (var s in Sequences)
             s.SetFilterPredicate(null);
@@ -1098,6 +1142,46 @@ public class SequenceReviewerViewModel : ViewModelBase
         var photos = GetFilteredPhotos();
         if (photos.Count > 0 && CurrentPhoto is null)
             SetCurrentPhoto(photos[0]);
+    }
+
+    /// <summary>
+    /// Executes a Segmented-Control click (I-013): "All" clears the filter,
+    /// Favorites/Trash set the tag and apply it — mirrors exactly what the
+    /// former per-segment Click handlers did, now unified behind one command.
+    /// </summary>
+    private void SetFilterFromOption(ReviewFilterOptionViewModel? option)
+    {
+        if (option is null) return;
+
+        if (option.Tag is null)
+        {
+            ClearFilter();
+            return;
+        }
+
+        FilterTag = option.Tag;
+        ApplyFilter();
+    }
+
+    /// <summary>
+    /// Recomputes each Segmented-Control's live count and active state
+    /// (I-013). Called whenever a photo's tag changes, sequences are
+    /// (re)loaded, photos are aussortiert, or the active filter changes.
+    /// </summary>
+    private void RefreshFilterOptions()
+    {
+        var allPhotos = Sequences.SelectMany(s => s.Photos).ToList();
+
+        foreach (var option in FilterOptions)
+        {
+            option.Count = option.Tag switch
+            {
+                ReviewTag.Favorite => allPhotos.Count(p => p.IsFavorite),
+                ReviewTag.Trash    => allPhotos.Count(p => p.IsTrash),
+                _                  => 0
+            };
+            option.IsActive = FilterTag == option.Tag;
+        }
     }
 
     private void HandleEscape()
@@ -1148,6 +1232,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         if (CurrentPhoto is null) return;
         CurrentPhoto.Tag = CurrentPhoto.Tag == ReviewTag.Favorite ? ReviewTag.None : ReviewTag.Favorite;
         PersistCurrentPhoto();
+        RefreshFilterOptions();
     }
 
     private void ToggleTrash()
@@ -1155,6 +1240,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         if (CurrentPhoto is null) return;
         CurrentPhoto.Tag = CurrentPhoto.Tag == ReviewTag.Trash ? ReviewTag.None : ReviewTag.Trash;
         PersistCurrentPhoto();
+        RefreshFilterOptions();
     }
 
     private void SetRating(string? param)
@@ -1600,15 +1686,31 @@ public class SequenceReviewerViewModel : ViewModelBase
             }
         }
 
+        // Reihenfolge festhalten, BEVOR Sequenzen wegfallen — danach lässt sich
+        // der Nachbar der geleerten Sequenz nicht mehr bestimmen (I-016).
+        var orderBefore = Sequences.ToList();
+        var currentIdx  = CurrentSequence is not null ? orderBefore.IndexOf(CurrentSequence) : -1;
+
         var emptySequences = Sequences.Where(s => s.Photos.Count == 0).ToList();
         foreach (var empty in emptySequences)
             Sequences.Remove(empty);
 
         if (CurrentSequence is not null && !Sequences.Contains(CurrentSequence))
         {
-            var next = Sequences.FirstOrDefault();
-            if (next is not null)
-                SelectSequence(Sequences.IndexOf(next));
+            // Zur NACHBAR-Sequenz springen, nicht zurück an den Listenanfang:
+            // wer die 435. Serie leerräumt, will bei der 436. weitermachen und
+            // nicht wieder bei der ersten anfangen. Erst nach vorne suchen
+            // (nächste überlebende), sonst zurück (vorherige).
+            ReviewSequenceViewModel? target = null;
+            if (currentIdx >= 0)
+            {
+                target = orderBefore.Skip(currentIdx + 1).FirstOrDefault(Sequences.Contains)
+                      ?? orderBefore.Take(currentIdx).LastOrDefault(Sequences.Contains);
+            }
+            target ??= Sequences.FirstOrDefault();
+
+            if (target is not null)
+                SelectSequence(Sequences.IndexOf(target));
             else
             {
                 _currentSequence = null;
@@ -1619,6 +1721,7 @@ public class SequenceReviewerViewModel : ViewModelBase
 
         OnPropertyChanged(nameof(FilteredSequences));
         OnPropertyChanged(nameof(SequenceCounterText));
+        RefreshFilterOptions();
         RebuildFilmstrip();
 
         if (FilmstripPhotos.Count > 0)
@@ -1658,6 +1761,43 @@ public class SequenceReviewerViewModel : ViewModelBase
             return;
         }
 
+        if (SortOutPhotos(photos))
+            IsDeleteEnabled = false;   // Sicherheitsschalter nie scharf lassen
+    }
+
+    /// <summary>
+    /// Sortiert eine komplette Serie aus (I-011) — identische Semantik wie beim
+    /// Einzelbild, nur auf Ebene des Serien-Ordners: derselbe Dialog, dieselben
+    /// drei Wirkungen, dieselbe Bestätigung mit exakter Anzahl.
+    ///
+    /// Bewusst KEIN zweiter Löschpfad: beide Wege laufen durch
+    /// <see cref="SortOutPhotos"/>. Genau das Auseinanderdriften zweier Pfade
+    /// war die Ursache von I-010.
+    /// </summary>
+    private void ExecuteDeleteSequence(object? parameter)
+    {
+        var seq = parameter as ReviewSequenceViewModel ?? CurrentSequence;
+        if (seq is null || seq.Photos.Count == 0) return;
+
+        // Anders als beim Einzelbild wird hier die GANZE Serie erfasst — die
+        // Müll-Markierung spielt keine Rolle, der User wählt die Serie ja
+        // bewusst als Einheit aus. Der Dialog nennt die Anzahl, bevor etwas
+        // passiert.
+        if (SortOutPhotos(seq.Photos.ToList(), removeEmptyFolders: true))
+            _logger?.LogInformation("Sequenz-Reviewer: Serie '{Name}' aussortiert", seq.SequenceName);
+    }
+
+    /// <summary>
+    /// Der EINE Aussortier-Pfad: fragt nach, führt die gewählte Wirkung aus,
+    /// meldet Fehler und räumt Modell und Anzeige auf.
+    /// </summary>
+    /// <param name="removeEmptyFolders">
+    /// Bei ganzen Serien zusätzlich den leer gewordenen Serien-Ordner entfernen,
+    /// sonst bleiben leere Ordner zurück.
+    /// </param>
+    /// <returns>false, wenn der User abgebrochen hat (dann ist nichts passiert).</returns>
+    private bool SortOutPhotos(List<ReviewPhotoViewModel> photos, bool removeEmptyFolders = false)
+    {
         var trashRoot = Path.Combine(FolderPath, FolderNameConstants.TrashDir);
         var dialogVm  = new DeleteOptionsDialogViewModel(photos.Count, trashRoot);
         var dialog    = new DeleteOptionsDialog(dialogVm)
@@ -1665,18 +1805,22 @@ public class SequenceReviewerViewModel : ViewModelBase
             Owner = Application.Current?.Windows.OfType<Window>().FirstOrDefault(w => w.IsActive)
         };
 
-        if (dialog.ShowDialog() != true) return;
+        if (dialog.ShowDialog() != true) return false;
 
-        var mode     = dialogVm.SelectedMode;
-        var removed  = new List<ReviewPhotoViewModel>();
-        var failures = new List<string>();
+        var mode       = dialogVm.SelectedMode;
+        var doneCount  = 0;
+        var failures   = new List<string>();
+        var touchedDirs = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var p in photos)
         {
             try
             {
+                var dir = Path.GetDirectoryName(p.FullPath);
+                if (dir is not null) touchedDirs.Add(dir);
+
                 ApplyDeleteMode(p.FullPath, mode, trashRoot);
-                removed.Add(p);
+                doneCount++;
                 // Sidecar-Aufräumen übernimmt RefreshAfterMove() weiter unten —
                 // hier zusätzlich zu feuern hieße denselben Eintrag zweimal
                 // schreiben (Read-Modify-Write auf dieselbe Datei, Audit F-03).
@@ -1690,17 +1834,18 @@ public class SequenceReviewerViewModel : ViewModelBase
             }
         }
 
+        if (removeEmptyFolders)
+            RemoveEmptySequenceFolders(touchedDirs);
+
         // Aufräumen wie nach einem Move-Export (DRY, Audit F-05): entfernt die
         // Fotos aus ALLEN Sequenzen — nicht nur der aktuellen —, räumt leer
         // gewordene Sequenzen ab, pflegt die Sidecar-Einträge und aktualisiert
-        // Zähler und Filmstrip. Ohne das bliebe eine leergeräumte Sequenz in der
-        // Übersicht stehen — genau das optische Bild, mit dem der Bug gemeldet
-        // wurde ("Sequenz 435/857" mit leerem Inhalt).
+        // Zähler und Filmstrip.
         RefreshAfterMove();
 
         _logger?.LogInformation(
             "Sequenz-Reviewer: {Done} von {Total} Foto(s) aussortiert (Modus {Mode}), {Failed} Fehler",
-            removed.Count, photos.Count, mode, failures.Count);
+            doneCount, photos.Count, mode, failures.Count);
 
         if (failures.Count > 0)
         {
@@ -1713,8 +1858,39 @@ public class SequenceReviewerViewModel : ViewModelBase
                 MessageBoxImage.Warning);
         }
 
-        // Der Sicherheitsschalter darf nicht scharf bleiben.
-        IsDeleteEnabled = false;
+        return true;
+    }
+
+    /// <summary>
+    /// Entfernt Serien-Ordner, die durch das Aussortieren leer geworden sind.
+    ///
+    /// Mit Absicht sehr eng abgesichert: gelöscht wird nur, was leer ist,
+    /// unterhalb des gereviewten Ordners liegt und nicht dieser selbst ist.
+    /// Ein Fehlgriff hier würde den kompletten Review-Ordner treffen.
+    /// </summary>
+    private void RemoveEmptySequenceFolders(IEnumerable<string> candidates)
+    {
+        var root = Path.GetFullPath(FolderPath).TrimEnd('/', '\\');
+
+        foreach (var dir in candidates)
+        {
+            try
+            {
+                var full = Path.GetFullPath(dir).TrimEnd('/', '\\');
+
+                if (string.Equals(full, root, StringComparison.OrdinalIgnoreCase)) continue;
+                if (!full.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase)) continue;
+                if (!Directory.Exists(full)) continue;
+                if (Directory.EnumerateFileSystemEntries(full).Any()) continue;   // nur wirklich leere
+
+                Directory.Delete(full);
+                _logger?.LogInformation("Leeren Serien-Ordner entfernt: {Dir}", full);
+            }
+            catch (Exception ex)
+            {
+                _logger?.LogWarning(ex, "Leeren Serien-Ordner konnte nicht entfernt werden: {Dir}", dir);
+            }
+        }
     }
 
     /// <summary>

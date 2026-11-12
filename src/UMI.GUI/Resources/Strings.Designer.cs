@@ -6609,6 +6609,86 @@ namespace UMI.GUI.Resources {
             get { return ResourceManager.GetString("SequenceReviewer_InternalFolder", resourceCulture); }
         }
 
+        /// <summary>Looks up a localized string: "Show:" (I-013 filter segmented control label).</summary>
+        public static string SequenceReviewer_FilterLabel {
+            get { return ResourceManager.GetString("SequenceReviewer_FilterLabel", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Favorites {0}".</summary>
+        public static string SequenceReviewer_FilterFavoritesCount {
+            get { return ResourceManager.GetString("SequenceReviewer_FilterFavoritesCount", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Trash {0}".</summary>
+        public static string SequenceReviewer_FilterTrashCount {
+            get { return ResourceManager.GetString("SequenceReviewer_FilterTrashCount", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Favorite" (marker-action button label).</summary>
+        public static string SequenceReviewer_MarkFavorite {
+            get { return ResourceManager.GetString("SequenceReviewer_MarkFavorite", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Trash" (marker-action button label).</summary>
+        public static string SequenceReviewer_MarkTrash {
+            get { return ResourceManager.GetString("SequenceReviewer_MarkTrash", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Sort out this series" (I-011 overview-card hover tooltip).</summary>
+        public static string SequenceReviewer_DeleteSequenceTooltip {
+            get { return ResourceManager.GetString("SequenceReviewer_DeleteSequenceTooltip", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "? Keys" (shortcuts overlay entry button).</summary>
+        public static string SequenceReviewer_ShortcutsButton {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutsButton", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Show keyboard shortcuts".</summary>
+        public static string SequenceReviewer_ShortcutsTooltip {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutsTooltip", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Keyboard Shortcuts" (overlay heading).</summary>
+        public static string SequenceReviewer_ShortcutsTitle {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutsTitle", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Navigate photos".</summary>
+        public static string SequenceReviewer_ShortcutNavPhotos {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutNavPhotos", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Navigate sequences".</summary>
+        public static string SequenceReviewer_ShortcutNavSequences {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutNavSequences", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Toggle favorite".</summary>
+        public static string SequenceReviewer_ShortcutFavorite {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutFavorite", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Toggle trash".</summary>
+        public static string SequenceReviewer_ShortcutTrash {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutTrash", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Set rating (press again to clear)".</summary>
+        public static string SequenceReviewer_ShortcutRating {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutRating", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Toggle overview".</summary>
+        public static string SequenceReviewer_ShortcutOverview {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutOverview", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Close reviewer".</summary>
+        public static string SequenceReviewer_ShortcutClose {
+            get { return ResourceManager.GetString("SequenceReviewer_ShortcutClose", resourceCulture); }
+        }
+
         /// <summary>Looks up a localized string: "Not saved: this folder lies inside UMI's internal directory (.umi) …".</summary>
         public static string Workbench_InternalPathRejected {
             get { return ResourceManager.GetString("Workbench_InternalPathRejected", resourceCulture); }
