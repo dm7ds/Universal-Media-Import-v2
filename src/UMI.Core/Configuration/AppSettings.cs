@@ -18,6 +18,7 @@
 
 using System.Text.Json;
 using System.Text.Json.Serialization;
+using UMI.Core.Utilities;
 
 namespace UMI.Core.Configuration;
 
@@ -90,6 +91,24 @@ public class AppSettings
     /// </summary>
     [JsonPropertyName("check_for_updates_on_startup")]
     public bool CheckForUpdatesOnStartup { get; set; } = true;
+
+    /// <summary>
+    /// Sequenz-Reviewer (I-017): gewähltes Sortier-Feld für die Serien-Liste.
+    /// App-weit statt pro-Ordner, damit die Wahl beim nächsten Öffnen erhalten
+    /// bleibt, ohne ein neues Persistenz-Format einzuführen.
+    /// Default: CaptureTime (behebt den I-017-Bug — Namens-Sortierung
+    /// mischte Aufnahmetage).
+    /// </summary>
+    [JsonPropertyName("sequence_reviewer_sort_field")]
+    public SequenceSortField SequenceReviewerSortField { get; set; } = SequenceSortField.CaptureTime;
+
+    /// <summary>Sequenz-Reviewer (I-017): Sortier-Richtung. Default: aufsteigend.</summary>
+    [JsonPropertyName("sequence_reviewer_sort_descending")]
+    public bool SequenceReviewerSortDescending { get; set; }
+
+    /// <summary>Sequenz-Reviewer (I-017): gewählter Gruppier-Modus. Default: keine Gruppierung.</summary>
+    [JsonPropertyName("sequence_reviewer_group_mode")]
+    public SequenceGroupMode SequenceReviewerGroupMode { get; set; } = SequenceGroupMode.None;
 
     /// <summary>
     /// Führt Backward-Compat-Migration durch: Wenn "mode" nicht gesetzt war

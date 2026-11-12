@@ -2359,10 +2359,40 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
     <value>Alle Sequenzen</value>
   </data>
   <data name="SequenceReviewer_Unmatched" xml:space="preserve">
-    <value>Nicht zugeordnet</value>
+    <value>Einzelaufnahmen</value>
   </data>
   <data name="SequenceReviewer_Overview" xml:space="preserve">
     <value>Übersicht</value>
+  </data>
+  <data name="SequenceReviewer_SortLabel" xml:space="preserve">
+    <value>Sortieren:</value>
+  </data>
+  <data name="SequenceReviewer_SortCaptureTime" xml:space="preserve">
+    <value>Aufnahmezeit</value>
+  </data>
+  <data name="SequenceReviewer_SortName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SequenceReviewer_SortPhotoCount" xml:space="preserve">
+    <value>Anzahl Fotos</value>
+  </data>
+  <data name="SequenceReviewer_SortDirectionAscending" xml:space="preserve">
+    <value>Aufsteigend</value>
+  </data>
+  <data name="SequenceReviewer_SortDirectionDescending" xml:space="preserve">
+    <value>Absteigend</value>
+  </data>
+  <data name="SequenceReviewer_GroupLabel" xml:space="preserve">
+    <value>Gruppieren:</value>
+  </data>
+  <data name="SequenceReviewer_GroupNone" xml:space="preserve">
+    <value>Keine</value>
+  </data>
+  <data name="SequenceReviewer_GroupType" xml:space="preserve">
+    <value>Typ</value>
+  </data>
+  <data name="SequenceReviewer_GroupHeader" xml:space="preserve">
+    <value>{0} ({1})</value>
   </data>
   <data name="SequenceReviewer_BackToPhoto" xml:space="preserve">
     <value>Zurück zum Foto</value>

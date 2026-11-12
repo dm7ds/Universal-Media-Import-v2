@@ -29,6 +29,25 @@ public class ReviewSequenceViewModel : ViewModelBase
     public string? SourceProfileName { get; init; }
     /// <summary>Color palette index (0–7) assigned by the parent ViewModel based on the profile.</summary>
     public int? ProfileColorIndex { get; init; }
+
+    /// <summary>
+    /// Quelle für den Gruppierschlüssel (I-017), bewusst GETRENNT von
+    /// <see cref="SourceProfileName"/>.
+    ///
+    /// <see cref="SourceProfileName"/> ist eine ANZEIGE-Property: sie wird als
+    /// Untertitel auf der Serien-Karte gerendert und nur im "Alle Sequenzen"-
+    /// Modus gesetzt. Wird sie als Träger für den Gruppierschlüssel
+    /// zweckentfremdet, erscheint der Wert ungewollt auf jeder Karte — im
+    /// Einzelaufnahmen-Fall sogar doppelt (Titel und Untertitel identisch).
+    /// Genau das war Audit-Finding F-01.
+    /// </summary>
+    public string? GroupKeySource { get; init; }
+
+    /// <summary>
+    /// Gruppierschlüssel für "Gruppieren nach Typ" (I-017) — der Serien-Typ
+    /// (Profil-/Modus-Name, z.B. Sport/Astro/HighISO/Einzelaufnahmen).
+    /// </summary>
+    public string GroupKey => GroupKeySource ?? SourceProfileName ?? SequenceName;
     public List<ReviewPhotoViewModel> Photos { get; }
     public int Count => Photos.Count;
 

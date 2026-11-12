@@ -380,13 +380,108 @@ public class SequenceReviewerViewModel : ViewModelBase
         set
         {
             if (SetProperty(ref _sequenceFilter, value))
+            {
                 OnPropertyChanged(nameof(FilteredSequences));
+                OnPropertyChanged(nameof(GroupedSequences));
+            }
         }
+    }
+
+    private SequenceSortField _sortField = SequenceSortField.CaptureTime;
+    /// <summary>
+    /// Sortier-Feld für die Serien-Liste (I-017). Default: Aufnahmezeit —
+    /// löst den Bug, dass die frühere fixe Namens-Sortierung Aufnahmetage
+    /// mischte (Serien-Namen tragen nur die Uhrzeit, kein Datum).
+    /// </summary>
+    public SequenceSortField SortField
+    {
+        get => _sortField;
+        set
+        {
+            if (SetProperty(ref _sortField, value))
+            {
+                PersistViewPreferences();
+                OnPropertyChanged(nameof(SelectedSortOption));
+                OnPropertyChanged(nameof(FilteredSequences));
+                OnPropertyChanged(nameof(GroupedSequences));
+            }
+        }
+    }
+
+    private bool _sortDescending;
+    /// <summary>Sortier-Richtung für <see cref="SortField"/>. Default: aufsteigend.</summary>
+    public bool SortDescending
+    {
+        get => _sortDescending;
+        set
+        {
+            if (SetProperty(ref _sortDescending, value))
+            {
+                PersistViewPreferences();
+                OnPropertyChanged(nameof(FilteredSequences));
+                OnPropertyChanged(nameof(GroupedSequences));
+            }
+        }
+    }
+
+    private SequenceGroupMode _groupMode = SequenceGroupMode.None;
+    /// <summary>Gruppier-Modus für die Serien-Liste (I-017). Default: keine Gruppierung.</summary>
+    public SequenceGroupMode GroupMode
+    {
+        get => _groupMode;
+        set
+        {
+            if (SetProperty(ref _groupMode, value))
+            {
+                PersistViewPreferences();
+                OnPropertyChanged(nameof(SelectedGroupOption));
+                OnPropertyChanged(nameof(GroupedSequences));
+            }
+        }
+    }
+
+    /// <summary>Optionen für die "Sortieren nach:"-Dropdown (I-017).</summary>
+    public IReadOnlyList<ReviewSortOptionViewModel> SortFieldOptions { get; }
+
+    /// <summary>Optionen für die "Gruppieren nach:"-Dropdown (I-017).</summary>
+    public IReadOnlyList<ReviewGroupOptionViewModel> GroupModeOptions { get; }
+
+    /// <summary>Selektierte Option der Sortier-Dropdown — vermittelt zwischen ComboBox und <see cref="SortField"/>.</summary>
+    public ReviewSortOptionViewModel SelectedSortOption
+    {
+        get => SortFieldOptions.First(o => o.Field == SortField);
+        set { if (value != null) SortField = value.Field; }
+    }
+
+    /// <summary>Selektierte Option der Gruppier-Dropdown — vermittelt zwischen ComboBox und <see cref="GroupMode"/>.</summary>
+    public ReviewGroupOptionViewModel SelectedGroupOption
+    {
+        get => GroupModeOptions.First(o => o.Mode == GroupMode);
+        set { if (value != null) GroupMode = value.Mode; }
+    }
+
+    /// <summary>
+    /// Persistiert Sortierung + Gruppierung in AppSettings (I-017) — app-weit
+    /// statt pro-Ordner, damit die Wahl den Ordnerwechsel überlebt, ohne ein
+    /// neues Persistenz-Format einzuführen. No-op ohne injizierten ConfigWriter
+    /// (z.B. in Tests).
+    /// </summary>
+    private void PersistViewPreferences()
+    {
+        if (_configWriter is null) return;
+        _configWriter.UpdateSection<AppSettings>("app_settings", s =>
+        {
+            s.SequenceReviewerSortField      = SortField;
+            s.SequenceReviewerSortDescending = SortDescending;
+            s.SequenceReviewerGroupMode      = GroupMode;
+        });
+        _ = _configWriter.SaveAsync();
     }
 
     /// <summary>
     /// Filtered view of Sequences for the Overview Grid and filtered navigation.
-    /// Applies SequenceFilterMode (Rated/Unrated/All) AND active tag/rating/date/camera filters.
+    /// Applies SequenceFilterMode (Rated/Unrated/All) AND active tag/rating/date/camera filters,
+    /// then sorts the result per <see cref="SortField"/>/<see cref="SortDescending"/> (I-017).
     /// Sequences that have no matching photos after filtering are hidden.
     /// </summary>
     public IReadOnlyList<ReviewSequenceViewModel> FilteredSequences
@@ -406,7 +501,35 @@ public class SequenceReviewerViewModel : ViewModelBase
                 seqs = seqs.Where(s => s.Photos.Any(PhotoPassesFilters));
             }
 
-            return seqs.ToList();
+            return SequenceSorter.Sort(
+                seqs.ToList(),
+                s => new SequenceSortKey(s.SequenceName, s.FirstPhoto?.CaptureTime, s.Count),
+                SortField,
+                SortDescending);
+        }
+    }
+
+    /// <summary>
+    /// Gruppierte Sicht von <see cref="FilteredSequences"/> für die Overview-Grid
+    /// (I-017). Bei <see cref="SequenceGroupMode.None"/> genau EINE Gruppe ohne
+    /// Header — dieselbe XAML-Struktur rendert damit flach, kein zweiter Zweig
+    /// nötig (DRY). Die Sortierung innerhalb jeder Gruppe ergibt sich daraus,
+    /// dass GroupBy die bereits sortierte <see cref="FilteredSequences"/>-Liste
+    /// stabil (reihenfolgeerhaltend) gruppiert — kein zweiter Sortierlauf nötig.
+    /// </summary>
+    public IReadOnlyList<ReviewSequenceGroupViewModel> GroupedSequences
+    {
+        get
+        {
+            var flat = FilteredSequences;
+
+            if (GroupMode == SequenceGroupMode.None)
+                return new List<ReviewSequenceGroupViewModel> { new(string.Empty, flat) };
+
+            return flat
+                .GroupBy(s => s.GroupKey)
+                .Select(g => new ReviewSequenceGroupViewModel(g.Key, g.ToList()))
+                .ToList();
         }
     }
 
@@ -477,6 +600,31 @@ public class SequenceReviewerViewModel : ViewModelBase
         SetSequenceFilterCommand         = new RelayCommand<string>(SetSequenceFilter);
         SelectSequenceFromOverviewCommand = new RelayCommand<object>(SelectSequenceFromOverview);
         DeleteSequenceCommand            = new RelayCommand<object>(ExecuteDeleteSequence);
+
+        // I-017: Sortieren/Gruppieren. Optionen-Listen sind SSOT für die
+        // Dropdown-Einträge (ein Ort, keine Parallel-Deklaration in XAML).
+        SortFieldOptions = new List<ReviewSortOptionViewModel>
+        {
+            new(SequenceSortField.CaptureTime, Strings.SequenceReviewer_SortCaptureTime),
+            new(SequenceSortField.Name,        Strings.SequenceReviewer_SortName),
+            new(SequenceSortField.PhotoCount,  Strings.SequenceReviewer_SortPhotoCount),
+        };
+        GroupModeOptions = new List<ReviewGroupOptionViewModel>
+        {
+            new(SequenceGroupMode.None, Strings.SequenceReviewer_GroupNone),
+            new(SequenceGroupMode.Type, Strings.SequenceReviewer_GroupType),
+        };
+
+        if (_configWriter != null)
+        {
+            // Direkt auf die Backing-Fields, nicht die Property-Setter — sonst
+            // würde das Laden der gespeicherten Werte sofort wieder einen
+            // (unnötigen) Save-Zyklus auslösen.
+            var appSettings = _configWriter.Config.AppSettings;
+            _sortField      = appSettings.SequenceReviewerSortField;
+            _sortDescending = appSettings.SequenceReviewerSortDescending;
+            _groupMode      = appSettings.SequenceReviewerGroupMode;
+        }
 
         DateFilter.PropertyChanged += (_, e) =>
         {
@@ -758,7 +906,7 @@ public class SequenceReviewerViewModel : ViewModelBase
                         .OrderBy(p => p.CaptureTime ?? DateTime.MaxValue).ThenBy(p => p.FileName).ToList();
                     var name = $"{profile.Name}_{seqIdx++}";
                     Sequences.Add(new ReviewSequenceViewModel(name, photoVMs)
-                        { SourceProfileName = profile.Name, ProfileColorIndex = GetProfileColorIndex(profile) });
+                        { SourceProfileName = profile.Name, GroupKeySource = profile.Name, ProfileColorIndex = GetProfileColorIndex(profile) });
                 }
             }
         }
@@ -789,7 +937,8 @@ public class SequenceReviewerViewModel : ViewModelBase
                 .ToList();
 
             if (unassigned.Count > 0)
-                Sequences.Add(new ReviewSequenceViewModel(Strings.SequenceReviewer_Unmatched, unassigned));
+                Sequences.Add(new ReviewSequenceViewModel(Strings.SequenceReviewer_Unmatched, unassigned)
+                    { GroupKeySource = Strings.SequenceReviewer_Unmatched });
         }
         else
         {
@@ -814,7 +963,8 @@ public class SequenceReviewerViewModel : ViewModelBase
                     .OrderBy(p => p.CaptureTime ?? DateTime.MaxValue).ThenBy(p => p.FileName).ToList();
                 var name = $"{SelectedProfile?.Name ?? seq.SequenceName}_{seqIdx++}";
                 var colorIdx = SelectedProfile != null ? GetProfileColorIndex(SelectedProfile) : (int?)null;
-                Sequences.Add(new ReviewSequenceViewModel(name, photoVMs) { ProfileColorIndex = colorIdx });
+                Sequences.Add(new ReviewSequenceViewModel(name, photoVMs)
+                    { ProfileColorIndex = colorIdx, GroupKeySource = SelectedProfile?.Name ?? seq.SequenceName });
             }
         }
 
@@ -846,6 +996,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasMultipleCameras));
         OnPropertyChanged(nameof(SequenceCounterText));
         OnPropertyChanged(nameof(FilteredSequences));
+        OnPropertyChanged(nameof(GroupedSequences));
         OnPropertyChanged(nameof(SelectedProfileColorIndex));
         RefreshFilterOptions();
 
@@ -931,6 +1082,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         OnPropertyChanged(nameof(HasMultipleCameras));
         OnPropertyChanged(nameof(SequenceCounterText));
         OnPropertyChanged(nameof(FilteredSequences));
+        OnPropertyChanged(nameof(GroupedSequences));
         RefreshFilterOptions();
 
         if (Sequences.Count > 0)
@@ -1110,6 +1262,7 @@ public class SequenceReviewerViewModel : ViewModelBase
             s.SetFilterPredicate(pred);
 
         OnPropertyChanged(nameof(FilteredSequences));
+        OnPropertyChanged(nameof(GroupedSequences));
         var photos = GetFilteredPhotos();
 
         if (photos.Count > 0)
@@ -1139,6 +1292,7 @@ public class SequenceReviewerViewModel : ViewModelBase
 
         RebuildFilmstrip();
         OnPropertyChanged(nameof(FilteredSequences));
+        OnPropertyChanged(nameof(GroupedSequences));
         var photos = GetFilteredPhotos();
         if (photos.Count > 0 && CurrentPhoto is null)
             SetCurrentPhoto(photos[0]);
@@ -1204,6 +1358,7 @@ public class SequenceReviewerViewModel : ViewModelBase
                 s.IsCurrentInOverview = ReferenceEquals(s, CurrentSequence);
 
             OnPropertyChanged(nameof(FilteredSequences));
+            OnPropertyChanged(nameof(GroupedSequences));
         }
         IsOverviewMode = !IsOverviewMode;
     }
@@ -1720,6 +1875,7 @@ public class SequenceReviewerViewModel : ViewModelBase
         }
 
         OnPropertyChanged(nameof(FilteredSequences));
+        OnPropertyChanged(nameof(GroupedSequences));
         OnPropertyChanged(nameof(SequenceCounterText));
         RefreshFilterOptions();
         RebuildFilmstrip();

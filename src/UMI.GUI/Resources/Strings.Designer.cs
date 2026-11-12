@@ -6463,7 +6463,7 @@ namespace UMI.GUI.Resources {
             get { return ResourceManager.GetString("SequenceReviewer_AllSequences", resourceCulture); }
         }
 
-        /// <summary>Looks up a localized string: "Unmatched".</summary>
+        /// <summary>Looks up a localized string: "Single Shots".</summary>
         public static string SequenceReviewer_Unmatched {
             get { return ResourceManager.GetString("SequenceReviewer_Unmatched", resourceCulture); }
         }
@@ -6471,6 +6471,56 @@ namespace UMI.GUI.Resources {
         /// <summary>Looks up a localized string: "Overview".</summary>
         public static string SequenceReviewer_Overview {
             get { return ResourceManager.GetString("SequenceReviewer_Overview", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Sort:".</summary>
+        public static string SequenceReviewer_SortLabel {
+            get { return ResourceManager.GetString("SequenceReviewer_SortLabel", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Capture time".</summary>
+        public static string SequenceReviewer_SortCaptureTime {
+            get { return ResourceManager.GetString("SequenceReviewer_SortCaptureTime", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Name".</summary>
+        public static string SequenceReviewer_SortName {
+            get { return ResourceManager.GetString("SequenceReviewer_SortName", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Photo count".</summary>
+        public static string SequenceReviewer_SortPhotoCount {
+            get { return ResourceManager.GetString("SequenceReviewer_SortPhotoCount", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Ascending".</summary>
+        public static string SequenceReviewer_SortDirectionAscending {
+            get { return ResourceManager.GetString("SequenceReviewer_SortDirectionAscending", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Descending".</summary>
+        public static string SequenceReviewer_SortDirectionDescending {
+            get { return ResourceManager.GetString("SequenceReviewer_SortDirectionDescending", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Group:".</summary>
+        public static string SequenceReviewer_GroupLabel {
+            get { return ResourceManager.GetString("SequenceReviewer_GroupLabel", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "None".</summary>
+        public static string SequenceReviewer_GroupNone {
+            get { return ResourceManager.GetString("SequenceReviewer_GroupNone", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Type".</summary>
+        public static string SequenceReviewer_GroupType {
+            get { return ResourceManager.GetString("SequenceReviewer_GroupType", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "{0} ({1})".</summary>
+        public static string SequenceReviewer_GroupHeader {
+            get { return ResourceManager.GetString("SequenceReviewer_GroupHeader", resourceCulture); }
         }
 
         /// <summary>Looks up a localized string: "Back to photo".</summary>

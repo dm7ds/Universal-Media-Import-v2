@@ -4,6 +4,34 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.4] — 2026-08-13
+
+### Fixed
+
+- **Serien standen in einer unlogischen Reihenfolge.** Sie wurden nach ihrem
+  Namen sortiert statt nach der Aufnahmezeit. Weil Serien `<Modus>_<Uhrzeit>`
+  heißen, kamen dadurch immer erst alle `Astro`-Serien, dann alle `Sport`-Serien
+  — und über mehrere Tage hinweg landete eine Vormittagsserie von Tag 2 vor
+  einer Abendserie von Tag 1, weil im Namen kein Datum steht. Die Fotos
+  *innerhalb* einer Serie waren immer korrekt sortiert, weshalb es mal richtig
+  und mal falsch wirkte.
+
+### Added
+
+- **Sortieren und Gruppieren in der Serien-Übersicht.**
+  - **Sortieren nach** Aufnahmezeit (Voreinstellung), Name oder Anzahl der
+    Fotos — auf- oder absteigend.
+  - **Gruppieren nach** Typ (Sport, Astro, HighISO, Timelapse,
+    Einzelaufnahmen) oder ohne Gruppierung. Innerhalb jeder Gruppe gilt die
+    gewählte Sortierung.
+  - Die Einstellung bleibt erhalten, auch wenn ein anderer Ordner geöffnet wird.
+
+### Changed
+
+- **„Nicht zugeordnet" heißt jetzt „Einzelaufnahmen".** Dahinter verbergen sich
+  die Fotos, die zu keiner Serie gehören — unter dem alten Namen wurden sie
+  schlicht nicht gefunden.
+
 ## [2.2.3] — 2026-08-09
 
 ### Added

@@ -408,6 +408,10 @@
             <Geometry x:Key="GeoRestore">M7,4 L18,4 L18,15 M4,7 L15,7 L15,20 L4,20 Z</Geometry>
             <!-- Help: question mark circle outline -->
             <Geometry x:Key="GeoHelp">M11,18 L13,18 L13,16 L11,16 Z M12,2 C6.48,2 2,6.48 2,12 C2,17.52 6.48,22 12,22 C17.52,22 22,17.52 22,12 C22,6.48 17.52,2 12,2 Z M12,20 C7.59,20 4,16.41 4,12 C4,7.59 7.59,4 12,4 C16.41,4 20,7.59 20,12 C20,16.41 16.41,20 12,20 Z M12,6 C9.79,6 8,7.79 8,10 L10,10 C10,8.9 10.9,8 12,8 C13.1,8 14,8.9 14,10 C14,12 11,11.75 11,15 L13,15 C13,12.75 16,12.5 16,10 C16,7.79 14.21,6 12,6 Z</Geometry>
+            <!-- Sort direction: shaft with an up-arrowhead (I-017). Rotated 180°
+                 via RenderTransform for the descending state — one geometry, no
+                 second up/down pair (NML). -->
+            <Geometry x:Key="GeoSortArrow">M6,2 L6,10 M2,6 L6,2 L10,6</Geometry>
 
             <!-- ── Custom thin scrollbar style for Filmstrip (dark theme) ── -->
             <Style x:Key="FilmstripScrollBarThumb" TargetType="Thumb">
@@ -1522,7 +1526,13 @@
                         BorderBrush="{StaticResource BrushBorderSubtle}"
                         BorderThickness="0,0,0,1"
                         Padding="16,6">
-                        <StackPanel Orientation="Horizontal">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+
+                        <StackPanel Grid.Column="0" Orientation="Horizontal">
 
                             <!-- All sequences -->
                             <Button
@@ -1589,6 +1599,95 @@
                             </Button>
 
                         </StackPanel>
+
+                        <!-- I-017: Sortieren + Gruppieren. Rechts vom Sequenz-Filter,
+                             visuell abgesetzt — eigene "Ansicht"-Optionen, kein Filter
+                             und keine Aktion. -->
+                        <StackPanel Grid.Column="1" Orientation="Horizontal" VerticalAlignment="Center">
+
+                            <TextBlock
+                                Text="{helpers:Localize SequenceReviewer_SortLabel}"
+                                FontSize="{StaticResource FontSizeCaption}"
+                                Foreground="{StaticResource BrushTextMuted}"
+                                VerticalAlignment="Center"
+                                Margin="12,0,6,0" />
+
+                            <ComboBox
+                                ItemsSource="{Binding SortFieldOptions}"
+                                SelectedItem="{Binding SelectedSortOption, Mode=TwoWay}"
+                                DisplayMemberPath="Label"
+                                Style="{StaticResource DarkComboBoxStyle}"
+                                MinWidth="120"
+                                Height="28"
+                                VerticalAlignment="Center" />
+
+                            <ToggleButton
+                                IsChecked="{Binding SortDescending, Mode=TwoWay}"
+                                Style="{StaticResource IconToggleButton}"
+                                VerticalAlignment="Center"
+                                Margin="4,0,0,0">
+                                <ToggleButton.ToolTip>
+                                    <ToolTip>
+                                        <TextBlock>
+                                            <TextBlock.Style>
+                                                <Style TargetType="TextBlock">
+                                                    <Setter Property="Text" Value="{helpers:Localize SequenceReviewer_SortDirectionAscending}" />
+                                                    <Style.Triggers>
+                                                        <DataTrigger Binding="{Binding SortDescending}" Value="True">
+                                                            <Setter Property="Text" Value="{helpers:Localize SequenceReviewer_SortDirectionDescending}" />
+                                                        </DataTrigger>
+                                                    </Style.Triggers>
+                                                </Style>
+                                            </TextBlock.Style>
+                                        </TextBlock>
+                                    </ToolTip>
+                                </ToggleButton.ToolTip>
+                                <Path
+                                    Data="{StaticResource GeoSortArrow}"
+                                    Fill="{StaticResource BrushDrone}"
+                                    Width="12" Height="12"
+                                    Stretch="Uniform">
+                                    <Path.Style>
+                                        <Style TargetType="Path">
+                                            <Style.Triggers>
+                                                <DataTrigger Binding="{Binding SortDescending}" Value="True">
+                                                    <Setter Property="RenderTransform">
+                                                        <Setter.Value>
+                                                            <RotateTransform Angle="180" CenterX="6" CenterY="6" />
+                                                        </Setter.Value>
+                                                    </Setter>
+                                                </DataTrigger>
+                                            </Style.Triggers>
+                                        </Style>
+                                    </Path.Style>
+                                </Path>
+                            </ToggleButton>
+
+                            <!-- Separator -->
+                            <Border
+                                Width="1"
+                                Margin="10,4,10,4"
+                                Background="{StaticResource BrushBorderSubtle}" />
+
+                            <TextBlock
+                                Text="{helpers:Localize SequenceReviewer_GroupLabel}"
+                                FontSize="{StaticResource FontSizeCaption}"
+                                Foreground="{StaticResource BrushTextMuted}"
+                                VerticalAlignment="Center"
+                                Margin="0,0,6,0" />
+
+                            <ComboBox
+                                ItemsSource="{Binding GroupModeOptions}"
+                                SelectedItem="{Binding SelectedGroupOption, Mode=TwoWay}"
+                                DisplayMemberPath="Label"
+                                Style="{StaticResource DarkComboBoxStyle}"
+                                MinWidth="100"
+                                Height="28"
+                                VerticalAlignment="Center" />
+
+                        </StackPanel>
+
+                        </Grid>
                     </Border>
 
                     <!-- Cards grid / empty state -->
@@ -1613,19 +1712,43 @@
                             </TextBlock.Style>
                         </TextBlock>
 
-                        <!-- Sequence cards -->
+                        <!-- Sequence cards, gruppiert (I-017): GroupedSequences liefert IMMER
+                             mindestens eine Gruppe. Bei "Gruppieren: Keine" hat diese eine
+                             Gruppe einen leeren Namen (HasHeader=False) — derselbe Baum rendert
+                             dann flach, ohne einen zweiten XAML-Zweig (DRY). Jede Gruppe hält
+                             ihre Sequenzen bereits in der gewählten Sortierung (GroupBy auf der
+                             sortierten FilteredSequences-Liste ist stabil). -->
                         <ScrollViewer
                             VerticalScrollBarVisibility="Auto"
                             HorizontalScrollBarVisibility="Disabled"
                             Padding="8,8,8,8">
-                            <ItemsControl ItemsSource="{Binding FilteredSequences}">
+                            <ItemsControl ItemsSource="{Binding GroupedSequences}">
                                 <ItemsControl.ItemsPanel>
                                     <ItemsPanelTemplate>
-                                        <WrapPanel />
+                                        <StackPanel Orientation="Vertical" />
                                     </ItemsPanelTemplate>
                                 </ItemsControl.ItemsPanel>
                                 <ItemsControl.ItemTemplate>
-                                    <DataTemplate DataType="{x:Type vm:ReviewSequenceViewModel}">
+                                    <DataTemplate DataType="{x:Type vm:ReviewSequenceGroupViewModel}">
+                                        <StackPanel>
+
+                                            <!-- Group header: Name + Anzahl, nur sichtbar wenn Gruppierung aktiv -->
+                                            <TextBlock
+                                                Text="{Binding HeaderText}"
+                                                Visibility="{Binding HasHeader, Converter={StaticResource BoolToVisibility}}"
+                                                FontSize="{StaticResource FontSizeSmall}"
+                                                FontWeight="SemiBold"
+                                                Foreground="{StaticResource BrushTextSecondary}"
+                                                Margin="8,10,8,2" />
+
+                                            <ItemsControl ItemsSource="{Binding Sequences}">
+                                                <ItemsControl.ItemsPanel>
+                                                    <ItemsPanelTemplate>
+                                                        <WrapPanel />
+                                                    </ItemsPanelTemplate>
+                                                </ItemsControl.ItemsPanel>
+                                                <ItemsControl.ItemTemplate>
+                                                    <DataTemplate DataType="{x:Type vm:ReviewSequenceViewModel}">
 
                                         <!-- Sequence card button -->
                                         <Button
@@ -1873,6 +1996,11 @@
 
                                         </Button>
 
+                                                    </DataTemplate>
+                                                </ItemsControl.ItemTemplate>
+                                            </ItemsControl>
+
+                                        </StackPanel>
                                     </DataTemplate>
                                 </ItemsControl.ItemTemplate>
                             </ItemsControl>

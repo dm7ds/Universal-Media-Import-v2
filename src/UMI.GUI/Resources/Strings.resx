@@ -2419,10 +2419,40 @@ Path has been configured. Do you want to re-download anyway?</value>
     <value>All sequences</value>
   </data>
   <data name="SequenceReviewer_Unmatched" xml:space="preserve">
-    <value>Unmatched</value>
+    <value>Single Shots</value>
   </data>
   <data name="SequenceReviewer_Overview" xml:space="preserve">
     <value>Overview</value>
+  </data>
+  <data name="SequenceReviewer_SortLabel" xml:space="preserve">
+    <value>Sort:</value>
+  </data>
+  <data name="SequenceReviewer_SortCaptureTime" xml:space="preserve">
+    <value>Capture time</value>
+  </data>
+  <data name="SequenceReviewer_SortName" xml:space="preserve">
+    <value>Name</value>
+  </data>
+  <data name="SequenceReviewer_SortPhotoCount" xml:space="preserve">
+    <value>Photo count</value>
+  </data>
+  <data name="SequenceReviewer_SortDirectionAscending" xml:space="preserve">
+    <value>Ascending</value>
+  </data>
+  <data name="SequenceReviewer_SortDirectionDescending" xml:space="preserve">
+    <value>Descending</value>
+  </data>
+  <data name="SequenceReviewer_GroupLabel" xml:space="preserve">
+    <value>Group:</value>
+  </data>
+  <data name="SequenceReviewer_GroupNone" xml:space="preserve">
+    <value>None</value>
+  </data>
+  <data name="SequenceReviewer_GroupType" xml:space="preserve">
+    <value>Type</value>
+  </data>
+  <data name="SequenceReviewer_GroupHeader" xml:space="preserve">
+    <value>{0} ({1})</value>
   </data>
   <data name="SequenceReviewer_BackToPhoto" xml:space="preserve">
     <value>Back to photo</value>
