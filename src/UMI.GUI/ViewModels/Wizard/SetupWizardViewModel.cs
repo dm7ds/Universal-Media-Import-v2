@@ -39,6 +39,7 @@ namespace UMI.GUI.ViewModels.Wizard;
 public class SetupWizardViewModel : ViewModelBase, IDisposable
 {
     private readonly IConfigWriterService _configWriter;
+    private readonly IToolInstallService _toolInstaller;
     private readonly ConfigPathResolver _pathResolver;
 
     private WelcomeStepViewModel? _welcomeStep;
@@ -124,10 +125,12 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
         IDriveWatcherService driveWatcher,
         ConfigPathResolver pathResolver,
         CameraTypeLoader typeLoader,
+        IToolInstallService toolInstaller,
         BurstProfileLoader? burstProfileLoader = null,
         ILogger<ToolsViewModel>? toolsLogger = null)
     {
         _configWriter = configWriter;
+        _toolInstaller = toolInstaller;
         _pathResolver = pathResolver;
 
         _cardDetection = cardDetection;
@@ -180,7 +183,7 @@ public class SetupWizardViewModel : ViewModelBase, IDisposable
     }
 
     private ToolsStepViewModel GetToolsStep()
-        => _toolsStep ??= new ToolsStepViewModel(Session, _configWriter, _toolsLogger);
+        => _toolsStep ??= new ToolsStepViewModel(Session, _configWriter, _toolInstaller, _toolsLogger);
 
     private GpsStepViewModel GetGpsStep()
         => _gpsStep ??= new GpsStepViewModel(Session);

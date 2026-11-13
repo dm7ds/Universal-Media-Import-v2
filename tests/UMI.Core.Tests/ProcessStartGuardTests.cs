@@ -34,7 +34,7 @@ public class ProcessStartGuardTests
         ["src/UMI.Core/Utilities/FFprobeWrapper.cs"] = "FFprobe-Wrapper, UseShellExecute=false",
         ["src/UMI.Core/Wizards/Steps/ExifToolStep.cs"] = "ExifTool-Aufruf im Setup-Wizard, UseShellExecute=false",
         ["src/UMI.Core/Wizards/Steps/ToolDetectionHelper.cs"] = "Tool-Erkennung über `where`, UseShellExecute=false",
-        ["src/UMI.GUI/ViewModels/ToolsViewModel.cs"] = "Öffnet den Explorer auf die heruntergeladene Tool-ZIP (explorer.exe /select)",
+        ["src/UMI.GUI/ViewModels/ToolsViewModel.cs"] = "Öffnet den Explorer auf das erzeugte Support-Bundle (explorer.exe /select); der Werkzeug-Download startet nichts (I-022)",
         ["src/UMI.GUI/ViewModels/Wizard/Steps/ToolsStepViewModel.cs"] = "OpenUrlCommand: öffnet eine im XAML gebundene Download-Seite im Browser",
         ["src/UMI.GUI/Views/AboutDialog.xaml.cs"] = "Hyperlink-Navigation der About-Seite im Browser",
         ["src/UMI.GUI/Views/HelpWindow.xaml.cs"] = "Öffnet nur http(s)-Links der Hilfe im Browser",
@@ -61,7 +61,7 @@ public class ProcessStartGuardTests
     [Fact]
     public void ProcessStart_OnlyInAllowlistedFiles_AndEveryAllowlistEntryStillHits()
     {
-        var hits = FilesMatching(ProcessStartPattern);
+        var hits = SourceGuard.FilesMatching(ProcessStartPattern);
 
         AssertAllowlistMatches(hits, ProcessStartAllowlist, "Process.Start / new Process");
     }
@@ -69,7 +69,7 @@ public class ProcessStartGuardTests
     [Fact]
     public void ShellExecute_OnlyInAllowlistedFiles_AndEveryAllowlistEntryStillHits()
     {
-        var hits = FilesMatching(ShellExecutePattern);
+        var hits = SourceGuard.FilesMatching(ShellExecutePattern);
 
         AssertAllowlistMatches(hits, ShellExecuteAllowlist, "UseShellExecute = true");
     }
@@ -91,49 +91,6 @@ public class ProcessStartGuardTests
 
     private static void AssertAllowlistMatches(
         IReadOnlySet<string> hits, IReadOnlyDictionary<string, string> allowlist, string what)
-    {
-        var unlisted = hits.Where(f => !allowlist.ContainsKey(f)).ToList();
-        var stale = allowlist.Keys.Where(f => !hits.Contains(f)).ToList();
-
-        unlisted.Should().BeEmpty(
-            "{0} darf nur in Allowlist-Dateien vorkommen. Neue Fundstelle(n): {1}. " +
-            "Ungeprüfte Starts des Installers sind verboten — der Weg ist IUpdateService.LaunchVerifiedInstallerAsync. " +
-            "Ist die Stelle legitim, mit Begründung in die Allowlist eintragen.",
-            what, string.Join(", ", unlisted));
-        stale.Should().BeEmpty(
-            "Allowlist-Eintrag(e) ohne Treffer für {0} — Eintrag entfernen, damit die Liste nicht verrottet: {1}",
-            what, string.Join(", ", stale));
-    }
-
-    /// <summary>Alle <c>src/**/*.cs</c> (ohne bin/obj), deren Code (ohne Zeilenkommentare) das Muster enthält.</summary>
-    private static SortedSet<string> FilesMatching(Regex pattern)
-    {
-        var root = FindRepoRoot();
-        var src = Path.Combine(root, "src");
-        var hits = new SortedSet<string>(StringComparer.Ordinal);
-
-        foreach (var file in Directory.EnumerateFiles(src, "*.cs", SearchOption.AllDirectories))
-        {
-            var relative = Path.GetRelativePath(root, file).Replace('\\', '/');
-            if (relative.Contains("/bin/") || relative.Contains("/obj/"))
-                continue;
-
-            var code = File.ReadLines(file).Where(line => !line.TrimStart().StartsWith("//", StringComparison.Ordinal));
-            if (code.Any(line => pattern.IsMatch(line)))
-                hits.Add(relative);
-        }
-
-        return hits;
-    }
-
-    private static string FindRepoRoot()
-    {
-        for (var dir = new DirectoryInfo(AppContext.BaseDirectory); dir is not null; dir = dir.Parent)
-        {
-            if (File.Exists(Path.Combine(dir.FullName, "src", "UMI.Core", "UMI.Core.csproj")))
-                return dir.FullName;
-        }
-
-        throw new InvalidOperationException("Repo-Root (src/UMI.Core/UMI.Core.csproj) oberhalb von " + AppContext.BaseDirectory + " nicht gefunden.");
-    }
+        => SourceGuard.AssertAllowlistMatches(hits, allowlist, what,
+            "Ungeprüfte Starts des Installers sind verboten — der Weg ist IUpdateService.LaunchVerifiedInstallerAsync.");
 }

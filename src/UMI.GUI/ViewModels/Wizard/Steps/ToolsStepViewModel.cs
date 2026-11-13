@@ -43,18 +43,16 @@ public class ToolsStepViewModel : WizardStepViewModelBase
     public ToolsViewModel Tools { get; }
 
     public string ExifToolDownloadUrl => "https://exiftool.org/";
-    public string GyroflowDownloadUrl => ToolsViewModel.GyroflowDownloadUrl;
-    public string FFprobeDownloadUrl  => ToolsViewModel.FFprobeDownloadUrl;
-
     public ICommand OpenUrlCommand { get; }
 
     public ToolsStepViewModel(
         WizardSession session,
         IConfigWriterService configWriter,
+        IToolInstallService toolInstaller,
         ILogger<ToolsViewModel>? logger = null)
     {
         _session = session;
-        Tools = new ToolsViewModel(configWriter, supportBundle: null, logger);
+        Tools = new ToolsViewModel(configWriter, toolInstaller, supportBundle: null, logger);
 
         OpenUrlCommand = new RelayCommand<string>(url =>
         {

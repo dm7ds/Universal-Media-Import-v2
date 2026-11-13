@@ -30,6 +30,10 @@ OutputBaseFilename=UMI_Setup_{#MyAppVersion}
 Compression=lzma2/ultra64
 SolidCompression=yes
 PrivilegesRequired=admin
+; Running UMI is handled by ONE guard in [Code] (EnsureUmiStopped, I-024). Inno's default
+; (CloseApplications=yes, Restart Manager) would close applications on its own in silent
+; runs; the guard promises that nothing is ended without an explicit confirmation.
+CloseApplications=no
 ArchitecturesInstallIn64BitMode=x64compatible
 WizardStyle=modern
 ShowLanguageDialog=yes
@@ -87,6 +91,24 @@ german.DotNet8DownloadFailed=Download der .NET 8 Runtime fehlgeschlagen (Exit-Co
 english.DotNet8InstallFailed=.NET 8 Runtime installation failed (exit code: %1).%n%nPlease install it manually:%nhttps://aka.ms/dotnet/8.0/dotnet-runtime-win-x64.exe
 german.DotNet8InstallFailed=Installation der .NET 8 Runtime fehlgeschlagen (Exit-Code: %1).%n%nBitte manuell installieren:%nhttps://aka.ms/dotnet/8.0/dotnet-runtime-win-x64.exe
 
+; Running-UMI guard (umi-process-guard.iss, I-024). %1 = list of running programs
+english.UmiRunningTitle=UMI is still running
+german.UmiRunningTitle=UMI läuft noch
+english.UmiRunningMsg=These UMI programs from the installation folder are still running:%n%n%1%nA running import or processing job is aborted when UMI is closed. If UMI itself asks whether to quit during a running import, answer in the UMI window.
+german.UmiRunningMsg=Diese UMI-Programme aus dem Installationsordner laufen noch:%n%n%1%nEin laufender Import oder Verarbeitungsvorgang wird beim Schließen von UMI abgebrochen. Fragt UMI bei einem laufenden Import selbst nach, ob es beendet werden soll, antworte im UMI-Fenster.
+english.UmiBtnClose=Close UMI and continue%nUMI is asked to close normally.
+german.UmiBtnClose=UMI beenden und fortfahren%nUMI wird normal zum Schließen aufgefordert.
+english.UmiBtnRetry=Check again%nI close UMI myself first.
+german.UmiBtnRetry=Erneut prüfen%nIch schließe UMI selbst.
+english.UmiBtnCancel=Cancel
+german.UmiBtnCancel=Abbrechen
+english.UmiForceMsg=UMI did not close:%n%n%1%nIf UMI is asking whether to quit a running import, answer there first; if you chose No there, choose No here as well.%n%nEnd it forcibly?%n%nA running import or processing job is LOST. Files may be left incomplete and the database may be damaged.
+german.UmiForceMsg=UMI hat sich nicht beendet:%n%n%1%nFragt UMI gerade selbst, ob ein laufender Import beendet werden soll, antworte zuerst dort; wenn du dort Nein gewählt hast, wähle auch hier Nein.%n%nErzwungen beenden?%n%nEin laufender Import oder Verarbeitungsvorgang geht dabei VERLOREN. Dateien können unvollständig bleiben, die Datenbank kann beschädigt werden.
+english.UmiKillFailed=UMI could not be ended. Close it manually and run this again.
+german.UmiKillFailed=UMI konnte nicht beendet werden. Bitte manuell schließen und erneut starten.
+english.UmiStillRunning=UMI is still running, so Setup cannot continue.%n%nClose UMI and start Setup again.
+german.UmiStillRunning=UMI läuft noch, daher kann die Installation nicht fortgesetzt werden.%n%nBitte UMI schließen und das Setup erneut starten.
+
 [Types]
 Name: "full";   Description: "{cm:TypeFull}"
 Name: "custom"; Description: "{cm:TypeCustom}"; Flags: iscustom
@@ -106,14 +128,22 @@ Source: "..\publish\umi-gui.exe";                DestDir: "{app}";              
 Source: "..\publish\config-clean\*";             DestDir: "{app}\config";           Flags: recursesubdirs createallsubdirs;          Components: cli gui
 Source: "..\publish\tools\exiftool\*";           DestDir: "{app}\tools\exiftool";   Flags: recursesubdirs createallsubdirs;          Components: cli gui
 Source: "..\publish\tools\gyroflow\*";           DestDir: "{app}\tools\gyroflow";   Flags: recursesubdirs createallsubdirs skipifsourcedoesntexist; Components: gui
+; In-app help (HelpWindow reads <BaseDirectory>\docs\help\chapters.json + de\, en\) — I-025.
+; build.ps1 publishes it with the GUI and gates on chapters.json before ISCC (I-026).
+Source: "..\publish\docs\help\*";                DestDir: "{app}\docs\help";        Flags: recursesubdirs createallsubdirs;          Components: gui
 Source: "..\publish\README.md";                  DestDir: "{app}";                                                                   Components: cli gui
 Source: "..\publish\LICENSE";                    DestDir: "{app}";                                                                   Components: cli gui
 Source: "..\publish\THIRD_PARTY_LICENSES.txt";   DestDir: "{app}";                                                                   Components: cli gui
 ; Icon for the Apps & Features uninstall entry (referenced via UninstallDisplayIcon)
 Source: "assets\umi-icon.ico";                   DestDir: "{app}";                  Flags: ignoreversion;                           Components: cli gui
 
+[UninstallDelete]
+; Help is not user data; leftovers of earlier versions' help files go with it (I-025).
+Type: filesandordirs; Name: "{app}\docs\help"
+Type: dirifempty;     Name: "{app}\docs"
+
 [Icons]
-Name: "{group}\UMI";                Filename: "{app}\umi-gui.exe";  Components: gui
+Name: "{group}\UMI";              Filename: "{app}\umi-gui.exe";  Components: gui
 Name: "{commondesktop}\UMI";        Filename: "{app}\umi-gui.exe";  Components: gui; Tasks: desktopicon
 Name: "{group}\UMI Dokumentation";  Filename: "{app}\README.md"
 ; "Uninstall" entry intentionally omitted — Apps & Features is the standard
@@ -214,6 +244,8 @@ begin
   Result := IsDotNet8Installed();
 end;
 
+#include "umi-process-guard.iss"
+
 // Flag set by InitializeSetup, consumed by PrepareToInstall
 var
   NeedsDotNet8Install: Boolean;
@@ -229,6 +261,13 @@ end;
 function PrepareToInstall(var NeedsRestart: Boolean): String;
 begin
   Result := '';
+  // First: a running UMI from {app} (before the .NET download, so nothing is wasted on a cancel).
+  // Silent runs end up here with exit code 7 when UMI cannot be closed gently.
+  if not EnsureUmiStopped(ExpandConstant('{app}'), WizardSilent) then
+  begin
+    Result := CustomMessage('UmiStillRunning');
+    Exit;
+  end;
   if NeedsDotNet8Install then
   begin
     if not InstallDotNet8() then
@@ -283,7 +322,10 @@ var
 
 function InitializeUninstall(): Boolean;
 begin
-  Result := True;
+  // Same guard as Setup: files of a running UMI would otherwise stay behind.
+  Result := EnsureUmiStopped(ExpandConstant('{app}'), UninstallSilent);
+  if not Result then
+    Exit;
   // Default = No (keep config). MB_DEFBUTTON2 makes "No" the highlighted button.
   DeleteUserConfigOnUninstall :=
     MsgBox(

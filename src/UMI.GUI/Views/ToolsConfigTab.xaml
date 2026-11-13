@@ -238,6 +238,14 @@
                     Background="{StaticResource BrushBorderSubtle}" />
             </StackPanel>
 
+            <TextBlock
+                Text="{Binding DownloadErrorMessage, Mode=OneWay}"
+                Visibility="{Binding DownloadErrorMessage, Mode=OneWay, Converter={StaticResource StringToVisibility}}"
+                FontSize="{StaticResource FontSizeSmall}"
+                Foreground="{StaticResource BrushErrorText}"
+                TextWrapping="Wrap"
+                Margin="0,4,0,0" />
+
             <Border Style="{StaticResource CardDivider}" Margin="0,16,0,16" />
 
             <StackPanel Margin="0,0,0,16">

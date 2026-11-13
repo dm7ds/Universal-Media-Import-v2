@@ -621,7 +621,7 @@ UMI includes a WPF desktop interface for Windows. Launch `umi-gui.exe` from the 
 
 ## Build from source
 
-**Requirements:** [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0), optional [Inno Setup 6](https://jrsoftware.org/isdown.php) for the installer
+**Requirements:** [.NET 8 SDK](https://dotnet.microsoft.com/download/dotnet/8.0) plus the [.NET 10 SDK](https://dotnet.microsoft.com/download/dotnet/10.0) (the unit-test project `tests/UMI.Core.Tests` targets `net10.0`), optional [Inno Setup 6](https://jrsoftware.org/isdown.php) for the installer
 
 ```powershell
 git clone https://github.com/dm7ds/Universal-Media-Import-v2.git
@@ -629,12 +629,12 @@ cd Universal-Media-Import-v2
 
 pwsh -File build.ps1 -Publish slim          # CLI: framework-dependent single-file EXE (~5 MB)
 pwsh -File build.ps1 -Publish portable      # CLI: self-contained EXE (~65 MB)
-pwsh -File build.ps1 -Publish slim -Installer  # CLI + Windows installer (Inno Setup)
+pwsh -File build.ps1 -Installer             # CLI + GUI + help + Windows installer (Inno Setup)
 pwsh -File build.ps1 -Gui                   # GUI only (umi-gui.exe)
 pwsh -File build.ps1 -Publish slim -Gui     # CLI + GUI combined
 ```
 
-Output lands in `publish/`. The build script runs all unit tests before publishing and fails on any warning (`/warnaserror`).
+Output lands in `publish/`. The build script runs all unit tests (`tests/UMI.Core.Tests`; zero tests counts as a failure) before publishing and fails on any warning (`/warnaserror`). `-Installer` always publishes everything the installer packs and refuses to build the setup unless `umi.exe` and `umi-gui.exe` carry the version of the current commit and the help (`publish/docs/help/chapters.json`) exists.
 
 **Source tree:**
 

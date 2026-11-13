@@ -33,33 +33,6 @@
             <Setter Property="TextWrapping" Value="Wrap" />
             <Setter Property="Margin" Value="24,2,0,0" />
         </Style>
-
-        <Style x:Key="DeleteGhostButton" TargetType="Button">
-            <Setter Property="Cursor" Value="Hand" />
-            <Setter Property="Foreground" Value="{StaticResource BrushTextSecondary}" />
-            <Setter Property="FontSize" Value="{StaticResource FontSizeSmall}" />
-            <Setter Property="FontWeight" Value="SemiBold" />
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="Button">
-                        <Border
-                            x:Name="Bd"
-                            CornerRadius="{StaticResource RadiusButton}"
-                            Padding="{TemplateBinding Padding}"
-                            BorderBrush="{StaticResource BrushBorderSubtle}"
-                            BorderThickness="1"
-                            Background="Transparent">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
-                        </Border>
-                        <ControlTemplate.Triggers>
-                            <Trigger Property="IsMouseOver" Value="True">
-                                <Setter TargetName="Bd" Property="BorderBrush" Value="{StaticResource BrushBorder}" />
-                            </Trigger>
-                        </ControlTemplate.Triggers>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
     </Window.Resources>
 
     <Border CornerRadius="{StaticResource RadiusDialog}" BorderThickness="1" Margin="16">
@@ -166,7 +139,7 @@
                         Padding="16,7"
                         Margin="0,0,8,0"
                         IsCancel="True"
-                        Style="{StaticResource DeleteGhostButton}" />
+                        Style="{StaticResource GhostButton}" />
                     <Button
                         Command="{Binding ConfirmCommand}"
                         Content="{helpers:Localize DeleteOptions_Confirm}"

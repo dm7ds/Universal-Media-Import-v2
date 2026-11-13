@@ -152,6 +152,36 @@ public sealed class InstallerIntegrityTests : IDisposable
         File.Exists(path).Should().BeTrue("ohne Vergleich gibt es keinen Grund zu löschen");
     }
 
+    // --- als reine .sha256-Datei veröffentlichter Hash (Werkzeuge, I-022) ---
+
+    [Theory]
+    [InlineData("")]
+    [InlineData("\n")]
+    [InlineData("  ")]
+    public void FromBareHex_SurroundingWhitespace_ParsesToSameHash(string padding)
+    {
+        var digest = InstallerIntegrity.FromBareHex(padding + AbcSha256 + padding);
+
+        InstallerIntegrity.TryParseDigest(digest, out var hex).Should().BeTrue();
+        hex.Should().Be(AbcSha256);
+    }
+
+    public static TheoryData<string?> UnusableBareHex => new()
+    {
+        null,
+        "",
+        "<html>404 Not Found</html>",
+        AbcSha256 + " *ffmpeg.zip",                 // Format "hash *datei" ist keine reine Hex-Datei
+        AbcSha256[..63],
+        AbcSha256 + "0",
+        new string('g', 64),
+    };
+
+    [Theory]
+    [MemberData(nameof(UnusableBareHex))]
+    public void FromBareHex_NotAHash_IsNotVerifiable(string? content)
+        => InstallerIntegrity.IsVerifiable(InstallerIntegrity.FromBareHex(content)).Should().BeFalse();
+
     // --- Austausch-Fenster: Handle bleibt offen ---
 
     [Fact]
@@ -255,40 +285,6 @@ public sealed class InstallerIntegrityTests : IDisposable
 
     private static SetupAsset Asset(string? digest) => new("https://example.test/setup.exe", digest);
 
-    private sealed class FailingMidStreamHandler(Exception failure) : HttpMessageHandler
-    {
-        protected override Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken ct)
-            => Task.FromResult(new HttpResponseMessage(HttpStatusCode.OK)
-            {
-                Content = new StreamContent(new ThrowAfterFirstReadStream(failure))
-            });
-    }
-
-    /// <summary>Liefert beim ersten Lesen 3 Bytes, beim zweiten die Exception — ein abgebrochener Download.</summary>
-    private sealed class ThrowAfterFirstReadStream(Exception failure) : Stream
-    {
-        private bool _served;
-
-        public override int Read(byte[] buffer, int offset, int count)
-        {
-            if (_served)
-                throw failure;
-            _served = true;
-            Encoding.ASCII.GetBytes("abc").CopyTo(buffer, offset);
-            return 3;
-        }
-
-        public override bool CanRead => true;
-        public override bool CanSeek => false;
-        public override bool CanWrite => false;
-        public override long Length => throw new NotSupportedException();
-        public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
-        public override void Flush() { }
-        public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-        public override void SetLength(long value) => throw new NotSupportedException();
-        public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-    }
-
     private static GitHubReleaseChecker CheckerServing(string body, out CountingHandler handler)
     {
         handler = new CountingHandler(body);
@@ -307,19 +303,5 @@ public sealed class InstallerIntegrityTests : IDisposable
                 Content = new ByteArrayContent(Encoding.ASCII.GetBytes(body))
             });
         }
-    }
-
-    private sealed class ListLogger : ILogger
-    {
-        public List<(LogLevel Level, string Message)> Entries { get; } = [];
-
-        public IDisposable? BeginScope<TState>(TState state) where TState : notnull => null;
-
-        public bool IsEnabled(LogLevel logLevel) => true;
-
-        public void Log<TState>(
-            LogLevel logLevel, EventId eventId, TState state, Exception? exception,
-            Func<TState, Exception?, string> formatter)
-            => Entries.Add((logLevel, formatter(state, exception)));
     }
 }

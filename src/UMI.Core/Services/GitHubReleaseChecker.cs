@@ -160,16 +160,8 @@ public sealed class GitHubReleaseChecker : IUpdateService
             return InstallerVerdict.NotVerifiable;
         }
 
-        try
-        {
-            await DownloadToFileAsync(asset.Url, targetPath, progress, ct).ConfigureAwait(false);
-        }
-        catch
-        {
-            // Abbruch oder Fehler: die Teil-Datei soll nicht in %TEMP% liegen bleiben.
-            InstallerIntegrity.TryDelete(targetPath, _logger);
-            throw;
-        }
+        await HttpFileDownload.DownloadAsync(_httpClient, asset.Url, targetPath, progress, _logger, ct)
+            .ConfigureAwait(false);
 
         // Der Download-Stream ist hier geschlossen; die Datei wird erst jetzt geprueft.
         using var check = await InstallerIntegrity.CheckAsync(targetPath, asset.Digest, _logger, ct)
@@ -180,35 +172,6 @@ public sealed class GitHubReleaseChecker : IUpdateService
     /// <inheritdoc/>
     public Task<InstallerVerdict> LaunchVerifiedInstallerAsync(SetupAsset asset, string path, CancellationToken ct)
         => InstallerLauncher.RunVerifiedAsync(asset, path, InstallerLauncher.ShellStart, _logger, ct);
-
-    private async Task DownloadToFileAsync(string url, string targetPath, IProgress<double>? progress, CancellationToken ct)
-    {
-        using var response = await _httpClient
-            .GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct)
-            .ConfigureAwait(false);
-
-        response.EnsureSuccessStatusCode();
-
-        var totalBytes = response.Content.Headers.ContentLength;
-        await using var contentStream = await response.Content.ReadAsStreamAsync(ct).ConfigureAwait(false);
-        await using var fileStream = new FileStream(targetPath, FileMode.Create, FileAccess.Write, FileShare.None, 81920, useAsync: true);
-
-        var buffer = new byte[81920];
-        long bytesRead = 0;
-        int read;
-
-        while ((read = await contentStream.ReadAsync(buffer, ct).ConfigureAwait(false)) > 0)
-        {
-            await fileStream.WriteAsync(buffer.AsMemory(0, read), ct).ConfigureAwait(false);
-            bytesRead += read;
-
-            if (progress is not null && totalBytes > 0)
-                progress.Report((double)bytesRead / totalBytes.Value);
-        }
-
-        // Ensure 100% is reported even when Content-Length was unknown
-        progress?.Report(1.0);
-    }
 
     /// <summary>
     /// Liest die Assembly-Version als "Major.Minor.Build"-String — inklusive

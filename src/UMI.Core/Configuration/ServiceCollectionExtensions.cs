@@ -27,6 +27,19 @@ namespace UMI.Core.Configuration;
 
 public static class ServiceCollectionExtensions
 {
+    /// <summary>Gesamtzeit für den Download eines Werkzeug-Archivs (Gyroflow ~80 MB, FFmpeg ~115 MB).</summary>
+    private static readonly TimeSpan ToolDownloadTimeout = TimeSpan.FromMinutes(10);
+
+    /// <summary>Ein HttpClient mit UMI-User-Agent (die GitHub-API verlangt einen). Wird je Dienst einmal angelegt.</summary>
+    private static HttpClient CreateUmiHttpClient(TimeSpan? timeout = null)
+    {
+        var httpClient = new HttpClient();
+        httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"UMI/{GitHubReleaseChecker.GetCurrentVersion()}");
+        if (timeout is { } value)
+            httpClient.Timeout = value;
+        return httpClient;
+    }
+
     /// <summary>
     /// Registriert alle gemeinsamen UMI Core-Services.
     /// CLI und GUI rufen diese Methode auf, ergaenzen dann ihre spezifischen Services.
@@ -146,11 +159,13 @@ public static class ServiceCollectionExtensions
                 sp.GetService<ILogger<SupportBundleService>>()));
 
         services.AddSingleton<IUpdateService>(sp =>
-        {
-            var httpClient = new HttpClient();
-            httpClient.DefaultRequestHeaders.UserAgent.ParseAdd($"UMI/{GitHubReleaseChecker.GetCurrentVersion()}");
-            return new GitHubReleaseChecker(httpClient, sp.GetService<ILogger<GitHubReleaseChecker>>());
-        });
+            new GitHubReleaseChecker(CreateUmiHttpClient(), sp.GetService<ILogger<GitHubReleaseChecker>>()));
+
+        services.AddSingleton<IToolInstallService>(sp =>
+            new ToolInstallService(
+                CreateUmiHttpClient(ToolDownloadTimeout),
+                ConfigPathResolver.ToolsRoot,
+                sp.GetService<ILogger<ToolInstallService>>()));
 
         services.AddSingleton<GpuTaskDatabase>(sp =>
         {

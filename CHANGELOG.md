@@ -4,7 +4,52 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
-## [2.2.5] — 2026-11-13
+## [2.2.6] — 2026-11-13
+
+Enthält alle Änderungen aus 2.2.5 (2.2.5 wurde nicht freigegeben).
+
+### Security
+
+- **Heruntergeladene Hilfswerkzeuge (Gyroflow, FFprobe) werden vor dem Entpacken
+  geprüft.** Die ZIP wird per SHA256 mit dem Wert verglichen, den der Herausgeber
+  veröffentlicht (Gyroflow: GitHub-Release; FFmpeg: die `.sha256`-Datei von
+  gyan.dev). Bei Abweichung wird das Archiv gelöscht und nichts entpackt; gibt
+  es keinen Prüfwert, installiert UMI nicht automatisch — das Werkzeug lässt
+  sich dann manuell installieren und über „Durchsuchen" auswählen. Fehler beim
+  Werkzeug-Download bleiben jetzt sichtbar, statt sofort zu verschwinden.
+  Läuft das Werkzeug gerade, bleibt die alte Installation unangetastet.
+  Grenze wie beim Update: Der Prüfwert kommt vom selben Anbieter wie die Datei.
+
+### Changed
+
+- **UMI fragt nach, bevor es während eines laufenden Imports geschlossen wird.**
+  Bisher brach das Schließen (X, Alt+F4, Schließen durch den Installer) einen
+  laufenden Import ohne Rückfrage ab. Jetzt erscheint ein Dialog, der die Folgen
+  nennt: bereits kopierte Dateien bleiben erhalten, die gerade kopierte Datei
+  kann unvollständig im Zielordner liegen bleiben, die Nachbearbeitung wird
+  nicht ausgeführt.
+  „Nicht beenden“ ist vorgewählt (Enter/Esc) und lässt den Import weiterlaufen.
+  - „Update installieren“ ist gesperrt, solange ein Import läuft; das Banner
+    sagt, warum. Startet ein Import erst während der Update-Installation,
+    fragt UMI ebenfalls nach.
+  - Bei Windows-Abmeldung/Herunterfahren gibt es keine Rückfrage (die Sitzung
+    endet ohnehin); der Import wird dann abgebrochen.
+
+### Fixed
+
+- **Installer und Deinstaller erkennen ein laufendes UMI.** Es zählen nur
+  `umi.exe` / `umi-gui.exe` aus dem Installationsordner (Entwicklungs-Builds
+  an anderer Stelle bleiben unberührt). Läuft UMI nach kurzer Wartezeit noch,
+  fragt das Setup: beenden und fortfahren, erneut prüfen oder abbrechen.
+  Beendet wird zuerst normal; erst nach einer zweiten Rückfrage — mit Hinweis,
+  dass ein laufender Import verloren geht — wird UMI erzwungen beendet. Bei
+  `/SILENT` und `/VERYSILENT` wird UMI nie angesprochen, weder normal noch
+  erzwungen: läuft es nach der Wartezeit weiter, bricht das Setup mit
+  Fehlermeldung ab.
+- **Die Hilfe fehlte in installierten Versionen.** Der Installer legt jetzt
+  `docs\help` an; die Deinstallation entfernt sie wieder.
+
+## [2.2.5] — 2026-11-13 (nicht freigegeben, Inhalt in 2.2.6)
 
 ### Security
 
@@ -24,6 +69,13 @@ loosely tracks [Semantic Versioning](https://semver.org/).
     Installer ist weiterhin nicht signiert.
   - Die Prüfung wirkt ab dem Update, das **auf** diese Version folgt: Erst eine
     installierte 2.2.5 prüft, was sie herunterlädt.
+
+### Fixed
+
+- **Sequenz-Reviewer zeigte das große Bild nicht mehr.** Seit 2.2.3 waren nur
+  noch die Vorschaubilder zu sehen, der Bildbereich blieb leer. Ursache waren die
+  neuen Favorit-/Müll-Schaltflächen unter dem Bild, die das Fenster beim Laden
+  eines Fotos zum Absturz der Anzeige brachten. Betroffen waren 2.2.3 und 2.2.4.
 
 ## [2.2.4] — 2026-08-13
 

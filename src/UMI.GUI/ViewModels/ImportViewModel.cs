@@ -39,7 +39,7 @@ namespace UMI.GUI.ViewModels;
 /// DriveWatcher runs for the entire app lifetime — card status is always visible.
 /// Watch mode only controls whether imports trigger automatically on card insertion.
 /// </summary>
-public class ImportViewModel : ViewModelBase, IDisposable
+public class ImportViewModel : ViewModelBase, IDisposable, IImportActivity
 {
     private readonly IImportOrchestrationService _orchestration;
     private readonly IConfigWriterService _configWriter;
@@ -240,7 +240,7 @@ public class ImportViewModel : ViewModelBase, IDisposable
 
         WatchCommand            = new RelayCommand(ExecuteWatch);
         QuickImportCommand      = new RelayCommand(ExecuteQuickImport);
-        CancelAllCommand        = new RelayCommand(ExecuteCancelAll);
+        CancelAllCommand        = new RelayCommand(CancelAllImports);
         PauseResumeAllCommand   = new RelayCommand(ExecutePauseResumeAll);
 
         DateFilter.PropertyChanged += (s, e) => OnPropertyChanged(e.PropertyName);
@@ -1313,7 +1313,8 @@ public class ImportViewModel : ViewModelBase, IDisposable
         cameraVm.RaiseHasImportIssuesChanged();
     }
 
-    private void ExecuteCancelAll()
+    /// <inheritdoc />
+    public void CancelAllImports()
     {
         List<CancellationTokenSource> toCancel;
         lock (_activeCts)
@@ -1329,6 +1330,32 @@ public class ImportViewModel : ViewModelBase, IDisposable
 
         _logger?.LogInformation("Cancel All requested — {Count} active import(s) cancelled",
             toCancel.Count);
+    }
+
+    /// <summary>
+    /// Wartet auf das Signal "<see cref="HasActiveImports"/> wurde false" (kein Polling). Muss auf dem
+    /// UI-Thread laufen: die Property wird dort gesetzt und gemeldet.
+    /// </summary>
+    public async Task WaitUntilIdleAsync(CancellationToken ct)
+    {
+        var idle = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        void OnChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+        {
+            if (e.PropertyName == nameof(HasActiveImports) && !HasActiveImports)
+                idle.TrySetResult();
+        }
+
+        PropertyChanged += OnChanged;
+        try
+        {
+            if (!HasActiveImports) return;
+            await idle.Task.WaitAsync(ct);
+        }
+        finally
+        {
+            PropertyChanged -= OnChanged;
+        }
     }
 
     private void UpdateHasActiveImports()
@@ -1387,7 +1414,7 @@ public class ImportViewModel : ViewModelBase, IDisposable
         _mtpPollingCts?.Dispose();
         _mtpPollingCts = null;
 
-        ExecuteCancelAll();
+        CancelAllImports();
 
         lock (_activeCts)
         {

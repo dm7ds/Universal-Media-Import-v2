@@ -1,9 +1,20 @@
 name: Release
 
 on:
+  # Release: nur ein Tag-Push "v*" legt ein GitHub-Release an.
   push:
     tags:
       - 'v*'
+  # Probelauf: baut und testet alles (inkl. Installer), veroeffentlicht aber
+  # NICHTS. Ob veroeffentlicht wird, haengt allein am Event (siehe PUBLISH im
+  # Job-env), nie an diesem Eingang — er ist nur die ausdrueckliche Bestaetigung
+  # "das ist ein Probelauf"; false wird im Step "Modus festlegen" abgelehnt.
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Probelauf: bauen + testen, KEIN Release, nichts wird veroeffentlicht'
+        type: boolean
+        default: true
 
 permissions:
   contents: write
@@ -12,19 +23,66 @@ jobs:
   release:
     name: Build & Release
     runs-on: windows-latest
-    # Only build releases on the public repo. The dev repo also has this
-    # workflow file in the mirror snapshot, but tags pushed inside dev
-    # should not produce releases.
-    if: github.repository == 'dm7ds/Universal-Media-Import-v2'
+    timeout-minutes: 30
+    # Tag-Pushes bauen nur im oeffentlichen Repo. Das Dev-Repo hat diese
+    # Workflow-Datei ebenfalls (Mirror-Snapshot); dort sollen Tags kein Release
+    # erzeugen. Der manuelle Probelauf darf in beiden Repos laufen, weil er
+    # nichts veroeffentlicht.
+    if: github.event_name == 'workflow_dispatch' || github.repository == 'dm7ds/Universal-Media-Import-v2'
+
+    env:
+      # DIE eine Stelle, die ueber Veroeffentlichung entscheidet. Jeder Step, der
+      # etwas hochlaedt, an einen Dienst schickt oder ein Release anlegt, prueft
+      # `env.PUBLISH == 'true'`. Beim Probelauf ist das Event workflow_dispatch,
+      # PUBLISH also 'false' — unabhaengig davon, welche Ref oder welcher Eingang
+      # gewaehlt wurde (auch ein Dispatch auf einem Tag veroeffentlicht nicht).
+      #
+      # Das Tag-Muster 'v*' steht NUR im on.push.tags-Filter oben; mit nur einem
+      # tags-Filter loest ein Branch-Push diesen Workflow gar nicht aus. Hier
+      # steht bewusst nur `ref_type == 'tag'` (kein zweites Muster): faengt ab,
+      # dass jemand spaeter einen branches-Filter unter on.push ergaenzt und damit
+      # Branch-Pushes veroeffentlichen wuerden.
+      PUBLISH: ${{ github.event_name == 'push' && github.ref_type == 'tag' }}
 
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - name: Modus festlegen
+        shell: pwsh
+        env:
+          DRY_RUN: ${{ inputs.dry_run }}
+        run: |
+          if ($env:GITHUB_EVENT_NAME -eq 'workflow_dispatch' -and $env:DRY_RUN -ne 'true') {
+            throw "workflow_dispatch ist nur als Probelauf erlaubt (dry_run=true). Ein Release entsteht ausschliesslich durch einen Tag-Push v*."
+          }
+          if ($env:PUBLISH -eq 'true') {
+            Write-Host "Modus: RELEASE ($env:GITHUB_REF_NAME) — baut, testet und veroeffentlicht."
+          } else {
+            Write-Host "Modus: PROBELAUF ($env:GITHUB_EVENT_NAME, $env:GITHUB_REF) — baut und testet, veroeffentlicht nichts."
+          }
 
-      - name: Setup .NET 8
-        uses: actions/setup-dotnet@v4
+      - name: Checkout
+        uses: actions/checkout@v7
         with:
-          dotnet-version: '8.0.x'
+          # Kein Token in .git/config zuruecklassen: Build- und Installer-Skripte
+          # brauchen keinen Schreibzugriff aufs Repo. Das Release-Step bringt sein
+          # eigenes Token mit.
+          persist-credentials: false
+
+      # tests/UMI.Core.Tests zielt auf net10.0, die Produktprojekte auf net8.0.
+      # Beide SDKs explizit installieren, damit der Testlauf nicht davon abhaengt,
+      # was das Runner-Image zufaellig vorinstalliert hat.
+      - name: Setup .NET 8 + 10
+        uses: actions/setup-dotnet@v6
+        with:
+          dotnet-version: |
+            8.0.x
+            10.0.x
+
+      # ── Test-Gate ──
+      # Kein Release ohne gruene Tests: schlaegt ein Test fehl, bricht dieser Step
+      # den Job ab; alle folgenden Steps (Installer, Release) laufen nur bei
+      # success() und werden uebersprungen.
+      - name: Unit Tests (UMI.Core.Tests)
+        run: dotnet test tests/UMI.Core.Tests/UMI.Core.Tests.csproj -c Release --nologo
 
       # ExifTool is a runtime dependency of UMI but lives outside this repo
       # (Perl-based tool, ~30 MB). Pulled fresh on every release run.
@@ -41,11 +99,23 @@ jobs:
       # content-disposition attachment). Damit gibt es keine Versionsnummer im
       # Workflow, die veralten kann. Der Sanity-Check unten faengt ab, falls
       # SourceForge je etwas anderes als die Windows-ZIP ausliefert.
+      #
+      # Integritaet: der Herausgeber (exiftool.org) veroeffentlicht die SHA256
+      # der Distributionsdateien unter /checksums.txt (aktuelle Version; pro
+      # Version zusaetzlich /checksums-<ver>.txt). Das ist eine ANDERE Quelle als
+      # der Download (SourceForge). Der Step berechnet den SHA256 der geladenen
+      # ZIP selbst und bricht bei Abweichung ab — auch wenn checksums.txt nicht
+      # erreichbar ist oder keinen eindeutigen _64.zip-Eintrag hat (fail closed).
+      # Hinweis: Erscheint zwischen den beiden Abrufen eine neue ExifTool-Version
+      # und die beiden Quellen sind kurz uneins, scheitert der Step bewusst;
+      # ein Neustart des Laufs loest das.
       - name: Download ExifTool
         shell: pwsh
         run: |
           $zipUrl  = 'https://sourceforge.net/projects/exiftool/files/latest/download'
+          $sumsUrl = 'https://exiftool.org/checksums.txt'
           $zipPath = Join-Path $env:RUNNER_TEMP 'exiftool.zip'
+          $sumsPath = Join-Path $env:RUNNER_TEMP 'exiftool-checksums.txt'
           $extract = Join-Path $env:RUNNER_TEMP 'exiftool-extract'
 
           # Der User-Agent ist NICHT optional: SourceForge wertet ihn aus und
@@ -56,6 +126,17 @@ jobs:
           # 11,2 MB mit korrekter PK-Signatur. Ohne Override wuerde der Build
           # also erneut brechen, nur mit kryptischem Expand-Archive-Fehler.
           $ua = 'Wget/1.21.3'
+
+          # Erst den Pruefwert des Herausgebers holen (andere Quelle als die ZIP).
+          Write-Host "Fetching publisher checksums from $sumsUrl"
+          Invoke-WebRequest $sumsUrl -OutFile $sumsPath -UseBasicParsing -UserAgent $ua
+          $entries = [regex]::Matches((Get-Content $sumsPath -Raw), '(?m)^SHA2-256\((exiftool-[0-9.]+_64\.zip)\)=\s*([0-9a-fA-F]{64})\s*$')
+          if ($entries.Count -ne 1) {
+            throw "checksums.txt von exiftool.org enthaelt $($entries.Count) SHA2-256-Eintraege fuer exiftool-<ver>_64.zip (erwartet: genau 1). Format geaendert? Erste Zeilen: $((Get-Content $sumsPath -TotalCount 3) -join ' | ')"
+          }
+          $expectedName = $entries[0].Groups[1].Value
+          $expectedHash = $entries[0].Groups[2].Value
+          Write-Host "Publisher SHA256 for ${expectedName}: $expectedHash"
 
           Write-Host "Downloading ExifTool (latest) from $zipUrl"
           Invoke-WebRequest $zipUrl -OutFile $zipPath -UseBasicParsing -UserAgent $ua
@@ -68,6 +149,14 @@ jobs:
             $head = (Get-Content $zipPath -TotalCount 1 -ErrorAction SilentlyContinue)
             throw "ExifTool-Download ist kein ZIP (Signatur $($sig[0].ToString('X2')) $($sig[1].ToString('X2')), erste Zeile: '$head'). SourceForge hat vermutlich eine HTML-Seite geliefert — User-Agent-Handling pruefen."
           }
+
+          # Integritaet: selbst berechneter SHA256 gegen den Herausgeber-Wert.
+          # (-ne ist in PowerShell case-insensitive; Get-FileHash liefert Grossbuchstaben.)
+          $actualHash = (Get-FileHash $zipPath -Algorithm SHA256).Hash
+          if ($actualHash -ne $expectedHash) {
+            throw "ExifTool-ZIP SHA256 weicht vom Wert des Herausgebers ab. Erwartet ($expectedName, exiftool.org): $expectedHash — berechnet: $actualHash. Manipulierter Download oder neue Version zwischen den Abrufen (Lauf wiederholen)."
+          }
+          Write-Host "ExifTool SHA256 verified ($expectedName)"
 
           Expand-Archive $zipPath -DestinationPath $extract -Force
 
@@ -131,16 +220,19 @@ jobs:
       #
       # Until SIGNPATH_ENABLED == 'true', the installer ships unsigned but the
       # rest of the workflow keeps working unchanged.
+      #
+      # Alle drei Steps laufen ausserdem nur bei PUBLISH: ein Probelauf laedt
+      # keinen Installer hoch und schickt nichts an SignPath.
       - name: Upload installer for signing
-        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        if: env.PUBLISH == 'true' && vars.SIGNPATH_ENABLED == 'true'
         id: upload-unsigned-installer
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: umi-installer-unsigned
           path: installer/Output/UMI_Setup_*.exe
 
       - name: Submit installer to SignPath
-        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        if: env.PUBLISH == 'true' && vars.SIGNPATH_ENABLED == 'true'
         uses: signpath/github-action-submit-signing-request@v2
         with:
           api-token: ${{ secrets.SIGNPATH_API_TOKEN }}
@@ -152,7 +244,7 @@ jobs:
           output-artifact-directory: installer/Output/signed
 
       - name: Replace unsigned installer with signed
-        if: ${{ vars.SIGNPATH_ENABLED == 'true' }}
+        if: env.PUBLISH == 'true' && vars.SIGNPATH_ENABLED == 'true'
         shell: pwsh
         run: |
           Get-ChildItem installer/Output/signed/UMI_Setup_*.exe | ForEach-Object {
@@ -161,10 +253,15 @@ jobs:
           Remove-Item -Recurse -Force installer/Output/signed
 
       # ── GitHub Release ──
+      # Einziger Step, der ein Release anlegt. Nur bei Tag-Push (PUBLISH).
       - name: Create GitHub Release
-        uses: softprops/action-gh-release@v2
+        if: env.PUBLISH == 'true'
+        uses: softprops/action-gh-release@v3
         with:
           name: ${{ github.ref_name }}
+          # Default ist false (action.yml): ein Glob ohne Treffer, z. B. der
+          # Installer, ergaebe sonst still ein Release ohne dieses Asset.
+          fail_on_unmatched_files: true
           files: |
             umi-slim.zip
             umi-portable.zip

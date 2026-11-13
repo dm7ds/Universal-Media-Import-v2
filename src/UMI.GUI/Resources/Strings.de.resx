@@ -2086,7 +2086,16 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
     <value>Ausführbare Dateien (*.exe)|*.exe|Alle Dateien (*.*)|*.*</value>
   </data>
   <data name="Tools_Extracting" xml:space="preserve">
-    <value>{0} wird entpackt...</value>
+    <value>{0} wird geprüft und entpackt...</value>
+  </data>
+  <data name="Tools_ChecksumMismatch" xml:space="preserve">
+    <value>{0} wurde NICHT installiert: Die heruntergeladene Datei stimmt nicht mit der von der Quelle veröffentlichten Prüfsumme überein und wurde gelöscht. Später erneut versuchen oder {0} manuell installieren und über „Durchsuchen“ auswählen.</value>
+  </data>
+  <data name="Tools_InUse" xml:space="preserve">
+    <value>{0} wurde nicht aktualisiert: Die Dateien sind in Benutzung. {0} bitte schließen und erneut versuchen; die vorhandene Installation ist unverändert.</value>
+  </data>
+  <data name="Tools_NotVerifiable" xml:space="preserve">
+    <value>{0} wurde NICHT installiert: Für den Download ist keine Prüfsumme verfügbar, deshalb wird nicht automatisch installiert. {0} manuell installieren und über „Durchsuchen“ auswählen.</value>
   </data>
   <data name="Tools_InstalledSuccess" xml:space="preserve">
     <value>{0} erfolgreich installiert!</value>
@@ -2648,5 +2657,26 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   </data>
   <data name="DeleteOptions_PartialFailure" xml:space="preserve">
     <value>{0} von {1} Foto(s) konnten nicht verarbeitet werden:</value>
+  </data>
+  <data name="CloseGuard_Title" xml:space="preserve">
+    <value>Import läuft noch</value>
+  </data>
+  <data name="CloseGuard_Message" xml:space="preserve">
+    <value>Ein Import läuft noch. Beim Beenden wird er abgebrochen:
+
+• Bereits kopierte Dateien bleiben erhalten.
+• Die Datei, die gerade kopiert wird, kann unvollständig im Zielordner liegen bleiben.
+• Die Nachbearbeitung (z. B. GPS, Stabilisierung) wird nicht ausgeführt.
+
+Wirklich beenden?</value>
+  </data>
+  <data name="CloseGuard_Quit" xml:space="preserve">
+    <value>Import abbrechen und beenden</value>
+  </data>
+  <data name="CloseGuard_Keep" xml:space="preserve">
+    <value>Nicht beenden</value>
+  </data>
+  <data name="Update_InstallBlockedByImport" xml:space="preserve">
+    <value>Ein Import läuft. Die Installation würde ihn abbrechen – bitte nach dem Ende des Imports installieren.</value>
   </data>
 </root>

@@ -4608,11 +4608,38 @@ namespace UMI.GUI.Resources {
         }
 
         /// <summary>
-        ///   Looks up a localized string similar to Extracting {0}....
+        ///   Looks up a localized string similar to Verifying and extracting {0}....
         /// </summary>
         public static string Tools_Extracting {
             get {
                 return ResourceManager.GetString("Tools_Extracting", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} was NOT installed: the downloaded file does not match the checksum published by its source and was deleted. Try again later, or install {0} manually and select it with Browse..
+        /// </summary>
+        public static string Tools_ChecksumMismatch {
+            get {
+                return ResourceManager.GetString("Tools_ChecksumMismatch", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} was not updated: its files are in use. Close {0} and try again; the existing installation is unchanged..
+        /// </summary>
+        public static string Tools_InUse {
+            get {
+                return ResourceManager.GetString("Tools_InUse", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to {0} was NOT installed: no checksum is available to verify the download, so it is not installed automatically. Install {0} manually and select it with Browse..
+        /// </summary>
+        public static string Tools_NotVerifiable {
+            get {
+                return ResourceManager.GetString("Tools_NotVerifiable", resourceCulture);
             }
         }
 
@@ -7055,6 +7082,31 @@ namespace UMI.GUI.Resources {
         /// <summary>Looks up a localized string: "{0} of {1} photo(s) could not be processed:".</summary>
         public static string DeleteOptions_PartialFailure {
             get { return ResourceManager.GetString("DeleteOptions_PartialFailure", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Import still running".</summary>
+        public static string CloseGuard_Title {
+            get { return ResourceManager.GetString("CloseGuard_Title", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "An import is still running. Quitting cancels it: ...".</summary>
+        public static string CloseGuard_Message {
+            get { return ResourceManager.GetString("CloseGuard_Message", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Cancel import and quit".</summary>
+        public static string CloseGuard_Quit {
+            get { return ResourceManager.GetString("CloseGuard_Quit", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "Don't quit".</summary>
+        public static string CloseGuard_Keep {
+            get { return ResourceManager.GetString("CloseGuard_Keep", resourceCulture); }
+        }
+
+        /// <summary>Looks up a localized string: "An import is running. Installing the update would cancel it ...".</summary>
+        public static string Update_InstallBlockedByImport {
+            get { return ResourceManager.GetString("Update_InstallBlockedByImport", resourceCulture); }
         }
     }
 }

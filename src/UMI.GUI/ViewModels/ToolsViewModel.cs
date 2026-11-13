@@ -17,8 +17,6 @@
 //     along with UMI - Universal Media Import.  If not, see <http://www.gnu.org/licenses/>.
 
 using System.IO;
-using System.IO.Compression;
-using System.Net.Http;
 using System.Windows.Input;
 using Microsoft.Extensions.Logging;
 using Microsoft.Win32;
@@ -36,11 +34,9 @@ namespace UMI.GUI.ViewModels;
 public class ToolsViewModel : ViewModelBase
 {
     private readonly IConfigWriterService _configWriter;
+    private readonly IToolInstallService _toolInstaller;
     private readonly ISupportBundleService? _supportBundle;
     private readonly ILogger<ToolsViewModel>? _logger;
-
-    internal const string GyroflowDownloadUrl = "https://github.com/gyroflow/gyroflow/releases/latest/download/Gyroflow-windows64.zip";
-    internal const string FFprobeDownloadUrl  = "https://www.gyan.dev/ffmpeg/builds/ffmpeg-release-essentials.zip";
 
     private string _exifToolPath = string.Empty;
     /// <summary>Path to exiftool.exe (required).</summary>
@@ -221,6 +217,17 @@ public class ToolsViewModel : ViewModelBase
         private set => SetProperty(ref _downloadStatusMessage, value);
     }
 
+    private string? _downloadErrorMessage;
+    /// <summary>
+    /// Why the last tool install did not happen (checksum mismatch, no checksum available, network error).
+    /// Stays until the next attempt — unlike <see cref="DownloadStatusMessage"/>, which is only shown while downloading.
+    /// </summary>
+    public string? DownloadErrorMessage
+    {
+        get => _downloadErrorMessage;
+        private set => SetProperty(ref _downloadErrorMessage, value);
+    }
+
     public ICommand BrowseExifToolCommand       { get; }
     public ICommand BrowseGyroflowCommand       { get; }
     public ICommand BrowseFFprobeCommand        { get; }
@@ -246,10 +253,12 @@ public class ToolsViewModel : ViewModelBase
 
     public ToolsViewModel(
         IConfigWriterService configWriter,
+        IToolInstallService toolInstaller,
         ISupportBundleService? supportBundle = null,
         ILogger<ToolsViewModel>? logger = null)
     {
         _configWriter = configWriter;
+        _toolInstaller = toolInstaller;
         _supportBundle = supportBundle;
         _logger = logger;
 
@@ -260,10 +269,10 @@ public class ToolsViewModel : ViewModelBase
         ResetExifToolDefaultCommand = new RelayCommand(ExecuteResetExifToolDefault, CanResetExifToolDefault);
 
         DownloadGyroflowCommand = new RelayCommand(
-            () => DownloadAndInstallAsync(ToolKeys.Gyroflow, GyroflowDownloadUrl, "Gyroflow.exe"),
+            () => DownloadAndInstallAsync(ToolKeys.Gyroflow),
             () => !IsDownloading);
         DownloadFFprobeCommand = new RelayCommand(
-            () => DownloadAndInstallAsync(ToolKeys.FFprobe, FFprobeDownloadUrl, "ffprobe.exe"),
+            () => DownloadAndInstallAsync(ToolKeys.FFprobe),
             () => !IsDownloading);
         CreateSupportBundleCommand = new RelayCommand(ExecuteCreateSupportBundle, () => !IsSaving);
     }
@@ -447,112 +456,99 @@ public class ToolsViewModel : ViewModelBase
         }
     }
 
-    private async void DownloadAndInstallAsync(string toolKey, string downloadUrl, string exeName)
+    /// <summary>
+    /// Installs a tool through <see cref="IToolInstallService"/> — the only path from download to extracted
+    /// executable, and it verifies the archive's SHA256 before unpacking. This method only drives the UI.
+    /// </summary>
+    private async void DownloadAndInstallAsync(string toolKey)
     {
         IsDownloading = true;
         DownloadProgress = 0;
+        DownloadErrorMessage = null;
         DownloadStatusMessage = string.Format(Strings.Tools_Downloading, toolKey);
-        string? tempZip = null;
         try
         {
-            var targetDir = toolKey == ToolKeys.FFprobe
-                ? Path.Combine(AppContext.BaseDirectory, "tools", "ffmpeg")
-                : Path.Combine(AppContext.BaseDirectory, "tools", toolKey);
-            tempZip = Path.Combine(Path.GetTempPath(), $"umi_{toolKey}_{Guid.NewGuid():N}.zip");
-
-            if (Directory.Exists(targetDir))
-            {
-                var existingExe = Directory.EnumerateFiles(targetDir, exeName, SearchOption.AllDirectories).FirstOrDefault();
-                if (existingExe != null)
-                {
-                    var existingFullPath = Path.GetFullPath(existingExe);
-
-                    var result = System.Windows.MessageBox.Show(
-                        string.Format(Strings.Tools_AlreadyInstalledMessage, exeName, existingFullPath),
-                        Strings.Tools_AlreadyInstalledTitle,
-                        System.Windows.MessageBoxButton.YesNo,
-                        System.Windows.MessageBoxImage.Question);
-
-                    if (result != System.Windows.MessageBoxResult.Yes)
-                    {
-
-                        if (toolKey == ToolKeys.Gyroflow)
-                            GyroflowPath = existingFullPath;
-                        else if (toolKey == ToolKeys.FFprobe)
-                            FFprobePath = existingFullPath;
-
-                        SaveToolPath(toolKey, existingFullPath);
-                        DownloadStatusMessage = Strings.Tools_FoundExistingPath;
-                        ScheduleClearStatus();
-                        return;
-                    }
-
-                }
-            }
-
-            using (var httpClient = new HttpClient())
-            {
-                httpClient.Timeout = TimeSpan.FromMinutes(10);
-                using var response = await httpClient.GetAsync(downloadUrl, HttpCompletionOption.ResponseHeadersRead);
-                response.EnsureSuccessStatusCode();
-
-                var totalBytes = response.Content.Headers.ContentLength;
-                await using var contentStream = await response.Content.ReadAsStreamAsync();
-                await using var fileStream = new FileStream(tempZip, FileMode.Create, FileAccess.Write, FileShare.None, 8192, useAsync: true);
-
-                var buffer = new byte[81920];
-                long totalRead = 0;
-                int bytesRead;
-                while ((bytesRead = await contentStream.ReadAsync(buffer)) > 0)
-                {
-                    await fileStream.WriteAsync(buffer.AsMemory(0, bytesRead));
-                    totalRead += bytesRead;
-                    if (totalBytes > 0)
-                        DownloadProgress = (int)(totalRead * 100 / totalBytes.Value);
-                }
-            }
-
-            DownloadStatusMessage = string.Format(Strings.Tools_Extracting, toolKey);
-            DownloadProgress = 100;
-
-            if (Directory.Exists(targetDir))
-                Directory.Delete(targetDir, recursive: true);
-            Directory.CreateDirectory(targetDir);
-            ZipFile.ExtractToDirectory(tempZip, targetDir, overwriteFiles: true);
-
-            var foundExe = Directory.EnumerateFiles(targetDir, exeName, SearchOption.AllDirectories).FirstOrDefault();
-            if (foundExe is null)
-            {
-                DownloadStatusMessage = string.Format(Strings.Tools_ExeNotFound, exeName);
+            if (UseExistingInstallation(toolKey))
                 return;
-            }
 
-            var fullPath = Path.GetFullPath(foundExe);
-
-            if (toolKey == ToolKeys.Gyroflow)
-                GyroflowPath = fullPath;
-            else if (toolKey == ToolKeys.FFprobe)
-                FFprobePath = fullPath;
-
-            SaveToolPath(toolKey, fullPath);
-            DownloadStatusMessage = string.Format(Strings.Tools_InstalledSuccess, toolKey);
-            ScheduleClearStatus();
+            var progress = new Progress<double>(fraction =>
+            {
+                DownloadProgress = (int)(fraction * 100);
+                if (fraction >= 1.0)
+                    DownloadStatusMessage = string.Format(Strings.Tools_Extracting, toolKey);
+            });
+            var result = await _toolInstaller.InstallAsync(toolKey, progress, CancellationToken.None);
+            ReportInstallResult(toolKey, result);
         }
         catch (Exception ex)
         {
-            DownloadStatusMessage = string.Format(Strings.Common_ErrorFormat, ex.Message);
+            DownloadErrorMessage = string.Format(Strings.Common_ErrorFormat, ex.Message);
             _logger?.LogError(ex, "Failed to download {ToolKey}", toolKey);
         }
         finally
         {
             IsDownloading = false;
             DownloadStatusMessage = null;
-
-            if (tempZip != null && File.Exists(tempZip))
-            {
-                try { File.Delete(tempZip); } catch {  }
-            }
         }
+    }
+
+    /// <summary>
+    /// If UMI already installed the tool, asks whether to download again. On "no" the existing
+    /// path is configured. Returns true when the existing installation is used (no download).
+    /// </summary>
+    private bool UseExistingInstallation(string toolKey)
+    {
+        var existingFullPath = _toolInstaller.FindInstalledExecutable(toolKey);
+        if (existingFullPath is null)
+            return false;
+
+        var answer = System.Windows.MessageBox.Show(
+            string.Format(Strings.Tools_AlreadyInstalledMessage, Path.GetFileName(existingFullPath), existingFullPath),
+            Strings.Tools_AlreadyInstalledTitle,
+            System.Windows.MessageBoxButton.YesNo,
+            System.Windows.MessageBoxImage.Question);
+        if (answer == System.Windows.MessageBoxResult.Yes)
+            return false;
+
+        ApplyToolPath(toolKey, existingFullPath);
+        DownloadStatusMessage = Strings.Tools_FoundExistingPath;
+        ScheduleClearStatus();
+        return true;
+    }
+
+    /// <summary>Turns the install outcome into a configured path or a message that stays visible.</summary>
+    private void ReportInstallResult(string toolKey, ToolInstallResult result)
+    {
+        switch (result.Outcome)
+        {
+            case ToolInstallOutcome.Installed when result.ExecutablePath is { } installedPath:
+                ApplyToolPath(toolKey, installedPath);
+                DownloadStatusMessage = string.Format(Strings.Tools_InstalledSuccess, toolKey);
+                ScheduleClearStatus();
+                break;
+            case ToolInstallOutcome.Mismatch:
+                DownloadErrorMessage = string.Format(Strings.Tools_ChecksumMismatch, toolKey);
+                break;
+            case ToolInstallOutcome.NotVerifiable:
+                DownloadErrorMessage = string.Format(Strings.Tools_NotVerifiable, toolKey);
+                break;
+            case ToolInstallOutcome.InUse:
+                DownloadErrorMessage = string.Format(Strings.Tools_InUse, toolKey);
+                break;
+            default:
+                DownloadErrorMessage = string.Format(Strings.Tools_ExeNotFound, toolKey);
+                break;
+        }
+    }
+
+    private void ApplyToolPath(string toolKey, string fullPath)
+    {
+        if (toolKey == ToolKeys.Gyroflow)
+            GyroflowPath = fullPath;
+        else if (toolKey == ToolKeys.FFprobe)
+            FFprobePath = fullPath;
+
+        SaveToolPath(toolKey, fullPath);
     }
 
     private async void ExecuteCreateSupportBundle()

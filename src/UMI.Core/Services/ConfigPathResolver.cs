@@ -114,7 +114,13 @@ public class ConfigPathResolver
     /// SSOT — wird in ServiceCollectionExtensions, ToolsViewModel und ExifToolStep genutzt.
     /// </summary>
     public static string DefaultExifToolPath =>
-        Path.Combine(AppContext.BaseDirectory, "tools", "exiftool", "exiftool.exe");
+        Path.Combine(ToolsRoot, "exiftool", "exiftool.exe");
+
+    /// <summary>
+    /// Ordner, in dem UMI Hilfswerkzeuge ablegt (<c>&lt;exe-dir&gt;\tools</c>). SSOT — für das gebündelte
+    /// ExifTool und die heruntergeladenen Werkzeuge (<see cref="ToolInstallService"/>).
+    /// </summary>
+    public static string ToolsRoot => Path.Combine(AppContext.BaseDirectory, "tools");
 
     /// <summary>
     /// Log-Verzeichnis: primär <c>%LOCALAPPDATA%\UMI\logs\</c>, Fallback <c>&lt;exe-dir&gt;\logs\</c>.

@@ -1001,6 +1001,14 @@
                     Background="{StaticResource BrushBorderSubtle}" />
             </StackPanel>
 
+            <TextBlock
+                Text="{Binding Tools.DownloadErrorMessage, Mode=OneWay}"
+                Visibility="{Binding Tools.DownloadErrorMessage, Mode=OneWay, Converter={StaticResource StringToVisibility}}"
+                FontSize="{StaticResource FontSizeSmall}"
+                Foreground="{StaticResource BrushErrorText}"
+                TextWrapping="Wrap"
+                Margin="0,12,0,0" />
+
         </StackPanel>
     </DataTemplate>
 

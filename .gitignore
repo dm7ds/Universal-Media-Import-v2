@@ -153,3 +153,6 @@ skills/
 
 # Session resume handle (local only, not for repo)
 resume.txt
+
+# Lane-Worktrees paralleler Buddies (lokal, nie einchecken)
+_lanes/

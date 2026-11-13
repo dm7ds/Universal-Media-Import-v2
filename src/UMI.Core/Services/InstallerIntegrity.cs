@@ -22,7 +22,10 @@ using Microsoft.Extensions.Logging;
 
 namespace UMI.Core.Services;
 
-/// <summary>Ausgang der Frage „ist diese Datei der erwartete Installer?".</summary>
+/// <summary>
+/// Ausgang der Frage „ist diese heruntergeladene Datei die erwartete?" — für den UMI-Installer
+/// (I-021) und für Werkzeug-Archive (I-022) gleichermaßen.
+/// </summary>
 public enum InstallerVerdict
 {
     /// <summary>Der SHA256 der Datei stimmt mit dem erwarteten Digest überein.</summary>
@@ -76,10 +79,11 @@ internal sealed class InstallerCheck : IDisposable
 }
 
 /// <summary>
-/// Die eine Stelle, die beantwortet: „Ist diese Datei der erwartete Installer?".
-/// Genutzt nach dem Download (<see cref="GitHubReleaseChecker.DownloadSetupAsync"/>) und
-/// unmittelbar vor dem Start (<see cref="InstallerLauncher.RunVerifiedAsync"/>),
-/// von GUI und CLI.
+/// Die eine Stelle, die beantwortet: „Ist diese heruntergeladene Datei die erwartete?" — einzige
+/// SHA256-Berechnung, einziger Digest-Parser, einziger Vergleich. Genutzt für den Installer nach dem
+/// Download (<see cref="GitHubReleaseChecker.DownloadSetupAsync"/>) und unmittelbar vor dem Start
+/// (<see cref="InstallerLauncher.RunVerifiedAsync"/>) sowie für Werkzeug-Archive vor dem Entpacken
+/// (<see cref="ToolInstallService.InstallAsync"/>). Der Name stammt aus I-021.
 /// </summary>
 internal static class InstallerIntegrity
 {
@@ -121,6 +125,14 @@ internal static class InstallerIntegrity
     internal static bool IsVerifiable(string? digest) => TryParseDigest(digest, out _);
 
     /// <summary>
+    /// Bringt einen als reine Hex-Zeichenkette veröffentlichten SHA256 (Inhalt einer <c>.sha256</c>-Datei,
+    /// Whitespace/Zeilenende am Rand erlaubt) in die Digest-Form <c>sha256:&lt;hex&gt;</c>, die
+    /// <see cref="TryParseDigest"/> prüft. Ob der Wert brauchbar ist, entscheidet allein dieser Parser.
+    /// </summary>
+    internal static string? FromBareHex(string? bareHex)
+        => bareHex is null ? null : DigestPrefix + bareHex.Trim();
+
+    /// <summary>
     /// Öffnet <paramref name="path"/> mit <see cref="FileShare.Read"/>, bildet über genau diesen
     /// Stream den SHA256 und vergleicht ihn mit <paramref name="expectedDigest"/>.
     /// <list type="bullet">
@@ -138,7 +150,7 @@ internal static class InstallerIntegrity
         if (!TryParseDigest(expectedDigest, out var expectedHex))
         {
             logger?.LogWarning(
-                "Installer nicht pruefbar: erwarteter Digest fehlt oder ist ungueltig ({Digest}).",
+                "Download nicht pruefbar: erwarteter Digest fehlt oder ist ungueltig ({Digest}).",
                 expectedDigest ?? "<null>");
             return new InstallerCheck(InstallerVerdict.NotVerifiable, null, null, null);
         }
@@ -158,7 +170,7 @@ internal static class InstallerIntegrity
             }
 
             logger?.LogWarning(
-                "Installer-Pruefsumme weicht ab, Datei wird geloescht: {Path} erwartet={Expected} gemessen={Actual}",
+                "Download-Pruefsumme weicht ab, Datei wird geloescht: {Path} erwartet={Expected} gemessen={Actual}",
                 path, expectedHex, actualHex);
             stream.Dispose();
             stream = null;
@@ -172,7 +184,7 @@ internal static class InstallerIntegrity
     }
 
     /// <summary>
-    /// Löscht eine nicht mehr brauchbare Installer-Datei (abweichend oder Teil-Download).
+    /// Löscht eine nicht mehr brauchbare heruntergeladene Datei (abweichend oder Teil-Download).
     /// Ein Löschfehler wird geloggt, nicht geworfen.
     /// </summary>
     internal static void TryDelete(string path, ILogger? logger)
@@ -183,7 +195,7 @@ internal static class InstallerIntegrity
         }
         catch (Exception ex) when (ex is IOException or UnauthorizedAccessException)
         {
-            logger?.LogWarning(ex, "Installer-Datei konnte nicht geloescht werden: {Path}", path);
+            logger?.LogWarning(ex, "Datei konnte nicht geloescht werden: {Path}", path);
         }
     }
 }

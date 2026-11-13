@@ -158,7 +158,28 @@ public class MainViewModel : ViewModelBase
     public bool IsUpdateReadyToInstall
     {
         get => _isUpdateReadyToInstall;
-        private set => SetProperty(ref _isUpdateReadyToInstall, value);
+        private set
+        {
+            if (SetProperty(ref _isUpdateReadyToInstall, value))
+                OnPropertyChanged(nameof(IsInstallBlockedByImport));
+        }
+    }
+
+    /// <summary>
+    /// True while the staged installer is ready but a running import blocks "Install" (I-028):
+    /// the installer ends the app, which would abort the import. The banner then says why.
+    /// </summary>
+    public bool IsInstallBlockedByImport => IsUpdateReadyToInstall && ImportViewModel.HasActiveImports;
+
+    /// <summary>The one predicate behind the Install button: ready, and no import running.</summary>
+    private bool CanInstallUpdate => IsUpdateReadyToInstall && !IsInstallBlockedByImport;
+
+    private void OnImportPropertyChanged(object? sender, System.ComponentModel.PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName != nameof(ImportViewModel.HasActiveImports)) return;
+
+        OnPropertyChanged(nameof(IsInstallBlockedByImport));
+        RelayCommand.RaiseCanExecuteChanged();
     }
 
     private string _stagedInstallerPath = string.Empty;
@@ -464,7 +485,8 @@ public class MainViewModel : ViewModelBase
         // Banner button has two roles: "Cancel" while a download runs (handled by
         // CancelDownloadCommand via XAML DataTrigger), "Install" once the staged
         // setup is ready. CanExecute=true only in the latter state.
-        DownloadUpdateCommand = new RelayCommand(ExecuteDownloadUpdate, () => IsUpdateReadyToInstall);
+        DownloadUpdateCommand = new RelayCommand(ExecuteDownloadUpdate, () => CanInstallUpdate);
+        ImportViewModel.PropertyChanged += OnImportPropertyChanged;
         CancelDownloadCommand = new RelayCommand(ExecuteCancelDownload, () => IsDownloading);
 
         ShowAboutCommand = new RelayCommand(ExecuteShowAbout);
@@ -642,11 +664,12 @@ public class MainViewModel : ViewModelBase
     /// <summary>
     /// Triggered by the banner button. Two distinct phases share this command:
     ///  - Download still running → no-op (CanExecute gates this; user sees "Cancel" instead)
-    ///  - Download finished, staged installer ready → launch installer + shut down.
+    ///  - Download finished, staged installer ready → launch installer + shut down,
+    ///    but never while an import runs (the shutdown would abort it — I-028).
     /// </summary>
     private async void ExecuteDownloadUpdate()
     {
-        if (IsUpdateReadyToInstall)
+        if (CanInstallUpdate)
             await LaunchStagedInstallerAsync();
     }
 
@@ -732,8 +755,9 @@ public class MainViewModel : ViewModelBase
 
     /// <summary>
     /// Re-verifies the previously-downloaded installer right before the start and launches it via
-    /// Shell (triggers UAC) while the verification handle is still open, then shuts down the GUI so
-    /// the installer can replace the binaries. No-op if the staged file is missing.
+    /// Shell (triggers UAC) while the verification handle is still open, then closes the GUI (see
+    /// <see cref="CloseMainWindowForUpdate"/>) so the installer can replace the binaries.
+    /// No-op if the staged file is missing.
     /// </summary>
     private async Task LaunchStagedInstallerAsync()
     {
@@ -757,7 +781,7 @@ public class MainViewModel : ViewModelBase
                 return;
             }
 
-            System.Windows.Application.Current?.Shutdown();
+            CloseMainWindowForUpdate();
         }
         catch (Exception ex)
         {
@@ -766,6 +790,29 @@ public class MainViewModel : ViewModelBase
             IsUpdateReadyToInstall = true; // file untouched (e.g. UAC declined) — user may retry
             RelayCommand.RaiseCanExecuteChanged();
         }
+    }
+
+    /// <summary>
+    /// Ends the GUI after the installer has started, through the SAME close path as the X button, so
+    /// the one Closing guard answers "does an import run?" — also when a watch-mode import started
+    /// while the UAC prompt was open (I-028). <c>Application.Shutdown()</c> would bypass that guard
+    /// (WPF ignores Cancel during shutdown). The app ends with the main window: ShutdownMode is
+    /// OnLastWindowClose, and the only other windows at this point are owned by it (help, about).
+    /// If the user declines the question the app keeps running; the installer then waits for it and
+    /// asks on its own side.
+    /// </summary>
+    private void CloseMainWindowForUpdate()
+    {
+        var mainWindow = Application.Current?.Windows.OfType<MainWindow>().FirstOrDefault();
+        if (mainWindow is not null)
+        {
+            mainWindow.Close();
+            return;
+        }
+
+        /* Fallback */
+        _logger?.LogWarning("Hauptfenster nicht gefunden — Anwendung wird per Shutdown beendet");
+        Application.Current?.Shutdown();
     }
 
     /// <summary>

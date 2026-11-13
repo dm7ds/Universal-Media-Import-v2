@@ -1214,7 +1214,7 @@
                     <!-- Favorit -->
                     <ToggleButton
                         Style="{StaticResource ReviewFavoriteToggleButton}"
-                        IsChecked="{Binding CurrentPhoto.IsFavorite}"
+                        IsChecked="{Binding CurrentPhoto.IsFavorite, Mode=OneWay}"
                         Command="{Binding ToggleFavoriteCommand}"
                         Margin="0,0,8,0">
                         <StackPanel Orientation="Horizontal">
@@ -1241,7 +1241,7 @@
                     <!-- Müll -->
                     <ToggleButton
                         Style="{StaticResource ReviewTrashToggleButton}"
-                        IsChecked="{Binding CurrentPhoto.IsTrash}"
+                        IsChecked="{Binding CurrentPhoto.IsTrash, Mode=OneWay}"
                         Command="{Binding ToggleTrashCommand}"
                         Margin="0,0,14,0">
                         <StackPanel Orientation="Horizontal">

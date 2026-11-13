@@ -93,10 +93,15 @@ public class GpsServiceTests : IDisposable
         var gpxDir = Path.Combine(_tempDir, "gpx");
         Directory.CreateDirectory(gpxDir);
 
+        // CreateDate gilt als Lokalzeit der Maschine (GpsService: SpecifyKind Local → ToUniversalTime).
+        // Die GPX-Zeit daher über dieselbe Zone ableiten statt "CET" fest anzunehmen — sonst ist der
+        // Test auf einem UTC-Runner (CI) rot. Auf einer MEZ-Maschine ergibt das 14:18:32 UTC wie bisher.
+        var gpxStartUtc = new DateTime(2025, 2, 9, 15, 18, 32, DateTimeKind.Local).ToUniversalTime();
+
         CreateTestGpxFile(
             Path.Combine(gpxDir, "Tour_2025-02-09.gpx"),
-            new DateTime(2025, 2, 9, 14, 18, 32, DateTimeKind.Utc),
-            new DateTime(2025, 2, 9, 14, 19, 32, DateTimeKind.Utc),
+            gpxStartUtc,
+            gpxStartUtc.AddMinutes(1),
             new[] {
                 (51.5074, -0.1278, 100.0),
                 (51.5075, -0.1279, 100.5),
@@ -106,7 +111,7 @@ public class GpsServiceTests : IDisposable
 
         var result = await _service.OptimizeGpsForVideoAsync(videoPath, gpxDir);
 
-        result.Should().NotBeNull("GPX sollte mit Video-Zeitfenster matchen (CET → UTC Konvertierung)");
+        result.Should().NotBeNull("GPX sollte mit Video-Zeitfenster matchen (Lokalzeit → UTC Konvertierung)");
         result.Should().EndWith("_optimized.gpx");
         File.Exists(result!).Should().BeTrue();
     }

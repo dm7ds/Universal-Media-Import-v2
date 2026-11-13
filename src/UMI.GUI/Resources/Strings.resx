@@ -627,7 +627,16 @@ Run 'umi config setup' to create a configuration.</value>
     <value>Downloading {0}...</value>
   </data>
   <data name="Tools_Extracting" xml:space="preserve">
-    <value>Extracting {0}...</value>
+    <value>Verifying and extracting {0}...</value>
+  </data>
+  <data name="Tools_ChecksumMismatch" xml:space="preserve">
+    <value>{0} was NOT installed: the downloaded file does not match the checksum published by its source and was deleted. Try again later, or install {0} manually and select it with Browse.</value>
+  </data>
+  <data name="Tools_InUse" xml:space="preserve">
+    <value>{0} was not updated: its files are in use. Close {0} and try again; the existing installation is unchanged.</value>
+  </data>
+  <data name="Tools_NotVerifiable" xml:space="preserve">
+    <value>{0} was NOT installed: no checksum is available to verify the download, so it is not installed automatically. Install {0} manually and select it with Browse.</value>
   </data>
   <data name="Tools_ExeNotFound" xml:space="preserve">
     <value>Error: {0} not found in archive</value>
@@ -2727,5 +2736,26 @@ Path has been configured. Do you want to re-download anyway?</value>
   </data>
   <data name="DeleteOptions_PartialFailure" xml:space="preserve">
     <value>{0} of {1} photo(s) could not be processed:</value>
+  </data>
+  <data name="CloseGuard_Title" xml:space="preserve">
+    <value>Import still running</value>
+  </data>
+  <data name="CloseGuard_Message" xml:space="preserve">
+    <value>An import is still running. Quitting cancels it:
+
+• Files that are already copied are kept.
+• The file being copied right now may stay incomplete in the target folder.
+• Post-processing (e.g. GPS, stabilization) is not carried out.
+
+Really quit?</value>
+  </data>
+  <data name="CloseGuard_Quit" xml:space="preserve">
+    <value>Cancel import and quit</value>
+  </data>
+  <data name="CloseGuard_Keep" xml:space="preserve">
+    <value>Don't quit</value>
+  </data>
+  <data name="Update_InstallBlockedByImport" xml:space="preserve">
+    <value>An import is running. Installing the update would cancel it — please install once the import is finished.</value>
   </data>
 </root>

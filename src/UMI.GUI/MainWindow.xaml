@@ -452,6 +452,10 @@
                                             <DataTrigger Binding="{Binding IsDownloading}" Value="True">
                                                 <Setter Property="Text" Value="{Binding DownloadStatusText}" />
                                             </DataTrigger>
+                                            <!-- Install is blocked while an import runs (I-028): say why. -->
+                                            <DataTrigger Binding="{Binding IsInstallBlockedByImport}" Value="True">
+                                                <Setter Property="Text" Value="{helpers:Localize Update_InstallBlockedByImport}" />
+                                            </DataTrigger>
                                         </Style.Triggers>
                                     </Style>
                                 </TextBlock.Style>
@@ -473,6 +477,9 @@
                                             <Setter Property="Command" Value="{Binding CancelDownloadCommand}" />
                                             <Setter Property="Foreground" Value="{StaticResource BrushTextMuted}" />
                                         </DataTrigger>
+                                        <Trigger Property="IsEnabled" Value="False">
+                                            <Setter Property="Opacity" Value="{StaticResource OpacityMuted}" />
+                                        </Trigger>
                                     </Style.Triggers>
                                 </Style>
                             </Button.Style>
