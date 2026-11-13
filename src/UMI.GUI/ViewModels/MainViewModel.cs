@@ -108,13 +108,11 @@ public class MainViewModel : ViewModelBase
         private set => SetProperty(ref _updateBannerText, value);
     }
 
-    private string _updateDownloadUrl = string.Empty;
-    /// <summary>Direct download URL of the setup EXE.</summary>
-    public string UpdateDownloadUrl
-    {
-        get => _updateDownloadUrl;
-        private set => SetProperty(ref _updateDownloadUrl, value);
-    }
+    /// <summary>
+    /// Setup asset of the offered release: download URL and expected SHA256 digest as one pair
+    /// (null = no update offered or the release has no setup EXE).
+    /// </summary>
+    private SetupAsset? _updateSetup;
 
     private string _updateLatestVersion = string.Empty;
     /// <summary>Latest version string — used to build the download target filename.</summary>
@@ -123,6 +121,9 @@ public class MainViewModel : ViewModelBase
         get => _updateLatestVersion;
         set => _updateLatestVersion = value;
     }
+
+    /// <summary>GitHub release page — named in the banner when the installer is not installed automatically.</summary>
+    private string _updateReleaseUrl = string.Empty;
 
     private bool _isDownloading;
     /// <summary>True while the setup EXE is being downloaded. Controls ProgressBar visibility.</summary>
@@ -619,7 +620,8 @@ public class MainViewModel : ViewModelBase
             if (!result.IsUpdateAvailable)
                 return;
 
-            UpdateDownloadUrl = result.DownloadUrl;
+            _updateSetup = result.Setup;
+            _updateReleaseUrl = result.ReleaseNotesUrl;
             UpdateLatestVersion = result.LatestVersion;
             UpdateBannerText = string.Format(Strings.Update_BannerText, result.LatestVersion);
 
@@ -628,8 +630,8 @@ public class MainViewModel : ViewModelBase
 
             // Background-fetch the installer right away so the user only has to
             // click "Install" once we're ready.
-            if (!string.IsNullOrEmpty(UpdateDownloadUrl))
-                _ = RunDownloadAsync();
+            if (result.Setup is not null)
+                _ = RunDownloadAsync(result.Setup);
         }
         catch (Exception ex)
         {
@@ -642,10 +644,10 @@ public class MainViewModel : ViewModelBase
     ///  - Download still running → no-op (CanExecute gates this; user sees "Cancel" instead)
     ///  - Download finished, staged installer ready → launch installer + shut down.
     /// </summary>
-    private void ExecuteDownloadUpdate()
+    private async void ExecuteDownloadUpdate()
     {
         if (IsUpdateReadyToInstall)
-            LaunchStagedInstaller();
+            await LaunchStagedInstallerAsync();
     }
 
     private void ExecuteCancelDownload()
@@ -653,7 +655,7 @@ public class MainViewModel : ViewModelBase
         _downloadCts?.Cancel();
     }
 
-    private async Task RunDownloadAsync()
+    private async Task RunDownloadAsync(SetupAsset setup)
     {
         _downloadCts?.Dispose();
         _downloadCts = new CancellationTokenSource();
@@ -675,13 +677,20 @@ public class MainViewModel : ViewModelBase
                 DownloadProgress = p;
             });
 
-            await _updateService!.DownloadSetupAsync(UpdateDownloadUrl, targetPath, progress, ct)
+            var verdict = await _updateService!
+                .DownloadSetupAsync(setup, targetPath, progress, ct)
                 .ConfigureAwait(false);
 
             // Stage the file for the install button — no confirmation dialog, the user
             // explicitly clicks "Install" on the banner when they're ready.
             await System.Windows.Application.Current.Dispatcher.InvokeAsync(() =>
             {
+                if (verdict != InstallerVerdict.Valid)
+                {
+                    ShowUnverifiedInstaller(verdict, version);
+                    return;
+                }
+
                 StagedInstallerPath = targetPath;
                 IsUpdateReadyToInstall = true;
                 UpdateBannerText = string.Format(Strings.Update_BannerReady, version);
@@ -697,7 +706,7 @@ public class MainViewModel : ViewModelBase
         {
             DownloadStatusText = string.Format(Strings.Update_DownloadError, ex.Message);
             DownloadProgress = 0;
-            _logger?.LogWarning(ex, "Update-Download fehlgeschlagen: {Url}", UpdateDownloadUrl);
+            _logger?.LogWarning(ex, "Update-Download fehlgeschlagen: {Url}", setup.Url);
         }
         finally
         {
@@ -707,29 +716,55 @@ public class MainViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// Launches the previously-downloaded installer via Shell (triggers UAC) and shuts down
-    /// the GUI so the installer can replace the binaries. No-op if the staged file is missing.
+    /// The installer is not installed automatically (no usable digest, or the checksum differs and
+    /// the file was deleted). Shown in the banner — DownloadStatusText is only visible while a
+    /// download runs — together with the release page for a manual download.
     /// </summary>
-    private void LaunchStagedInstaller()
+    private void ShowUnverifiedInstaller(InstallerVerdict verdict, string version)
     {
-        if (string.IsNullOrEmpty(StagedInstallerPath) || !File.Exists(StagedInstallerPath))
+        StagedInstallerPath = string.Empty;
+        IsUpdateReadyToInstall = false;
+        UpdateBannerText = verdict == InstallerVerdict.Mismatch
+            ? string.Format(Strings.Update_DigestMismatch, _updateReleaseUrl)
+            : string.Format(Strings.Update_NotVerifiable, version, _updateReleaseUrl);
+        RelayCommand.RaiseCanExecuteChanged();
+    }
+
+    /// <summary>
+    /// Re-verifies the previously-downloaded installer right before the start and launches it via
+    /// Shell (triggers UAC) while the verification handle is still open, then shuts down the GUI so
+    /// the installer can replace the binaries. No-op if the staged file is missing.
+    /// </summary>
+    private async Task LaunchStagedInstallerAsync()
+    {
+        if (_updateSetup is null || string.IsNullOrEmpty(StagedInstallerPath) || !File.Exists(StagedInstallerPath))
         {
             _logger?.LogWarning("Install-Klick ohne gestagete Setup-EXE — Pfad: {Path}", StagedInstallerPath);
             return;
         }
 
+        // Disable the button while hashing so a second click cannot start a second check.
+        IsUpdateReadyToInstall = false;
+        RelayCommand.RaiseCanExecuteChanged();
+
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            var verdict = await _updateService!.LaunchVerifiedInstallerAsync(
+                _updateSetup, StagedInstallerPath, CancellationToken.None);
+            if (verdict != InstallerVerdict.Valid)
             {
-                FileName = StagedInstallerPath,
-                UseShellExecute = true
-            });
+                ShowUnverifiedInstaller(verdict, UpdateLatestVersion);
+                return;
+            }
+
             System.Windows.Application.Current?.Shutdown();
         }
         catch (Exception ex)
         {
             _logger?.LogWarning(ex, "Installer-Launch fehlgeschlagen: {Path}", StagedInstallerPath);
+            UpdateBannerText = string.Format(Strings.Update_LaunchFailed, ex.Message);
+            IsUpdateReadyToInstall = true; // file untouched (e.g. UAC declined) — user may retry
+            RelayCommand.RaiseCanExecuteChanged();
         }
     }
 

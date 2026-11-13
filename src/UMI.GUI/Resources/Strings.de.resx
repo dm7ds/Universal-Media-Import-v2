@@ -2590,6 +2590,15 @@ Nutze den Setup-Assistenten oder klicke auf 'Kamera hinzufuegen'.</value>
   <data name="Update_DownloadCanceled" xml:space="preserve">
     <value>Download abgebrochen.</value>
   </data>
+  <data name="Update_NotVerifiable" xml:space="preserve">
+    <value>Version {0} ist verfügbar, aber der Installer kann nicht automatisch geprüft werden (keine gültige SHA256-Prüfsumme veröffentlicht). Er wird nicht automatisch installiert — bitte manuell von der Release-Seite laden: {1}</value>
+  </data>
+  <data name="Update_DigestMismatch" xml:space="preserve">
+    <value>Der heruntergeladene Installer stimmt nicht mit der veröffentlichten SHA256-Prüfsumme überein. Er wurde gelöscht und wird nicht gestartet — bitte manuell von der Release-Seite laden: {0}</value>
+  </data>
+  <data name="Update_LaunchFailed" xml:space="preserve">
+    <value>Der Installer konnte nicht gestartet werden: {0}</value>
+  </data>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->
   <!-- Config Tab — App Settings Section -->

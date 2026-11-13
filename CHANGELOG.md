@@ -4,6 +4,27 @@ All notable user-visible changes are documented here. Format follows
 [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and the project
 loosely tracks [Semantic Versioning](https://semver.org/).
 
+## [2.2.5] — 2026-11-13
+
+### Security
+
+- **Updates werden vor der Installation geprüft.** Bisher wurde ein
+  heruntergeladenes Update ungeprüft gestartet — mit Administratorrechten.
+  Jetzt vergleicht UMI die Datei per SHA256 mit dem Prüfwert, den GitHub für das
+  Release veröffentlicht, und zwar zweimal: direkt nach dem Download und noch
+  einmal unmittelbar vor dem Start. Zwischen dieser letzten Prüfung und dem
+  Start kann die Datei nicht mehr ausgetauscht werden.
+  - Stimmt der Prüfwert nicht, wird die Datei gelöscht und nicht gestartet.
+  - Liefert ein Release keinen Prüfwert, wird nicht automatisch installiert —
+    das Update lässt sich dann manuell von der Release-Seite laden
+    (Kommandozeile: Exit-Code 4).
+  - **Wichtig zur Einordnung:** Das schützt vor beschädigten Downloads und vor
+    einer auf dem eigenen Rechner ausgetauschten Datei. Es ist **keine**
+    Signaturprüfung und schützt nicht gegen ein manipuliertes Release. Der
+    Installer ist weiterhin nicht signiert.
+  - Die Prüfung wirkt ab dem Update, das **auf** diese Version folgt: Erst eine
+    installierte 2.2.5 prüft, was sie herunterlädt.
+
 ## [2.2.4] — 2026-08-13
 
 ### Fixed

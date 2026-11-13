@@ -57,7 +57,6 @@ public sealed class GitHubReleaseChecker : IUpdateService
             IsUpdateAvailable: false,
             CurrentVersion: _currentVersion,
             LatestVersion: _currentVersion,
-            DownloadUrl: string.Empty,
             ReleaseNotesUrl: string.Empty);
 
         try
@@ -77,7 +76,6 @@ public sealed class GitHubReleaseChecker : IUpdateService
 
             var latestVersion = NormalizeVersion(release.TagName);
             var releaseNotesUrl = release.HtmlUrl ?? string.Empty;
-            var downloadUrl = FindSetupAssetUrl(release.Assets);
 
             if (!IsUpdateAvailable(_currentVersion, latestVersion))
                 return noUpdate with { LatestVersion = latestVersion, ReleaseNotesUrl = releaseNotesUrl };
@@ -86,8 +84,8 @@ public sealed class GitHubReleaseChecker : IUpdateService
                 IsUpdateAvailable: true,
                 CurrentVersion: _currentVersion,
                 LatestVersion: latestVersion,
-                DownloadUrl: downloadUrl,
-                ReleaseNotesUrl: releaseNotesUrl);
+                ReleaseNotesUrl: releaseNotesUrl,
+                Setup: FindSetupAsset(release.Assets));
         }
         catch (OperationCanceledException) when (!ct.IsCancellationRequested)
         {
@@ -116,12 +114,14 @@ public sealed class GitHubReleaseChecker : IUpdateService
     }
 
     /// <summary>
-    /// Findet die Download-URL des ersten Assets das auf .exe endet und "Setup" im Namen hat.
+    /// Findet das erste Asset das auf .exe endet und "Setup" im Namen hat. URL und Digest
+    /// werden aus demselben Asset gelesen und reisen als <see cref="SetupAsset"/> weiter,
+    /// damit sie nie auseinanderlaufen. Null, wenn es kein Setup-Asset mit URL gibt.
     /// </summary>
-    internal static string FindSetupAssetUrl(IReadOnlyList<GitHubAsset>? assets)
+    internal static SetupAsset? FindSetupAsset(IReadOnlyList<GitHubAsset>? assets)
     {
         if (assets is null || assets.Count == 0)
-            return string.Empty;
+            return null;
 
         foreach (var asset in assets)
         {
@@ -129,11 +129,13 @@ public sealed class GitHubReleaseChecker : IUpdateService
                 && asset.Name.Contains("Setup", StringComparison.OrdinalIgnoreCase)
                 && asset.Name.EndsWith(".exe", StringComparison.OrdinalIgnoreCase))
             {
-                return asset.BrowserDownloadUrl ?? string.Empty;
+                return string.IsNullOrEmpty(asset.BrowserDownloadUrl)
+                    ? null
+                    : new SetupAsset(asset.BrowserDownloadUrl, asset.Digest);
             }
         }
 
-        return string.Empty;
+        return null;
     }
 
     /// <summary>
@@ -148,7 +150,38 @@ public sealed class GitHubReleaseChecker : IUpdateService
     }
 
     /// <inheritdoc/>
-    public async Task DownloadSetupAsync(string url, string targetPath, IProgress<double>? progress, CancellationToken ct)
+    public async Task<InstallerVerdict> DownloadSetupAsync(
+        SetupAsset asset, string targetPath, IProgress<double>? progress, CancellationToken ct)
+    {
+        // Ohne brauchbaren Digest gibt es nichts zu vergleichen -> gar nicht erst laden.
+        if (!InstallerIntegrity.IsVerifiable(asset.Digest))
+        {
+            _logger?.LogWarning("Setup-Download uebersprungen, Digest fehlt oder ist ungueltig: {Url}", asset.Url);
+            return InstallerVerdict.NotVerifiable;
+        }
+
+        try
+        {
+            await DownloadToFileAsync(asset.Url, targetPath, progress, ct).ConfigureAwait(false);
+        }
+        catch
+        {
+            // Abbruch oder Fehler: die Teil-Datei soll nicht in %TEMP% liegen bleiben.
+            InstallerIntegrity.TryDelete(targetPath, _logger);
+            throw;
+        }
+
+        // Der Download-Stream ist hier geschlossen; die Datei wird erst jetzt geprueft.
+        using var check = await InstallerIntegrity.CheckAsync(targetPath, asset.Digest, _logger, ct)
+            .ConfigureAwait(false);
+        return check.Verdict;
+    }
+
+    /// <inheritdoc/>
+    public Task<InstallerVerdict> LaunchVerifiedInstallerAsync(SetupAsset asset, string path, CancellationToken ct)
+        => InstallerLauncher.RunVerifiedAsync(asset, path, InstallerLauncher.ShellStart, _logger, ct);
+
+    private async Task DownloadToFileAsync(string url, string targetPath, IProgress<double>? progress, CancellationToken ct)
     {
         using var response = await _httpClient
             .GetAsync(url, HttpCompletionOption.ResponseHeadersRead, ct)
@@ -224,4 +257,8 @@ internal sealed class GitHubAsset
 
     [JsonPropertyName("browser_download_url")]
     public string? BrowserDownloadUrl { get; init; }
+
+    /// <summary>Roher <c>digest</c>-Wert der API (<c>sha256:&lt;hex&gt;</c>); fehlt bei älteren Releases.</summary>
+    [JsonPropertyName("digest")]
+    public string? Digest { get; init; }
 }

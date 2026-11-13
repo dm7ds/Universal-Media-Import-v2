@@ -2650,6 +2650,15 @@ Path has been configured. Do you want to re-download anyway?</value>
   <data name="Update_DownloadCanceled" xml:space="preserve">
     <value>Download canceled.</value>
   </data>
+  <data name="Update_NotVerifiable" xml:space="preserve">
+    <value>Version {0} is available, but its installer cannot be verified automatically (no valid SHA256 checksum published). It will not be installed automatically — please download it manually from the release page: {1}</value>
+  </data>
+  <data name="Update_DigestMismatch" xml:space="preserve">
+    <value>The downloaded installer does not match the published SHA256 checksum. It was deleted and will not be started — please download it manually from the release page: {0}</value>
+  </data>
+  <data name="Update_LaunchFailed" xml:space="preserve">
+    <value>The installer could not be started: {0}</value>
+  </data>
 
   <!-- ═══════════════════════════════════════════════════════════════════ -->
   <!-- Config Tab — App Settings Section -->

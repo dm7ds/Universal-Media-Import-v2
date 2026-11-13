@@ -378,7 +378,13 @@ umi update --apply
 | Option | Description |
 |---|---|
 | `--check` | Show installed version vs. latest available, exit |
-| `--apply` | Check, download `UMI_Setup_<version>.exe` to `%TEMP%` and start the installer |
+| `--apply` | Check, download `UMI_Setup_<version>.exe` to `%TEMP%`, verify its SHA256 and start the installer |
+
+The installer is checked against the SHA256 checksum GitHub publishes for the release, both after the
+download and directly before it is started. A release without a usable checksum is **not** installed
+automatically (download it manually from the release page); a mismatching file is deleted and not started.
+`--apply` then exits with code `4`. The checksum comes from the same release as the file, so it does not
+protect against a compromised release, and the installer is not code-signed.
 
 The GUI runs the same check at startup (when *Check for updates on startup* is
 enabled in **Settings → Tools**, the default), pre-fetches the installer in the

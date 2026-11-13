@@ -6928,6 +6928,33 @@ namespace UMI.GUI.Resources {
         }
 
         /// <summary>
+        ///   Looks up a localized string similar to "Version {0} is available, but its installer cannot be verified automatically ... {1}".
+        /// </summary>
+        public static string Update_NotVerifiable {
+            get {
+                return ResourceManager.GetString("Update_NotVerifiable", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "The downloaded installer does not match the published SHA256 checksum ... {0}".
+        /// </summary>
+        public static string Update_DigestMismatch {
+            get {
+                return ResourceManager.GetString("Update_DigestMismatch", resourceCulture);
+            }
+        }
+
+        /// <summary>
+        ///   Looks up a localized string similar to "The installer could not be started: {0}".
+        /// </summary>
+        public static string Update_LaunchFailed {
+            get {
+                return ResourceManager.GetString("Update_LaunchFailed", resourceCulture);
+            }
+        }
+
+        /// <summary>
         ///   Looks up a localized string similar to "Create Support Bundle".
         /// </summary>
         public static string Tools_SupportBundle {

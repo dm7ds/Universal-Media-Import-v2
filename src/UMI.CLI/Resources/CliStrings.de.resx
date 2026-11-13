@@ -1205,4 +1205,10 @@
   <data name="Update_Canceled" xml:space="preserve">
     <value>Update-Download abgebrochen.</value>
   </data>
+  <data name="Update_NotVerifiable" xml:space="preserve">
+    <value>Der Installer kann nicht automatisch geprüft werden (GitHub liefert keine gültige SHA256-Prüfsumme dafür). Er wurde NICHT heruntergeladen oder gestartet. Bitte manuell von der Release-Seite laden: {0}</value>
+  </data>
+  <data name="Update_DigestMismatch" xml:space="preserve">
+    <value>Der heruntergeladene Installer stimmt nicht mit der veröffentlichten SHA256-Prüfsumme überein. Die Datei wurde gelöscht und NICHT gestartet. Bitte manuell von der Release-Seite laden: {0}</value>
+  </data>
 </root>

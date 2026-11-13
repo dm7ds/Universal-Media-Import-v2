@@ -37,6 +37,7 @@ public static class UpdateCommand
     private const int ExitCheckFailed = 1;
     private const int ExitDownloadFailed = 2;
     private const int ExitLaunchFailed = 3;
+    private const int ExitNotVerified = 4;
 
     public static Command Create()
     {
@@ -115,8 +116,8 @@ public static class UpdateCommand
             Console.WriteLine(CliStrings.Update_Available);
             Console.ResetColor();
 
-            if (!string.IsNullOrEmpty(result.DownloadUrl))
-                Console.WriteLine(string.Format(CliStrings.Update_DownloadUrl, result.DownloadUrl));
+            if (result.Setup is not null)
+                Console.WriteLine(string.Format(CliStrings.Update_DownloadUrl, result.Setup.Url));
         }
         else
         {
@@ -128,11 +129,13 @@ public static class UpdateCommand
             return ExitOk;
 
         // ── Apply ─────────────────────────────────────────────────────────────
-        if (string.IsNullOrEmpty(result.DownloadUrl))
+        if (result.Setup is null)
         {
             Console.Error.WriteLine(CliStrings.Update_NoDownloadUrl);
             return ExitDownloadFailed;
         }
+
+        var setup = result.Setup;
 
         var version = result.LatestVersion;
         var targetPath = Path.Combine(Path.GetTempPath(), $"UMI_Setup_{version}.exe");
@@ -150,8 +153,10 @@ public static class UpdateCommand
 
         try
         {
-            await updateService.DownloadSetupAsync(result.DownloadUrl, targetPath, progress, ct);
+            var verdict = await updateService.DownloadSetupAsync(setup, targetPath, progress, ct);
             Console.WriteLine(); // newline after progress line
+            if (verdict != InstallerVerdict.Valid)
+                return ReportUnverified(verdict, result.ReleaseNotesUrl);
             Console.WriteLine(CliStrings.Update_DownloadComplete);
         }
         catch (OperationCanceledException)
@@ -167,14 +172,26 @@ public static class UpdateCommand
             return ExitDownloadFailed;
         }
 
-        // ── Launch ────────────────────────────────────────────────────────────
+        return await LaunchVerifiedAsync(updateService, setup, targetPath, result.ReleaseNotesUrl, ct);
+    }
+
+    /// <summary>
+    /// Startet den Installer über die gemeinsame Start-Sequenz des Core (erneute Prüfung,
+    /// Start bei offenem Prüf-Handle, danach Freigabe).
+    /// </summary>
+    private static async Task<int> LaunchVerifiedAsync(
+        IUpdateService updateService, SetupAsset setup, string installerPath, string releaseUrl, CancellationToken ct)
+    {
         try
         {
-            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
-            {
-                FileName = targetPath,
-                UseShellExecute = true
-            });
+            var verdict = await updateService.LaunchVerifiedInstallerAsync(setup, installerPath, ct);
+            if (verdict != InstallerVerdict.Valid)
+                return ReportUnverified(verdict, releaseUrl);
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine(CliStrings.Update_Canceled);
+            return ExitOk;
         }
         catch (Exception ex)
         {
@@ -184,5 +201,17 @@ public static class UpdateCommand
 
         // CLI exits cleanly — installer takes over
         return ExitOk;
+    }
+
+    /// <summary>
+    /// Meldet, dass der Installer nicht gestartet wird (nicht prüfbar bzw. Prüfsumme weicht ab).
+    /// </summary>
+    private static int ReportUnverified(InstallerVerdict verdict, string releaseUrl)
+    {
+        var message = verdict == InstallerVerdict.Mismatch
+            ? CliStrings.Update_DigestMismatch
+            : CliStrings.Update_NotVerifiable;
+        Console.Error.WriteLine(string.Format(message, releaseUrl));
+        return ExitNotVerified;
     }
 }

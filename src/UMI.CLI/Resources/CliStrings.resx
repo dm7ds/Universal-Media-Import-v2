@@ -1205,4 +1205,10 @@
   <data name="Update_Canceled" xml:space="preserve">
     <value>Update download canceled.</value>
   </data>
+  <data name="Update_NotVerifiable" xml:space="preserve">
+    <value>The installer cannot be verified automatically (GitHub published no valid SHA256 checksum for it). It was NOT downloaded or started. Please download it manually from the release page: {0}</value>
+  </data>
+  <data name="Update_DigestMismatch" xml:space="preserve">
+    <value>The downloaded installer does not match the published SHA256 checksum. The file was deleted and NOT started. Please download it manually from the release page: {0}</value>
+  </data>
 </root>

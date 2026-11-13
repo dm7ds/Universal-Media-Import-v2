@@ -317,6 +317,20 @@ umi update --apply        # check + download + launch installer + exit
 
 `UpdateCommand` reuses `IUpdateService` (`GitHubReleaseChecker`) and reports progress on a single overwriting line.
 
+### Installer integrity check (SHA256)
+
+The GitHub release API publishes a SHA256 `digest` for current release assets (older releases may lack it, see below). UMI compares the installer against it twice, in the GUI and in the CLI:
+
+1. **After the download** — a mismatching file is deleted immediately and never started.
+2. **Directly before the start** — the file is hashed again while UMI holds it open for reading, and the installer is started while that handle is still open. This closes the window in which another process could swap the staged file in `%TEMP%`.
+
+- **Release without a usable digest** (older releases, API change): nothing is downloaded or installed automatically. The GUI banner and the CLI point to the release page for a manual download.
+- **Checksum mismatch:** the file is deleted, the installer is not started, and the banner / CLI says so. The expected and measured hashes are written to the log.
+- **CLI exit code `4`:** the installer was not started because it could not be verified or did not match (`0` = ok, `1` = check failed, `2` = download failed, `3` = launch failed).
+- **A cancelled or failed download** leaves no partial file in `%TEMP%`.
+
+**Limit:** the checksum comes from the same GitHub release as the installer. It protects against transport errors, incomplete downloads and replacement of the file in `%TEMP%` — it does **not** protect against a compromised GitHub account or release. The installer itself is not code-signed.
+
 ---
 
 ## Logging

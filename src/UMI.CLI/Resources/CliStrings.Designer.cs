@@ -2332,4 +2332,16 @@ public static class CliStrings
     public static string Update_Canceled
         => ResourceManager.GetString("Update_Canceled", resourceCulture) ?? string.Empty;
 
+    /// <summary>
+    ///   Looks up a localized string similar to "The installer cannot be verified automatically ... {0}".
+    /// </summary>
+    public static string Update_NotVerifiable
+        => ResourceManager.GetString("Update_NotVerifiable", resourceCulture) ?? string.Empty;
+
+    /// <summary>
+    ///   Looks up a localized string similar to "The downloaded installer does not match the published SHA256 checksum ... {0}".
+    /// </summary>
+    public static string Update_DigestMismatch
+        => ResourceManager.GetString("Update_DigestMismatch", resourceCulture) ?? string.Empty;
+
 }
